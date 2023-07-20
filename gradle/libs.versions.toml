@@ -1,7 +1,7 @@
 [versions]
 ## plugins version
-androidPlugin = "8.0.1"
-kotlinPlugin = "1.7.20"
+androidPlugin = "7.4.1"
+kotlinPlugin = "1.8.10"
 
 ## androidx
 androidx-core-ktx = "1.8.0"
