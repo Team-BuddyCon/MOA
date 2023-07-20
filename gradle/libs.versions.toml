@@ -2,6 +2,7 @@
 ## plugins version
 androidPlugin = "7.4.1"
 kotlinPlugin = "1.8.10"
+ktlintPlugin = "11.4.2"
 
 ## androidx
 androidx-core-ktx = "1.8.0"
@@ -18,6 +19,7 @@ androidx-espresso-core = "3.5.1"
 android-application = { id = "com.android.application", version.ref = "androidPlugin" }
 android-library = { id = "com.android.library", version.ref = "androidPlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinPlugin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
 
 [libraries]
 ## androidx
