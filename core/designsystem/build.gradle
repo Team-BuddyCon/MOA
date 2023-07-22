@@ -1,23 +1,18 @@
 plugins {
-    alias libs.plugins.android.application
+    alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
 }
 
 android {
-    namespace 'com.yapp.buddycon'
+    namespace 'com.yapp.buddycon.designsystem'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.yapp.buddycon"
         minSdk 26
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
