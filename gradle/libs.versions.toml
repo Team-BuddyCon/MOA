@@ -3,12 +3,19 @@
 androidPlugin = "7.4.1"
 kotlinPlugin = "1.8.10"
 ktlintPlugin = "11.4.2"
+hiltPlugin = "2.44"
 
 ## androidx
 androidx-core-ktx = "1.8.0"
 androidx-lifecycle-runtime-ktx = "2.3.1"
 androidx-activity-compose = "1.5.1"
 androidx-compose-bom = "2022.10.00"
+
+## hilt
+hilt = "2.44"
+
+## timber
+timber = "5.0.1"
 
 ## test
 junit = "4.13.2"
@@ -19,7 +26,9 @@ androidx-espresso-core = "3.5.1"
 android-application = { id = "com.android.application", version.ref = "androidPlugin" }
 android-library = { id = "com.android.library", version.ref = "androidPlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinPlugin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlinPlugin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" }
 
 [libraries]
 ## androidx
@@ -31,6 +40,13 @@ androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+## hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+
+## timber
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
 ## test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
