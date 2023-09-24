@@ -1,4 +1,4 @@
-package com.yapp.buddycon.navigation
+package com.yapp.buddycon.navigation.base
 
 import androidx.annotation.DrawableRes
 
