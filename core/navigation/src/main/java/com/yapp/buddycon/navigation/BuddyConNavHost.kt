@@ -5,14 +5,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.yapp.buddycon.navigation.gifticon.GifticonDestination
 import com.yapp.buddycon.navigation.gifticon.gifticonGraph
+import com.yapp.buddycon.navigation.map.mapGraph
+import com.yapp.buddycon.navigation.mypage.mypageGraph
+import com.yapp.buddycon.navigation.startup.SplashDestination
+import com.yapp.buddycon.navigation.ui.SplashScreen
 
 const val ROOT_GRAPH = "root_graph"
 const val GIFTICON_GRAPH = "gifticon_graph"
-const val MAP = "MAP"
-const val MYPAGE = "MYPAGE"
+const val MAP_GRAPH = "map_graph"
+const val MYPAGE_GRAPH = "mypage_graph"
 
 @Composable
 fun BuddyConNavHost(
@@ -20,10 +25,18 @@ fun BuddyConNavHost(
 ) {
     NavHost(
         navController = navHostController,
-        startDestination = GifticonDestination.Gifticon.route,
+        startDestination = SplashDestination.route,
         modifier = Modifier.fillMaxSize(),
         route = ROOT_GRAPH,
     ) {
+        composable(route = SplashDestination.route) {
+            SplashScreen {
+                navHostController.navigate(GifticonDestination.Gifticon.route)
+            }
+        }
+
         gifticonGraph(navHostController)
+        mapGraph(navHostController)
+        mypageGraph(navHostController)
     }
 }
