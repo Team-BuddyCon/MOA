@@ -2,11 +2,11 @@ package com.yapp.buddycon.navigation.gifticon
 
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.navigation.base.BottomDestination
-import com.yapp.buddycon.navigation.base.CurtainCallDestination
+import com.yapp.buddycon.navigation.base.BuddyConDestination
 
 const val GIFTICON = "gifticon"
 
-sealed interface GifticonDestination : CurtainCallDestination {
+sealed interface GifticonDestination : BuddyConDestination {
 
     object Gifticon : GifticonDestination, BottomDestination {
         override val route = GIFTICON

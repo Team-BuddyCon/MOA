@@ -1,5 +1,5 @@
 package com.yapp.buddycon.navigation.base
 
-interface CurtainCallDestination {
+interface BuddyConDestination {
     val route: String
 }
