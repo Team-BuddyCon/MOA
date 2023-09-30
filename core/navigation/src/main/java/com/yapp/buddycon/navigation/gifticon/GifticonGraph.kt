@@ -12,7 +12,7 @@ fun NavGraphBuilder.gifticonGraph(
 ) {
     navigation(
         startDestination = GifticonDestination.Gifticon.route,
-        route = GIFTICON_GRAPH,
+        route = GIFTICON_GRAPH
     ) {
         composable(GifticonDestination.Gifticon.route) {
             GifticonScreeen()

@@ -12,7 +12,7 @@ fun NavGraphBuilder.mapGraph(
 ) {
     navigation(
         startDestination = MapDestination.Map.route,
-        route = MAP_GRAPH,
+        route = MAP_GRAPH
     ) {
         composable(MapDestination.Map.route) {
             MapScreen()

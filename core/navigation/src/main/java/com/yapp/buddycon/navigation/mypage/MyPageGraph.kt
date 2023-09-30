@@ -12,7 +12,7 @@ fun NavGraphBuilder.mypageGraph(
 ) {
     navigation(
         startDestination = MyPageDestination.MyPage.route,
-        route = MYPAGE_GRAPH,
+        route = MYPAGE_GRAPH
     ) {
         composable(MyPageDestination.MyPage.route) {
             MyPageScreen()

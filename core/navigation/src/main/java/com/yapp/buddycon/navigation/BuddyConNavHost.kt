@@ -29,7 +29,7 @@ fun BuddyConNavHost(
     navHostController: NavHostController = rememberNavController()
 ) {
     Scaffold(
-        bottomBar = { BuddyConBottomBar(navHostController) },
+        bottomBar = { BuddyConBottomBar(navHostController) }
     ) { paddingValues ->
         NavHost(
             navController = navHostController,
@@ -37,7 +37,7 @@ fun BuddyConNavHost(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
-            route = ROOT_GRAPH,
+            route = ROOT_GRAPH
         ) {
             composable(route = SplashDestination.route) {
                 SplashScreen {

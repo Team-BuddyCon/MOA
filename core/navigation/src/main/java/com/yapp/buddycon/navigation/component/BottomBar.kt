@@ -30,7 +30,7 @@ fun BuddyConBottomBar(navHostController: NavHostController) {
     val bottomDestinations = listOf(
         GifticonDestination.Gifticon,
         MapDestination.Map,
-        MyPageDestination.MyPage,
+        MyPageDestination.MyPage
     )
 
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -41,13 +41,13 @@ fun BuddyConBottomBar(navHostController: NavHostController) {
         NavigationBar(
             modifier = Modifier.height(72.dp),
             containerColor = Color.White,
-            tonalElevation = 10.dp,
+            tonalElevation = 10.dp
         ) {
             bottomDestinations.forEach { bottomDestination ->
                 BuddyConBottomBarItem(
                     navHostController = navHostController,
                     bottomDestination = bottomDestination,
-                    currentDestination = currentDestination,
+                    currentDestination = currentDestination
                 )
             }
         }
@@ -74,7 +74,7 @@ private fun RowScope.BuddyConBottomBarItem(
                 painter = painterResource(if (selected) bottomDestination.drawableSelResId else bottomDestination.drawableResId),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = Color.Unspecified,
+                tint = Color.Unspecified
             )
         },
         modifier = Modifier.weight(1f),
@@ -83,7 +83,7 @@ private fun RowScope.BuddyConBottomBarItem(
                 text = bottomDestination.route,
                 color = if (selected) Color(0xFF2D2D2D) else Color(0xFF838486),
                 fontSize = 10.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Medium
             )
         },
         alwaysShowLabel = true,
@@ -91,7 +91,7 @@ private fun RowScope.BuddyConBottomBarItem(
             indicatorColor = Color.White,
             selectedIconColor = Color.Transparent,
             unselectedIconColor = Color.Transparent,
-            unselectedTextColor = Color.Transparent,
-        ),
+            unselectedTextColor = Color.Transparent
+        )
     )
 }
