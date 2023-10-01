@@ -3,34 +3,58 @@
 androidPlugin = "7.4.1"
 kotlinPlugin = "1.8.10"
 ktlintPlugin = "11.4.2"
+hiltPlugin = "2.44"
 
 ## androidx
 androidx-core-ktx = "1.8.0"
-androidx-lifecycle-runtime-ktx = "2.3.1"
+androidx-lifecycle = "2.5.1"
+androidx-lifecycle-compose = "2.6.0"
 androidx-activity-compose = "1.5.1"
 androidx-compose-bom = "2022.10.00"
+androidx-navigation-compose = "2.5.3"
+
+## hilt
+hilt = "2.44"
+
+## timber
+timber = "5.0.1"
 
 ## test
 junit = "4.13.2"
 androidx-junit = "1.1.5"
 androidx-espresso-core = "3.5.1"
+appcompat = "1.6.1"
+material = "1.9.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidPlugin" }
 android-library = { id = "com.android.library", version.ref = "androidPlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinPlugin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlinPlugin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" }
 
 [libraries]
 ## androidx
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx-lifecycle-runtime-ktx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity-compose" }
+androidx-lifecycle-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle-compose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidx-compose-bom" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidx-navigation-compose" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+## hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+
+## timber
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
 ## test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -39,6 +63,8 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-compose-ui-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [bundles]
-androidx-compose = ["androidx-compose-ui", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-activity-compose", "androidx-compose-material3"]
+androidx-compose = ["androidx-compose-ui", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-activity-compose", "androidx-compose-material3", "androidx-navigation-compose", "androidx-lifecycle-compose"]

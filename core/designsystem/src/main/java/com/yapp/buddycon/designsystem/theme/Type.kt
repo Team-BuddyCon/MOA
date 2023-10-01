@@ -1,4 +1,4 @@
-package com.yapp.buddycon.ui.theme
+package com.yapp.buddycon.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
