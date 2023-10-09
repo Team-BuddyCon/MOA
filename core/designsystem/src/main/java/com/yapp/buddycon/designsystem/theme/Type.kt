@@ -117,3 +117,185 @@ val Typography.body05: TextStyle
 
 val Typography.body06: TextStyle
     @Composable get() = bodySmall
+
+
+@Preview(showBackground = true, widthDp = 540)
+@Composable
+private fun TypographyPreview() {
+    BuddyConTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
+            Row {
+                Text(
+                    text = "Large Title",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "Pretendard / Medium / 30",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Title 01",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.title01
+                )
+                Text(
+                    text = "Pretendard / Bold / 24",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.title01
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Title 02",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.title02
+                )
+                Text(
+                    text = "Pretendard / Bold / 22",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.title02
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Title 03",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.title03
+                )
+                Text(
+                    text = "Pretendard / Bold / 22",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.title03
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Title 05",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.title05
+                )
+                Text(
+                    text = "Pretendard / Regular / 18",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.title05
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Sub Title",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.subTitle
+                )
+                Text(
+                    text = "Pretendard / Bold / 16",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.subTitle
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Body 01",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body01
+                )
+                Text(
+                    text = "Pretendard / Regular / 16",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body01
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Body 02",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body02
+                )
+                Text(
+                    text = "Pretendard / Bold / 14",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body02
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Body 03",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body03
+                )
+                Text(
+                    text = "Pretendard / Regular / 14",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body03
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Body 04",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body04
+                )
+                Text(
+                    text = "Pretendard / Bold / 12",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body04
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Body 05",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body05
+                )
+                Text(
+                    text = "Pretendard / Regular / 12",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body05
+                )
+            }
+            Row(Modifier.padding(top = 20.dp)) {
+                Text(
+                    text = "Body 06",
+                    modifier = Modifier.width(142.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body06
+                )
+                Text(
+                    text = "Pretendard / Medium / 10",
+                    modifier = Modifier.padding(start = 54.dp),
+                    color = Color(0xFF2D2D2D),
+                    style = MaterialTheme.typography.body06
+                )
+            }
+        }
+    }
+}
