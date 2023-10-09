@@ -1,6 +1,5 @@
 package com.yapp.buddycon.designsystem.theme
 
-import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -117,7 +115,6 @@ val Typography.body05: TextStyle
 
 val Typography.body06: TextStyle
     @Composable get() = bodySmall
-
 
 @Preview(showBackground = true, widthDp = 540)
 @Composable
