@@ -10,15 +10,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yapp.buddycon.designsystem.R
 
-/**  */
 @Composable
 fun BottomFullButton(
     onButtonClick: () -> Unit,
     buttonBackgroundColor: Color = Color(0xFFFF4E6E),
     buttonTextColor: Color = Color.White,
-    buttonText: String = "버튼"
+    buttonText: String = stringResource(id = R.string.button_default_name)
 ) {
     Button(
         onClick = { onButtonClick() },
@@ -32,7 +33,7 @@ fun BottomFullButton(
         ),
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        // todo - 버튼 text 폰트 및 사이즈 설정하기
+        // todo - 버튼 text 폰트 및 사이즈 설정하기 -
         Text(text = buttonText)
     }
 }
