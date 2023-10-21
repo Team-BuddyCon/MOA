@@ -22,12 +22,14 @@ import androidx.compose.ui.unit.dp
 
 @Immutable
 data class BuddyConColors(
-    val primary: Color
+    val primary: Color,
+    val background: Color
 )
 
 val LocalBuddyConColors = staticCompositionLocalOf {
     BuddyConColors(
-        primary = Color.Unspecified
+        primary = Color.Unspecified,
+        background = Color.Unspecified
     )
 }
 

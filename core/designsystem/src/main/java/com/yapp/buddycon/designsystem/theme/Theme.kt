@@ -156,7 +156,8 @@ fun BuddyConTheme(
     )
 
     val buddyConColors = BuddyConColors(
-        primary = Pink100
+        primary = Pink100,
+        background = White
     )
 
     CompositionLocalProvider(
