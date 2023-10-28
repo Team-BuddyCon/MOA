@@ -54,7 +54,7 @@ fun RowScope.DarkDialogButton(
     ) {
         Text(
             text = text,
-            color = BuddyConTheme.colors.onLightDialog,
+            color = BuddyConTheme.colors.onDarkDialog,
             style = BuddyConTheme.typography.subTitle
         )
     }
