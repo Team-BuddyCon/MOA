@@ -9,12 +9,17 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 
 @Composable
 fun ConfirmDialog(
-    dialogTitle: String, dialogContent: String? = null, onClick: (() -> Unit)? = null
+    dialogTitle: String,
+    dialogContent: String? = null,
+    onClick: (() -> Unit)? = null
 ) {
     BaseDialog(
-        dialogTitle = dialogTitle, dialogContent = dialogContent, dialogButtons = listOf(
+        dialogTitle = dialogTitle,
+        dialogContent = dialogContent,
+        dialogButtons = listOf(
             BaseButton.Dialog.Light(
-                title = stringResource(id = R.string.confirm), action = onClick
+                title = stringResource(id = R.string.confirm),
+                action = onClick
             )
         )
     )
@@ -35,7 +40,8 @@ private fun ConfirmDialogPreview() {
 private fun ConfirmDialogWithContentPreview() {
     BuddyConTheme {
         ConfirmDialog(
-            dialogTitle = "제목입니다", dialogContent = "추가설명\n추가설명"
+            dialogTitle = "제목입니다",
+            dialogContent = "추가설명\n추가설명"
         )
     }
 }

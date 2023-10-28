@@ -18,4 +18,3 @@ sealed class BaseButton(
         ) : Dialog(title, action)
     }
 }
-
