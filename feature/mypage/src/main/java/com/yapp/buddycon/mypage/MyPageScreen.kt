@@ -3,7 +3,7 @@ package com.yapp.buddycon.mypage
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.yapp.buddycon.designsystem.component.BottomFullButton
+import com.yapp.buddycon.designsystem.component.button.BottomFullButton
 
 @Composable
 fun MyPageScreen() {
