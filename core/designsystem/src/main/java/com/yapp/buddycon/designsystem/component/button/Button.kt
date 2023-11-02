@@ -1,4 +1,4 @@
-package com.yapp.buddycon.designsystem.component
+package com.yapp.buddycon.designsystem.component.button
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
