@@ -22,12 +22,22 @@ import androidx.compose.ui.unit.dp
 
 @Immutable
 data class BuddyConColors(
-    val primary: Color
+    val primary: Color,
+    val background: Color,
+    val lightDialog: Color,
+    val onLightDialog: Color,
+    val darkDialog: Color,
+    val onDarkDialog: Color
 )
 
 val LocalBuddyConColors = staticCompositionLocalOf {
     BuddyConColors(
-        primary = Color.Unspecified
+        primary = Color.Unspecified,
+        background = Color.Unspecified,
+        lightDialog = Color.Unspecified,
+        onLightDialog = Color.Unspecified,
+        darkDialog = Color.Unspecified,
+        onDarkDialog = Color.Unspecified
     )
 }
 
