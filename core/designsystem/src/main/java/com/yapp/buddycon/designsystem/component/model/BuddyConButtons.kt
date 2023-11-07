@@ -1,12 +1,12 @@
-package com.yapp.buddycon.designsystem.component.button
+package com.yapp.buddycon.designsystem.component.model
 
-sealed class BaseButton(
+sealed class BuddyConButtons(
     open val action: (() -> Unit)?
 ) {
     sealed class Dialog(
         open val title: String,
         override val action: (() -> Unit)? = null,
-    ) : BaseButton(action) {
+    ) : BuddyConButtons(action) {
         data class Light(
             override val title: String,
             override val action: (() -> Unit)?
