@@ -42,8 +42,8 @@ fun BasicCategoryButton(
     onClick: () -> Unit,
     isSelected: Boolean,
 ) {
-    val textColor : Color = if (isSelected) White else Grey50
-    val textBG : Color = if (isSelected) Pink100 else White.copy(alpha = 0.0f)
+    val textColor: Color = if (isSelected) White else Grey50
+    val textBG: Color = if (isSelected) Pink100 else White.copy(alpha = 0.0f)
     Button(
         onClick = { onClick() },
         modifier = modifier.height(32.dp),
@@ -51,7 +51,7 @@ fun BasicCategoryButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = textBG
         ),
-        contentPadding = PaddingValues(12.dp,6.dp)
+        contentPadding = PaddingValues(12.dp, 6.dp)
     ) {
         Text(
             text = text, style = BuddyConTheme.typography.body02, color = textColor
