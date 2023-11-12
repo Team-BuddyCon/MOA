@@ -45,7 +45,7 @@ internal fun BuddyConInput(
     Column(
         modifier = modifier
             .padding(horizontal = INPUT_HORIZONTAL_PADDING)
-            .padding(top = INPUT_TOP_PADDING, bottom = INPUT_BOTTOM_PADDING),
+            .padding(top = INPUT_TOP_PADDING, bottom = INPUT_BOTTOM_PADDING)
     ) {
         Text(
             text = buildAnnotatedString {
@@ -73,7 +73,7 @@ internal fun BuddyConInput(
                 modifier = Modifier.weight(1f),
                 enabled = (buddyConInputs is BuddyConInputs.EssentialText) || (buddyConInputs is BuddyConInputs.NoEssentialText),
                 textStyle = BuddyConTheme.typography.subTitle.copy(
-                    color = Grey90,
+                    color = Grey90
                 ),
                 singleLine = buddyConInputs !is BuddyConInputs.NoEssentialText,
                 maxLines = if (buddyConInputs is BuddyConInputs.NoEssentialText) Int.MAX_VALUE else 1
