@@ -2,7 +2,6 @@ package com.yapp.buddycon.designsystem.component.dialog
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.yapp.buddycon.designsystem.component.model.BuddyConButtons
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 
 @Composable
@@ -18,11 +17,11 @@ fun DefaultDialog(
         dialogTitle = dialogTitle,
         dialogContent = dialogContent,
         dialogButtons = listOf(
-            BuddyConButtons.Dialog.Dark(
+            DialogButtons.Dark(
                 title = dismissText,
                 action = onDismiss
             ),
-            BuddyConButtons.Dialog.Light(
+            DialogButtons.Light(
                 title = confirmText,
                 action = onConfirm
             )

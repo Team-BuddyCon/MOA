@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.yapp.buddycon.designsystem.component.model.BuddyConButtons
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
@@ -27,7 +26,7 @@ val DIALOG_OUTER_PADDING = 30.dp
 fun BaseDialog(
     dialogTitle: String,
     dialogContent: String? = null,
-    dialogButtons: List<BuddyConButtons.Dialog>? = null
+    dialogButtons: List<DialogButtons>? = null
 ) {
     Card(
         modifier = Modifier
@@ -68,14 +67,14 @@ fun BaseDialog(
                 ) {
                     dialogButtons.forEach { dialogButton ->
                         when (dialogButton) {
-                            is BuddyConButtons.Dialog.Light -> {
+                            is DialogButtons.Light -> {
                                 LightDialogButton(
                                     text = dialogButton.title,
                                     onClick = dialogButton.action
                                 )
                             }
 
-                            is BuddyConButtons.Dialog.Dark -> {
+                            is DialogButtons.Dark -> {
                                 DarkDialogButton(
                                     text = dialogButton.title,
                                     onClick = dialogButton.action
