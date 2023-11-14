@@ -27,7 +27,9 @@ data class BuddyConColors(
     val lightDialog: Color,
     val onLightDialog: Color,
     val darkDialog: Color,
-    val onDarkDialog: Color
+    val onDarkDialog: Color,
+    val snackbarBackground: Color,
+    val onSnackbar: Color
 )
 
 val LocalBuddyConColors = staticCompositionLocalOf {
@@ -37,7 +39,9 @@ val LocalBuddyConColors = staticCompositionLocalOf {
         lightDialog = Color.Unspecified,
         onLightDialog = Color.Unspecified,
         darkDialog = Color.Unspecified,
-        onDarkDialog = Color.Unspecified
+        onDarkDialog = Color.Unspecified,
+        snackbarBackground = Color.Unspecified,
+        onSnackbar = Color.Unspecified
     )
 }
 

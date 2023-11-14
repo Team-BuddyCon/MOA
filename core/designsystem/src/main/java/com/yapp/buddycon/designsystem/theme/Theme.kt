@@ -161,7 +161,9 @@ fun BuddyConTheme(
         lightDialog = Pink100,
         onLightDialog = White,
         darkDialog = Grey30,
-        onDarkDialog = Grey70
+        onDarkDialog = Grey70,
+        snackbarBackground = Black.copy(0.4f),
+        onSnackbar = White
     )
 
     CompositionLocalProvider(
