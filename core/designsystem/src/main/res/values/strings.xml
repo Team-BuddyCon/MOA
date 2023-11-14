@@ -3,4 +3,11 @@
     <string name="button_default_name">버튼</string>
 
     <string name="confirm">확인</string>
+
+    <string name="tag_expiration">만료</string>
+    <string name="tag_dday">D-0</string>
+    <string name="tag_d_9_format">D-%d</string>
+    <string name="tag_d_99_format">D-%2d</string>
+    <string name="tag_d_365_format">D-%3d</string>
+    <string name="tag_d_365_more_format">D-365+</string>
 </resources>

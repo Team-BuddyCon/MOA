@@ -14,6 +14,21 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 private val DIALOG_BUTTON_HEIGHT = 46.dp
 private val DIALOG_BUTTON_SHAPE_RADIUS = 12.dp
 
+sealed class DialogButtons(
+    open val title: String,
+    open val action: (() -> Unit)? = null
+) {
+    data class Light(
+        override val title: String,
+        override val action: (() -> Unit)?
+    ) : DialogButtons(title, action)
+
+    data class Dark(
+        override val title: String,
+        override val action: (() -> Unit)?
+    ) : DialogButtons(title, action)
+}
+
 @Composable
 fun RowScope.LightDialogButton(
     text: String,
