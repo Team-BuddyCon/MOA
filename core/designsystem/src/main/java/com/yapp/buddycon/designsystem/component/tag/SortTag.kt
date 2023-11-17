@@ -18,14 +18,9 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey40
 import com.yapp.buddycon.designsystem.theme.Paddings
+import com.yapp.buddycon.domain.model.type.SortType
 
 private val SORT_ICON_SIZE = 18.dp
-
-enum class SortType(val value: String) {
-    EXPIRATION_DATE("유효기간순"),
-    REGISTRATION("등록순"),
-    NAME("이름순")
-}
 
 @Composable
 fun SortTag(
