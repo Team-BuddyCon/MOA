@@ -165,7 +165,8 @@ fun BuddyConTheme(
         snackbarBackground = Black.copy(0.4f),
         onSnackbar = White,
         topAppBarColor = White,
-        onTopAppBarColor = Grey90
+        onTopAppBarColor = Grey90,
+        modalColor = White
     )
 
     CompositionLocalProvider(
