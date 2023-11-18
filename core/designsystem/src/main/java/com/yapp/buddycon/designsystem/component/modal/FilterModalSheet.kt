@@ -28,9 +28,10 @@ import com.yapp.buddycon.designsystem.theme.Grey50
 import com.yapp.buddycon.designsystem.theme.Pink100
 import com.yapp.buddycon.domain.model.type.SortType
 
-private val FILTER_MODAL_HEIGHT = 228.dp
-private val FILTER_MODAL_ITEM_HORIZONTAL_PADDING = 16.dp
-private val FILTER_MODAL_ITEM_ICON_SIZE = 18.dp
+private val FilterModalSheetHeight = 228.dp
+private val FilterModelSheetRadius = 24.dp
+private val FilterModalItemHorizontalPadding = 16.dp
+private val FilterModalItemIconSize = 18.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,9 +45,12 @@ fun FilterModalSheet(
         onDismissRequest = onDismiss,
         modifier = Modifier
             .fillMaxWidth()
-            .height(FILTER_MODAL_HEIGHT),
+            .height(FilterModalSheetHeight),
         sheetState = sheetState,
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        shape = RoundedCornerShape(
+            topStart = FilterModelSheetRadius,
+            topEnd = FilterModelSheetRadius
+        ),
         containerColor = BuddyConTheme.colors.modalColor
     ) {
         Column(Modifier.fillMaxSize()) {
@@ -56,7 +60,7 @@ fun FilterModalSheet(
                     .weight(1f)
                     .fillMaxWidth()
                     .clickable { onChangeSortType(SortType.EXPIRATION_DATE) }
-                    .padding(horizontal = FILTER_MODAL_ITEM_HORIZONTAL_PADDING)
+                    .padding(horizontal = FilterModalItemHorizontalPadding)
             ) {
                 Text(
                     text = SortType.EXPIRATION_DATE.value,
@@ -69,7 +73,7 @@ fun FilterModalSheet(
                     Icon(
                         painter = painterResource(R.drawable.ic_check),
                         contentDescription = SortType.EXPIRATION_DATE.value,
-                        modifier = Modifier.size(FILTER_MODAL_ITEM_ICON_SIZE),
+                        modifier = Modifier.size(FilterModalItemIconSize),
                         tint = Pink100
                     )
                 }
@@ -85,7 +89,7 @@ fun FilterModalSheet(
                     .weight(1f)
                     .fillMaxWidth()
                     .clickable { onChangeSortType(SortType.REGISTRATION) }
-                    .padding(horizontal = FILTER_MODAL_ITEM_HORIZONTAL_PADDING)
+                    .padding(horizontal = FilterModalItemHorizontalPadding)
             ) {
                 Text(
                     text = SortType.REGISTRATION.value,
@@ -98,7 +102,7 @@ fun FilterModalSheet(
                     Icon(
                         painter = painterResource(R.drawable.ic_check),
                         contentDescription = SortType.REGISTRATION.value,
-                        modifier = Modifier.size(FILTER_MODAL_ITEM_ICON_SIZE),
+                        modifier = Modifier.size(FilterModalItemIconSize),
                         tint = Pink100
                     )
                 }
@@ -114,7 +118,7 @@ fun FilterModalSheet(
                     .weight(1f)
                     .fillMaxWidth()
                     .clickable { onChangeSortType(SortType.NAME) }
-                    .padding(horizontal = FILTER_MODAL_ITEM_HORIZONTAL_PADDING)
+                    .padding(horizontal = FilterModalItemHorizontalPadding)
             ) {
                 Text(
                     text = SortType.NAME.value,
@@ -127,7 +131,7 @@ fun FilterModalSheet(
                     Icon(
                         painter = painterResource(R.drawable.ic_check),
                         contentDescription = SortType.NAME.value,
-                        modifier = Modifier.size(FILTER_MODAL_ITEM_ICON_SIZE),
+                        modifier = Modifier.size(FilterModalItemIconSize),
                         tint = Pink100
                     )
                 }
