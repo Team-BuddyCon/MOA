@@ -11,4 +11,6 @@
     <string name="top_appbar_edit">편집</string>
     <string name="modal_sheet_gifticon">사용 가능한 기프티콘</string>
     <string name="modal_sheet_imminet_gifticon">유효기간 임박 %d개</string>
+    <string name="modal_sheet_place_find_location">길 찾기</string>
+    <string name="modal_sheet_place_copy_address">주소 복사</string>
 </resources>
