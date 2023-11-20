@@ -16,4 +16,5 @@
     <string name="modal_sheet_place_distance">거리</string>
     <string name="modal_sheet_place_distance_format">"%.1f km</string>
     <string name="modal_sheet_category_title">사용처</string>
+    <string name="modal_sheet_calendar_title">유효기간</string>
 </resources>
