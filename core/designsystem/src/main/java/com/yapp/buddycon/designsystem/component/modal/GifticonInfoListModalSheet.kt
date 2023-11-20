@@ -23,11 +23,16 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.yapp.buddycon.designsystem.R
@@ -37,6 +42,8 @@ import com.yapp.buddycon.designsystem.theme.Grey60
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink100
 import com.yapp.buddycon.domain.model.gifticon.GifticonModel
+import com.yapp.buddycon.domain.model.type.GifticonCategory
+import java.util.Calendar
 
 private val GifticonInfoListModalSheetHeight = 573.dp
 private val GifticonInfoListModalSheetRadius = 24.dp
@@ -144,6 +151,37 @@ fun GifticonInfoListModalSheet(
                     )
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+private fun GifticonInfoListModalSheetPreview() {
+    var isShowModal by remember { mutableStateOf(true) }
+    val today = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.time.time
+
+    BuddyConTheme {
+        if (isShowModal) {
+            GifticonInfoListModalSheet(
+                countOfUsableGifticon = 4,
+                countOfImminetGifticon = 1,
+                gifticonInfos = List(10) {
+                    GifticonModel(
+                        imageUrl = "https://github.com/Team-BuddyCon/ANDROID_V2/assets/34837583/5ab80674-4ffb-4c91-ab10-3743d8c87e58",
+                        category = GifticonCategory.STARBUCKS,
+                        name = "빙그레)바나나맛우유240",
+                        expirationTime = (today + 1000 * 60 * 60 * 24L * (-1..366).random())
+                    )
+                },
+                onDismiss = { isShowModal = false }
+            )
         }
     }
 }
