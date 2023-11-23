@@ -28,13 +28,16 @@ fun MainButton(
     bgColors: Color = Pink100,
     onClick: () -> Unit,
 ) {
-    val textColor: Color = if (bgColors == Grey30) Grey60 else White
     BuddyConBasicButton(
         onClick = onClick,
         buttonText = text,
         modifier = modifier,
         buttonBackgroundColor = bgColors,
-        buttonTextColor = textColor
+        buttonTextColor = if (bgColors == Grey30) {
+            Grey60
+        } else {
+            White
+        }
     )
 }
 
@@ -45,7 +48,7 @@ fun DisabledButton(
     onClick: () -> Unit,
 ) {
     BuddyConBasicButton(
-        onClick = { onClick },
+        onClick = onClick,
         buttonBackgroundColor = Grey40,
         buttonText = text,
         buttonTextColor = Grey60,
@@ -66,16 +69,19 @@ fun BuddyConBasicButton(
         modifier = modifier
             .fillMaxWidth()
             .height(54.dp),
-        shape = RoundedCornerShape(12.dp), colors = ButtonDefaults.buttonColors(
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(
             containerColor = buttonBackgroundColor
-        ), contentPadding = PaddingValues(vertical = 16.dp)
+        ),
+        contentPadding = PaddingValues(vertical = 16.dp)
     ) {
         Text(
-            text = buttonText, style = BuddyConTheme.typography.subTitle, color = buttonTextColor
+            text = buttonText,
+            style = BuddyConTheme.typography.subTitle,
+            color = buttonTextColor
         )
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -89,7 +95,10 @@ private fun MainPinkButtonPreview() {
 @Composable
 private fun GreyButtonPreview() {
     BuddyConTheme {
-        MainButton(text = "버튼", bgColors = Grey30) {}
+        MainButton(
+            text = "버튼",
+            bgColors = Grey30
+        ) {}
     }
 }
 
