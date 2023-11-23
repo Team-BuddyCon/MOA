@@ -25,7 +25,10 @@ enum class DDayType {
 }
 
 @Composable
-fun DDayTag(dateMillis: Long) {
+fun DDayTag(
+    modifier: Modifier = Modifier,
+    dateMillis: Long
+) {
     val today = Calendar.getInstance().apply {
         set(Calendar.HOUR_OF_DAY, 0)
         set(Calendar.MINUTE, 0)
@@ -36,7 +39,7 @@ fun DDayTag(dateMillis: Long) {
     val ddayType = getDDayType(offset = offset)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = when (ddayType) {
                     DDayType.EXPIRATION -> Grey90

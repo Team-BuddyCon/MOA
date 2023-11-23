@@ -157,6 +157,7 @@ fun BuddyConTheme(
 
     val buddyConColors = BuddyConColors(
         primary = Pink100,
+        onPrimary = White,
         background = White,
         lightDialog = Pink100,
         onLightDialog = White,
@@ -165,7 +166,8 @@ fun BuddyConTheme(
         snackbarBackground = Black.copy(0.4f),
         onSnackbar = White,
         topAppBarColor = White,
-        onTopAppBarColor = Grey90
+        onTopAppBarColor = Grey90,
+        modalColor = White
     )
 
     CompositionLocalProvider(
