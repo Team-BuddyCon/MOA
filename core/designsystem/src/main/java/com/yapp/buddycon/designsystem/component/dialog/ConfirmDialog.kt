@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.buddycon.designsystem.R
-import com.yapp.buddycon.designsystem.component.button.BaseButton
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 
 @Composable
@@ -17,7 +16,7 @@ fun ConfirmDialog(
         dialogTitle = dialogTitle,
         dialogContent = dialogContent,
         dialogButtons = listOf(
-            BaseButton.Dialog.Light(
+            DialogButtons.Light(
                 title = stringResource(id = R.string.confirm),
                 action = onClick
             )
