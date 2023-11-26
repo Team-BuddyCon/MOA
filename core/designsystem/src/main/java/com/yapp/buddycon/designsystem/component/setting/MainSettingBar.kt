@@ -32,14 +32,14 @@ fun MainSettingBar(
             .fillMaxWidth()
             .clickable { onSettingClick() }
             .padding(horizontal = 16.dp, vertical = 17.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = mainTitle,
             style = BuddyConTheme.typography.subTitle,
             modifier = Modifier.weight(1.0f),
             overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
+            maxLines = 1
         )
 
         subText?.let {
