@@ -31,6 +31,7 @@ import com.yapp.buddycon.designsystem.theme.Grey90
 import com.yapp.buddycon.designsystem.theme.White
 
 const val TAG = "BuddyConTest"
+
 @Composable
 fun MyPageScreen() {
     val scrollState = rememberScrollState()
