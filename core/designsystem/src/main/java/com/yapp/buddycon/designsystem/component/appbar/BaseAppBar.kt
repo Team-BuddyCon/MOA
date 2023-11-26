@@ -38,20 +38,22 @@ internal fun BaseAppBar(buddyConAppBars: BuddyConAppBars) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = buddyConAppBars.title,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = if (buddyConAppBars is BuddyConAppBars.WithNotification) {
-                        BuddyConTheme.typography.title02
-                    } else {
-                        BuddyConTheme.typography.subTitle
-                    },
-                    textAlign = if (buddyConAppBars is BuddyConAppBars.WithNotification) {
-                        TextAlign.Start
-                    } else {
-                        TextAlign.Center
-                    }
-                )
+                buddyConAppBars.title?.let { title ->
+                    Text(
+                        text = title,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = if (buddyConAppBars is BuddyConAppBars.WithNotification) {
+                            BuddyConTheme.typography.title02
+                        } else {
+                            BuddyConTheme.typography.subTitle
+                        },
+                        textAlign = if (buddyConAppBars is BuddyConAppBars.WithNotification) {
+                            TextAlign.Start
+                        } else {
+                            TextAlign.Center
+                        }
+                    )
+                }
             }
         },
         modifier = Modifier
@@ -91,26 +93,41 @@ internal fun BaseAppBar(buddyConAppBars: BuddyConAppBars) {
                     .fillMaxHeight(),
                 contentAlignment = Alignment.Center
             ) {
-                if (buddyConAppBars is BuddyConAppBars.WithNotification) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification_sel),
-                        contentDescription = buddyConAppBars.title,
-                        modifier = Modifier
-                            .size(AppbarIconSize)
-                            .clickable { buddyConAppBars.action?.invoke() },
-                        tint = Color.Unspecified
-                    )
-                } else {
-                    Text(
-                        text = stringResource(R.string.top_appbar_edit),
-                        style = BuddyConTheme.typography.subTitle.copy(
-                            color = if (buddyConAppBars is BuddyConAppBars.WithBackAndEdit) {
-                                Pink100
-                            } else {
-                                Color.Transparent
-                            }
+                when (buddyConAppBars) {
+                    is BuddyConAppBars.WithNotification -> {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_notification_sel),
+                            contentDescription = buddyConAppBars.title,
+                            modifier = Modifier
+                                .size(AppbarIconSize)
+                                .clickable { buddyConAppBars.action?.invoke() },
+                            tint = Color.Unspecified
                         )
-                    )
+                    }
+
+                    is BuddyConAppBars.ForSetting -> {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_notification),
+                            contentDescription = buddyConAppBars.title,
+                            modifier = Modifier
+                                .size(AppbarIconSize)
+                                .clickable { buddyConAppBars.action?.invoke() },
+                            tint = Color.Unspecified
+                        )
+                    }
+
+                    else -> {
+                        Text(
+                            text = stringResource(R.string.top_appbar_edit),
+                            style = BuddyConTheme.typography.subTitle.copy(
+                                color = if (buddyConAppBars is BuddyConAppBars.WithBackAndEdit) {
+                                    Pink100
+                                } else {
+                                    Color.Transparent
+                                }
+                            )
+                        )
+                    }
                 }
             }
         },
@@ -156,6 +173,18 @@ fun TopAppBarWithNotification(
     BaseAppBar(
         buddyConAppBars = BuddyConAppBars.WithNotification(
             title = title,
+            action = action
+        )
+    )
+}
+
+@Composable
+fun TopAppBarForSetting(
+    action: (() -> Unit)? = null
+) {
+    BaseAppBar(
+        buddyConAppBars = BuddyConAppBars.ForSetting(
+            title = null,
             action = action
         )
     )
