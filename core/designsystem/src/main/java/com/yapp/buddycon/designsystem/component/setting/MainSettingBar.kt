@@ -14,11 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
-import com.yapp.buddycon.designsystem.theme.BuddyConTypography
 import com.yapp.buddycon.designsystem.theme.Grey40
 import com.yapp.buddycon.designsystem.theme.Grey60
 
