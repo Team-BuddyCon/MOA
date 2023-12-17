@@ -67,6 +67,8 @@ dependencies {
     // timber
     implementation libs.timber
 
+    implementation libs.accompanist.systemuicontroller
+
     // test
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit

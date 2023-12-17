@@ -158,6 +158,7 @@ fun BuddyConTheme(
     val buddyConColors = BuddyConColors(
         primary = Pink100,
         onPrimary = White,
+        primaryVariant = White,
         background = White,
         lightDialog = Pink100,
         onLightDialog = White,

@@ -9,11 +9,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.yapp.buddycon.navigation.gifticon.GifticonDestination
 import com.yapp.buddycon.navigation.gifticon.gifticonGraph
 import com.yapp.buddycon.navigation.map.mapGraph
 import com.yapp.buddycon.navigation.mypage.mypageGraph
-import com.yapp.buddycon.navigation.startup.SplashDestination
+import com.yapp.buddycon.navigation.startup.StartUpDestination
+import com.yapp.buddycon.startup.onboarding.OnBoardingScreen
 import com.yapp.buddycon.startup.splash.SplashScreen
 
 private const val ROOT_GRAPH = "root_graph"
@@ -27,16 +27,27 @@ fun BuddyConNavHost(
     ) { paddingValues ->
         NavHost(
             navController = navHostController,
-            startDestination = SplashDestination.route,
+            startDestination = StartUpDestination.Splash.route,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
             route = ROOT_GRAPH
         ) {
-            composable(route = SplashDestination.route) {
-                SplashScreen {
-                    navHostController.navigate(GifticonDestination.Gifticon.route)
-                }
+            composable(route = StartUpDestination.Splash.route) {
+                SplashScreen(
+                    onNavigateToOnBoarding = {
+                        navHostController.navigate(StartUpDestination.OnBoarding.route) {
+                            popUpTo(StartUpDestination.Splash.route) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    onNavigateToLogin = {}
+                )
+            }
+
+            composable(route = StartUpDestination.OnBoarding.route) {
+                OnBoardingScreen()
             }
 
             gifticonGraph(navHostController)
