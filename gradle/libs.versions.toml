@@ -22,6 +22,9 @@ timber = "5.0.1"
 ## 3rd library
 coil-compose = "2.4.0"
 
+## retrofit2
+retrofit2 = "2.9.0"
+
 ## test
 junit = "4.13.2"
 androidx-junit = "1.1.5"
@@ -62,6 +65,10 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 ## 3rd library
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-compose" }
 
+## retrofit2
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2" }
+converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit2" }
+
 ## test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
@@ -74,3 +81,4 @@ material = { group = "com.google.android.material", name = "material", version.r
 
 [bundles]
 androidx-compose = ["androidx-compose-ui", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-activity-compose", "androidx-compose-material3", "androidx-navigation-compose", "androidx-lifecycle-compose"]
+retrofit-bundle = ["retrofit", "converter-gson"]
