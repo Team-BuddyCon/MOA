@@ -28,6 +28,7 @@ import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
 import com.yapp.buddycon.designsystem.component.utils.SpacerVertical
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey90
+import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.White
 
 const val TAG = "BuddyConTest"
@@ -99,11 +100,11 @@ fun MyPageScreen() {
 }
 
 @Composable
-fun UserName(userName: String) {
+private fun UserName(userName: String) {
     Text(
         text = "안녕하세요,\n${userName}님!",
         style = BuddyConTheme.typography.title02,
-        modifier = Modifier.padding(horizontal = 16.dp)
+        modifier = Modifier.padding(horizontal = Paddings.xlarge)
     )
 }
 
