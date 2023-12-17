@@ -6,7 +6,6 @@ private const val SPLASH = "splash"
 private const val ONBOARDING = "onboarding"
 private const val LOGIN = "login"
 
-
 sealed class StartUpDestination : BuddyConDestination {
     object Splash : StartUpDestination() {
         override val route = SPLASH

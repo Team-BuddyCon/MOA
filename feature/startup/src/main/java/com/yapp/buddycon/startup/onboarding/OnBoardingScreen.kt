@@ -178,7 +178,7 @@ private fun DynamicHorizontalPagerIndicator(
                 val indicatorModifier = Modifier
                     .size(
                         width = if (index == position) 30.dp else 8.dp,
-                        height = 8.dp,
+                        height = 8.dp
                     )
                     .background(
                         color = if (index == position) Grey90 else Grey50,
