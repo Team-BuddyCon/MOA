@@ -25,4 +25,13 @@
     <string name="startup_onboarding_pager_skip">건너뛰기</string>
     <string name="startup_onboarding_pager_next">다음</string>
     <string name="startup_onboarding_start">시작하기</string>
+
+    <!-- My Page Setting -->
+    <string name="setting_bar_notification">알림</string>
+    <string name="setting_bar_inquiry">문의하기</string>
+    <string name="setting_bar_version_info">버전 정보</string>
+    <string name="setting_bar_policy">약관 및 정책</string>
+    <string name="setting_bar_open_source_license">오픈소스 라이센스</string>
+    <string name="setting_bar_logout">로그아웃</string>
+    <string name="setting_bar_withdrawal">탈퇴하기</string>
 </resources>
