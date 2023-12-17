@@ -62,6 +62,8 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 
 ## accompanist
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist-compose" }
+accompanist-pager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanist-compose" }
+accompanist-pager-indicators = { group = "com.google.accompanist", name = "accompanist-pager-indicators", version.ref = "accompanist-compose" }
 
 ## 3rd library
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-compose" }

@@ -10,9 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.yapp.buddycon.designsystem.theme.BuddyConColors
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
-import com.yapp.buddycon.designsystem.theme.White
 import kotlinx.coroutines.delay
 
 private const val SplashIconDescription = "SplashIcon"

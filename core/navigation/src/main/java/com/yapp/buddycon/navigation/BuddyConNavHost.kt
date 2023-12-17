@@ -13,6 +13,7 @@ import com.yapp.buddycon.navigation.gifticon.gifticonGraph
 import com.yapp.buddycon.navigation.map.mapGraph
 import com.yapp.buddycon.navigation.mypage.mypageGraph
 import com.yapp.buddycon.navigation.startup.StartUpDestination
+import com.yapp.buddycon.startup.login.LoginScreen
 import com.yapp.buddycon.startup.onboarding.OnBoardingScreen
 import com.yapp.buddycon.startup.splash.SplashScreen
 
@@ -47,7 +48,17 @@ fun BuddyConNavHost(
             }
 
             composable(route = StartUpDestination.OnBoarding.route) {
-                OnBoardingScreen()
+                OnBoardingScreen {
+                    navHostController.navigate(StartUpDestination.Login.route) {
+                        popUpTo(StartUpDestination.OnBoarding.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            }
+
+            composable(route = StartUpDestination.Login.route) {
+                LoginScreen()
             }
 
             gifticonGraph(navHostController)
