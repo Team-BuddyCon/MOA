@@ -43,7 +43,13 @@ fun BuddyConNavHost(
                             }
                         }
                     },
-                    onNavigateToLogin = {}
+                    onNavigateToLogin = {
+                        navHostController.navigate(StartUpDestination.Login.route) {
+                            popUpTo(StartUpDestination.Splash.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
                 )
             }
 

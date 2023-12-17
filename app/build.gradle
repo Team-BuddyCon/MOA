@@ -51,6 +51,8 @@ android {
 dependencies {
     implementation project(":core:designsystem")
     implementation project(":core:navigation")
+    implementation project(":core:local")
+    implementation project(":data")
 
     // androidx
     implementation libs.androidx.core.ktx
