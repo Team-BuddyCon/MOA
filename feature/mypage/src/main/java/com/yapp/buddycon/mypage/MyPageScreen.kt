@@ -14,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,18 +35,18 @@ import com.yapp.buddycon.designsystem.theme.White
 
 const val TAG = "BuddyConTest"
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPageScreen() {
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        TopAppBarForSetting(action = {})
+    Scaffold(
+        topBar = { TopAppBarForSetting(action = {}) }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+                .padding(innerPadding)
+                .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
             UserName(userName = "버디콘") // todo - 실제 userName 전달
@@ -55,46 +57,7 @@ fun MyPageScreen() {
 
             SpacerVertical(height = 8.dp)
 
-            MainSettingBar(
-                mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_notification),
-                subText = "ON",
-                onSettingClick = { Log.d(TAG, "[알림] click") }
-            )
-
-            DividerHorizontal(modifier = Modifier.padding(horizontal = 16.dp))
-
-            MainSettingBar(
-                mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_inquiry),
-                onSettingClick = { Log.d(TAG, "[문의하기] click") }
-            )
-
-            MainSettingBar(
-                mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_version_info),
-                subText = "1.1", // todo - version 정보
-                onSettingClick = { Log.d(TAG, "[버전 정보] click") }
-            )
-
-            MainSettingBar(
-                mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_policy),
-                onSettingClick = { Log.d(TAG, "[약관 및 정책] click") }
-            )
-
-            MainSettingBar(
-                mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_open_source_license),
-                onSettingClick = { Log.d(TAG, "[오픈소스 라이센스] click") }
-            )
-
-            DividerHorizontal(modifier = Modifier.padding(horizontal = 16.dp))
-
-            MainSettingBar(
-                mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_logout),
-                onSettingClick = { Log.d(TAG, "[로그아웃] click") }
-            )
-
-            MainSettingBar(
-                mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_withdrawal),
-                onSettingClick = { Log.d(TAG, "[탈퇴하기] click") }
-            )
+            MyPageSettingBars()
         }
     }
 }
@@ -109,7 +72,7 @@ private fun UserName(userName: String) {
 }
 
 @Composable
-fun UsedGifticonInfo(usedGifticon: Int) {
+private fun UsedGifticonInfo(usedGifticon: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -153,4 +116,48 @@ fun UsedGifticonInfo(usedGifticon: Int) {
             )
         }
     }
+}
+
+@Composable
+private fun MyPageSettingBars() {
+    MainSettingBar(
+        mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_notification),
+        subText = "ON",
+        onSettingClick = { Log.d(TAG, "[알림] click") }
+    )
+
+    DividerHorizontal(modifier = Modifier.padding(horizontal = 16.dp))
+
+    MainSettingBar(
+        mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_inquiry),
+        onSettingClick = { Log.d(TAG, "[문의하기] click") }
+    )
+
+    MainSettingBar(
+        mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_version_info),
+        subText = "1.1", // todo - version 정보
+        onSettingClick = { Log.d(TAG, "[버전 정보] click") }
+    )
+
+    MainSettingBar(
+        mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_policy),
+        onSettingClick = { Log.d(TAG, "[약관 및 정책] click") }
+    )
+
+    MainSettingBar(
+        mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_open_source_license),
+        onSettingClick = { Log.d(TAG, "[오픈소스 라이센스] click") }
+    )
+
+    DividerHorizontal(modifier = Modifier.padding(horizontal = 16.dp))
+
+    MainSettingBar(
+        mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_logout),
+        onSettingClick = { Log.d(TAG, "[로그아웃] click") }
+    )
+
+    MainSettingBar(
+        mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_withdrawal),
+        onSettingClick = { Log.d(TAG, "[탈퇴하기] click") }
+    )
 }
