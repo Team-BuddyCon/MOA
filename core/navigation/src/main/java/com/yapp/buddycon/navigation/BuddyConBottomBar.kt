@@ -26,7 +26,7 @@ import com.yapp.buddycon.navigation.map.MapDestination
 import com.yapp.buddycon.navigation.mypage.MyPageDestination
 
 @Composable
-fun BuddyConBottomBar(navHostController: NavHostController) {
+internal fun BuddyConBottomBar(navHostController: NavHostController) {
     val bottomDestinations = listOf(
         GifticonDestination.Gifticon,
         MapDestination.Map,

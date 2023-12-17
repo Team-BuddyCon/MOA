@@ -7,7 +7,8 @@ import androidx.navigation.navigation
 import com.yapp.buddycon.mypage.MyPageScreen
 
 private const val MYPAGE_GRAPH = "mypage_graph"
-fun NavGraphBuilder.mypageGraph(
+
+internal fun NavGraphBuilder.mypageGraph(
     navHostController: NavHostController
 ) {
     navigation(

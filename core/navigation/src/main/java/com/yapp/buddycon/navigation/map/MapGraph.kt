@@ -6,9 +6,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.map.MapScreen
 
-
 private const val MAP_GRAPH = "map_graph"
-fun NavGraphBuilder.mapGraph(
+
+internal fun NavGraphBuilder.mapGraph(
     navHostController: NavHostController
 ) {
     navigation(
