@@ -1,4 +1,4 @@
-package com.yapp.buddycon.navigation.component
+package com.yapp.buddycon.navigation
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
