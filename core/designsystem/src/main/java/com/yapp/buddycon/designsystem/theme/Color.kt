@@ -80,7 +80,6 @@ val White = Color(0xFFFFFFFF)
 val Aureolin = Color(0xFFF9EB00)
 val Temptress = Color(0xFF381E20)
 
-
 @Preview(widthDp = 540)
 @Composable
 private fun ColorPreview() {
