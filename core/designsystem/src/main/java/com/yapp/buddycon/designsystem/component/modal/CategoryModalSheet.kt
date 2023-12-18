@@ -39,6 +39,7 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.domain.model.type.GifticonCategory
+import java.lang.IllegalStateException
 
 private val CategoryModalSheetHeight = 498.dp
 private val CategoryModalSheetRadius = 24.dp
@@ -104,7 +105,7 @@ fun CategoryModalSheet(
             verticalArrangement = Arrangement.spacedBy(Paddings.xlarge),
             horizontalArrangement = Arrangement.spacedBy(Paddings.medium)
         ) {
-            items(GifticonCategory.values()) {
+            items(GifticonCategory.values().dropLast(1)) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -142,6 +143,7 @@ private fun GifticonCategory.logo(): Int = when (this) {
     GifticonCategory.CU -> R.drawable.ic_cu
     GifticonCategory.GS25 -> R.drawable.ic_gs25
     GifticonCategory.ETC -> R.drawable.ic_etc
+    else -> throw IllegalStateException()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

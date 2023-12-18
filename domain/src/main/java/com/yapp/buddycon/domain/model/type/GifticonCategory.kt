@@ -8,5 +8,6 @@ enum class GifticonCategory(val value: String) {
     GONGCHA("공차"),
     CU("CU"),
     GS25("GS25"),
-    ETC("기타")
+    ETC("기타"),
+    TOTAL("전체")
 }
