@@ -76,8 +76,10 @@ val Grey30 = Color(0xFFECEDEF)
 val Grey20 = Color(0xFFF2F3F5)
 
 val Black = Color(0xFF000000)
-
 val White = Color(0xFFFFFFFF)
+val Aureolin = Color(0xFFF9EB00)
+val Temptress = Color(0xFF381E20)
+
 
 @Preview(widthDp = 540)
 @Composable
