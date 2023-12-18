@@ -34,4 +34,7 @@
     <string name="setting_bar_open_source_license">오픈소스 라이센스</string>
     <string name="setting_bar_logout">로그아웃</string>
     <string name="setting_bar_withdrawal">탈퇴하기</string>
+
+    <!-- Login -->
+    <string name="login_kakao_talk">카카오톡으로 로그인</string>
 </resources>
