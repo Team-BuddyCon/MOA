@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -35,7 +36,9 @@ private val LoginBannerDescription = "LoginBanner"
 private val BuddyConLogoDescription = "BuddyConLogo"
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    loginViewModel: LoginViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
