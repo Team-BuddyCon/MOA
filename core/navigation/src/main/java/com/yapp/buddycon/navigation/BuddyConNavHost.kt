@@ -15,6 +15,7 @@ import com.yapp.buddycon.navigation.mypage.mypageGraph
 import com.yapp.buddycon.navigation.startup.StartUpDestination
 import com.yapp.buddycon.startup.login.LoginScreen
 import com.yapp.buddycon.startup.onboarding.OnBoardingScreen
+import com.yapp.buddycon.startup.signup.SignUpScreen
 import com.yapp.buddycon.startup.splash.SplashScreen
 
 private const val ROOT_GRAPH = "root_graph"
@@ -64,7 +65,17 @@ fun BuddyConNavHost(
             }
 
             composable(route = StartUpDestination.Login.route) {
-                LoginScreen()
+                LoginScreen {
+                    navHostController.navigate(StartUpDestination.SignUp.route)
+                }
+            }
+
+            composable(route = StartUpDestination.SignUp.route) {
+                SignUpScreen(
+                    onBack = {
+                        navHostController.popBackStack()
+                    }
+                )
             }
 
             gifticonGraph(navHostController)

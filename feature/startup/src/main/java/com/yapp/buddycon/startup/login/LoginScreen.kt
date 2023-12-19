@@ -37,7 +37,8 @@ private val BuddyConLogoDescription = "BuddyConLogo"
 
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel(),
+    onNavigateToSignUp: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -72,7 +73,7 @@ fun LoginScreen(
                 oauthToken?.let { token ->
                     UserApiClient.instance.me { user, error ->
                         user?.let {
-                            Timber.d("kakao login accessToken: ${token.accessToken} nickname: ${user.kakaoAccount?.profile?.nickname}")
+                            onNavigateToSignUp()
                         }
                     }
                 }

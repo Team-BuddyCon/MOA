@@ -5,6 +5,7 @@ import com.yapp.buddycon.navigation.base.BuddyConDestination
 private const val SPLASH = "splash"
 private const val ONBOARDING = "onboarding"
 private const val LOGIN = "login"
+private const val SIGNUP = "signup"
 
 sealed class StartUpDestination : BuddyConDestination {
     object Splash : StartUpDestination() {
@@ -17,5 +18,9 @@ sealed class StartUpDestination : BuddyConDestination {
 
     object Login : StartUpDestination() {
         override val route = LOGIN
+    }
+
+    object SignUp : StartUpDestination() {
+        override val route = SIGNUP
     }
 }

@@ -37,4 +37,10 @@
 
     <!-- Login -->
     <string name="login_kakao_talk">카카오톡으로 로그인</string>
+    <string name="signup">회원가입</string>
+    <string name="signup_terms_title">버티콘의 서비스\n이용약관에 동의해주세요</string>
+    <string name="signup_all_terms_agree">전체 동의하기</string>
+    <string name="signup_terms_of_use_agree">[필수] 이용약관 동의</string>
+    <string name="signup_privacy_policy_agree">[필수] 개인정보 처리방침 동의</string>
+    <string name="signup_complete">회원가입 완료</string>
 </resources>
