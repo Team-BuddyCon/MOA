@@ -73,6 +73,9 @@ fun LoginScreen(
                 oauthToken?.let { token ->
                     UserApiClient.instance.me { user, error ->
                         user?.let {
+                            it.kakaoAccount?.profile?.nickname?.let { nickname ->
+                                loginViewModel.saveNickname(nickname)
+                            }
                             onNavigateToSignUp()
                         }
                     }

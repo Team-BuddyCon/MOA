@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +21,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
@@ -27,7 +30,11 @@ import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink100
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(
+    welcomeViewModel: WelcomeViewModel = hiltViewModel()
+) {
+    val userNickname by welcomeViewModel.userNickname.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +63,7 @@ fun WelcomeScreen() {
             style = BuddyConTheme.typography.largeTitle
         )
         Text(
-            text = String.format(stringResource(R.string.welcome_greeting_format), "오원석"),
+            text = String.format(stringResource(R.string.welcome_greeting_format), userNickname),
             modifier = Modifier
                 .padding(horizontal = Paddings.xextra)
                 .padding(top = Paddings.medium)
