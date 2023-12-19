@@ -35,7 +35,8 @@ import timber.log.Timber
 
 @Composable
 fun SignUpScreen(
-    onBack: () -> Unit = {}
+    onNavigateToWelcome: () -> Unit = {},
+    onBack: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -49,14 +50,16 @@ fun SignUpScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(BuddyConTheme.colors.background)
+                .background(BuddyConTheme.colors.background),
+            onNavigateToWelcome = onNavigateToWelcome
         )
     }
 }
 
 @Composable
 private fun SignUpContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToWelcome: () -> Unit = {},
 ) {
     var signUpTermsState by remember { mutableStateOf(SignUpTermsState()) }
     Column(
@@ -105,6 +108,7 @@ private fun SignUpContent(
         BuddyConButton(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.signup_complete),
+            enabled = signUpTermsState.isEssentialChecked(),
             containerColor = if (signUpTermsState.isEssentialChecked()) {
                 BuddyConTheme.colors.primary
             } else {
@@ -116,7 +120,7 @@ private fun SignUpContent(
                 Grey60
             }
         ) {
-
+            onNavigateToWelcome()
         }
     }
 }

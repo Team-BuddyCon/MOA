@@ -6,6 +6,7 @@ private const val SPLASH = "splash"
 private const val ONBOARDING = "onboarding"
 private const val LOGIN = "login"
 private const val SIGNUP = "signup"
+private const val WELCOME = "welcome"
 
 sealed class StartUpDestination : BuddyConDestination {
     object Splash : StartUpDestination() {
@@ -22,5 +23,9 @@ sealed class StartUpDestination : BuddyConDestination {
 
     object SignUp : StartUpDestination() {
         override val route = SIGNUP
+    }
+
+    object Welcome : StartUpDestination() {
+        override val route = WELCOME
     }
 }

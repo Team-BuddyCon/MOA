@@ -22,11 +22,13 @@ fun BuddyConButton(
     text: String,
     containerColor: Color = BuddyConTheme.colors.primary,
     contentColor: Color = BuddyConTheme.colors.onPrimary,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
         modifier = modifier.height(BuddyConButtonHeight),
+        enabled = enabled,
         shape = RoundedCornerShape(BuddyConButtonRadius),
         colors = ButtonDefaults.buttonColors(containerColor = containerColor)
     ) {

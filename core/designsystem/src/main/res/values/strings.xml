@@ -43,4 +43,7 @@
     <string name="signup_terms_of_use_agree">[필수] 이용약관 동의</string>
     <string name="signup_privacy_policy_agree">[필수] 개인정보 처리방침 동의</string>
     <string name="signup_complete">회원가입 완료</string>
+    <string name="complete">완료!</string>
+    <string name="welcome_greeting_format">버디콘의 소중한 회원이 되신 %s님,\n만나서 반가워요!</string>
+    <string name="start">시작하기</string>
 </resources>
