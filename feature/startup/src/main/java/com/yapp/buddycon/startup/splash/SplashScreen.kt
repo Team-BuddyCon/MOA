@@ -42,7 +42,7 @@ fun SplashScreen(
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(com.yapp.buddycon.designsystem.R.drawable.ic_splash_logo),
+            painter = painterResource(com.yapp.buddycon.designsystem.R.drawable.ic_logo),
             contentDescription = SplashIconDescription
         )
     }
