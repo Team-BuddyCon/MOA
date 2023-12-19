@@ -6,12 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.yapp.buddycon.data'
+    namespace 'com.yapp.buddycon.network'
     compileSdk 33
 
     defaultConfig {
         minSdk 26
-        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -33,14 +32,13 @@ android {
 }
 
 dependencies {
-    implementation project(":core:local")
-    implementation project(":domain")
-    implementation libs.androidx.datastore.preferences
+    implementation libs.bundles.retrofit
     implementation libs.hilt.android
     kapt libs.hilt.compiler
     implementation libs.androidx.core.ktx
-    implementation libs.bundles.retrofit
+    implementation libs.appcompat
+    implementation libs.material
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
-    androidTestAnnotationProcessor libs.androidx.espresso.core
+    androidTestImplementation libs.androidx.espresso.core
 }
