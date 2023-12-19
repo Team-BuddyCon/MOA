@@ -23,15 +23,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.R
+import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.component.utils.DividerHorizontal
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey40
 import com.yapp.buddycon.designsystem.theme.Grey60
 import com.yapp.buddycon.designsystem.theme.Paddings
-import timber.log.Timber
 
 @Composable
 fun SignUpScreen(

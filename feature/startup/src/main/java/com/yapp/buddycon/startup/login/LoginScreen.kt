@@ -22,14 +22,13 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
-import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.button.LoginButton
+import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import timber.log.Timber
 import kotlin.coroutines.resume
 
 private val LoginBannerDescription = "LoginBanner"

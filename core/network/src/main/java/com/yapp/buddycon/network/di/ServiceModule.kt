@@ -18,5 +18,4 @@ object ServiceModule {
     fun provideAuthService(
         retrofit: Retrofit
     ): AuthService = retrofit.create()
-
 }

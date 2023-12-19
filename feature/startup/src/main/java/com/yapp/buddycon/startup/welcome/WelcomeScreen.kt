@@ -84,7 +84,6 @@ fun WelcomeScreen(
                 .fillMaxWidth(),
             text = stringResource(R.string.start)
         ) {
-
         }
     }
 }
