@@ -1,4 +1,4 @@
-package com.yapp.buddycon.navigation.component
+package com.yapp.buddycon.navigation
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
@@ -26,7 +26,7 @@ import com.yapp.buddycon.navigation.map.MapDestination
 import com.yapp.buddycon.navigation.mypage.MyPageDestination
 
 @Composable
-fun BuddyConBottomBar(navHostController: NavHostController) {
+internal fun BuddyConBottomBar(navHostController: NavHostController) {
     val bottomDestinations = listOf(
         GifticonDestination.Gifticon,
         MapDestination.Map,

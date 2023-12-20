@@ -4,11 +4,11 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.navigation.base.BottomDestination
 import com.yapp.buddycon.navigation.base.BuddyConDestination
 
-const val MYPAGE = "mypage"
+private const val MYPAGE = "mypage"
 
-sealed interface MyPageDestination : BuddyConDestination {
+sealed class MyPageDestination : BuddyConDestination {
 
-    object MyPage : MyPageDestination, BottomDestination {
+    object MyPage : MyPageDestination(), BottomDestination {
         override val route = MYPAGE
         override val drawableResId = R.drawable.ic_menu_mypage
         override val drawableSelResId = R.drawable.ic_menu_mypage_sel

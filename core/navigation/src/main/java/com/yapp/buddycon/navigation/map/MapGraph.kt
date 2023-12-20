@@ -5,9 +5,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.map.MapScreen
-import com.yapp.buddycon.navigation.MAP_GRAPH
 
-fun NavGraphBuilder.mapGraph(
+private const val MAP_GRAPH = "map_graph"
+
+internal fun NavGraphBuilder.mapGraph(
     navHostController: NavHostController
 ) {
     navigation(

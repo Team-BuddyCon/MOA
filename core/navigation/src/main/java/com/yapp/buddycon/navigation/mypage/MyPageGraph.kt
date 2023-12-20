@@ -5,9 +5,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.mypage.MyPageScreen
-import com.yapp.buddycon.navigation.MYPAGE_GRAPH
 
-fun NavGraphBuilder.mypageGraph(
+private const val MYPAGE_GRAPH = "mypage_graph"
+
+internal fun NavGraphBuilder.mypageGraph(
     navHostController: NavHostController
 ) {
     navigation(

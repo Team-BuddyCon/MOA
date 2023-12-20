@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 data class BuddyConColors(
     val primary: Color,
     val onPrimary: Color,
+    val primaryVariant: Color,
     val background: Color,
     val lightDialog: Color,
     val onLightDialog: Color,
@@ -40,6 +41,7 @@ val LocalBuddyConColors = staticCompositionLocalOf {
     BuddyConColors(
         primary = Color.Unspecified,
         onPrimary = Color.Unspecified,
+        primaryVariant = Color.Unspecified,
         background = Color.Unspecified,
         lightDialog = Color.Unspecified,
         onLightDialog = Color.Unspecified,

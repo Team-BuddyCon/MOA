@@ -4,11 +4,11 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.navigation.base.BottomDestination
 import com.yapp.buddycon.navigation.base.BuddyConDestination
 
-const val GIFTICON = "gifticon"
+private const val GIFTICON = "gifticon"
 
-sealed interface GifticonDestination : BuddyConDestination {
+sealed class GifticonDestination : BuddyConDestination {
 
-    object Gifticon : GifticonDestination, BottomDestination {
+    object Gifticon : GifticonDestination(), BottomDestination {
         override val route = GIFTICON
         override val drawableResId = R.drawable.ic_menu_gifticon
         override val drawableSelResId = R.drawable.ic_menu_gifticon_sel
