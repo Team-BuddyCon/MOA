@@ -9,24 +9,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.button.FloatingActionButton
-import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 
 @Composable
-fun GifticonScreeen() {
+fun GifticonScreeen(
+    onNavigateToRegister: () -> Unit = {}
+) {
     Scaffold(
         topBar = {
-            TopAppBarWithNotification(
-                title = stringResource(R.string.gifticon)
-            )
+            TopAppBarWithNotification(stringResource(R.string.gifticon))
         },
         floatingActionButtonPosition = FabPosition.End,
-        floatingActionButton = {
-            FloatingActionButton {
-            }
-        }
+        floatingActionButton = { FloatingActionButton(onNavigateToRegister) }
     ) { paddingValues ->
         GifticonContent(
             modifier = Modifier
