@@ -41,7 +41,7 @@ internal fun BuddyConBottomBar(navHostController: NavHostController) {
         NavigationBar(
             modifier = Modifier.height(72.dp),
             containerColor = Color.White,
-            tonalElevation = 10.dp
+            tonalElevation = 50.dp
         ) {
             bottomDestinations.forEach { bottomDestination ->
                 BuddyConBottomBarItem(
