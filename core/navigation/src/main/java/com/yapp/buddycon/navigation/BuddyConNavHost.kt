@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.yapp.buddycon.navigation.gifticon.GifticonDestination
 import com.yapp.buddycon.navigation.gifticon.gifticonGraph
 import com.yapp.buddycon.navigation.map.mapGraph
 import com.yapp.buddycon.navigation.mypage.mypageGraph
@@ -87,7 +88,13 @@ fun BuddyConNavHost(
             }
 
             composable(route = StartUpDestination.Welcome.route) {
-                WelcomeScreen()
+                WelcomeScreen {
+                    navHostController.navigate(GifticonDestination.Gifticon.route) {
+                        popUpTo(StartUpDestination.Welcome.route) {
+                            inclusive = true
+                        }
+                    }
+                }
             }
 
             gifticonGraph(navHostController)

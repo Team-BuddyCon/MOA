@@ -31,7 +31,8 @@ import com.yapp.buddycon.designsystem.theme.Pink100
 
 @Composable
 fun WelcomeScreen(
-    welcomeViewModel: WelcomeViewModel = hiltViewModel()
+    welcomeViewModel: WelcomeViewModel = hiltViewModel(),
+    onNavigateToGifticon: () -> Unit = {}
 ) {
     val userNickname by welcomeViewModel.userNickname.collectAsStateWithLifecycle()
 
@@ -82,8 +83,8 @@ fun WelcomeScreen(
                 .padding(bottom = Paddings.xlarge)
                 .padding(horizontal = Paddings.xlarge)
                 .fillMaxWidth(),
-            text = stringResource(R.string.start)
-        ) {
-        }
+            text = stringResource(R.string.start),
+            onClick = onNavigateToGifticon
+        )
     }
 }
