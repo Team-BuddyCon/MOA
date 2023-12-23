@@ -48,4 +48,8 @@
     <string name="start">시작하기</string>
 
     <string name="gifticon">기프티콘</string>
+    <string name="gifticon_register">기프티콘 등록하기</string>
+    <string name="gifticon_cancel">취소하기</string>
+    <string name="gifticon_save">저장하기</string>
+    <string name="gifticon_register_snackbar">기프티콘 정보를 등록해 주세요</string>
 </resources>
