@@ -5,6 +5,7 @@ import com.yapp.buddycon.navigation.base.BottomDestination
 import com.yapp.buddycon.navigation.base.BuddyConDestination
 
 private const val GIFTICON = "gifticon"
+private const val GIFTICON_REGISTER = "gifticon_register"
 
 sealed class GifticonDestination : BuddyConDestination {
 
@@ -12,5 +13,9 @@ sealed class GifticonDestination : BuddyConDestination {
         override val route = GIFTICON
         override val drawableResId = R.drawable.ic_menu_gifticon
         override val drawableSelResId = R.drawable.ic_menu_gifticon_sel
+    }
+
+    object Register : GifticonDestination() {
+        override val route = GIFTICON_REGISTER
     }
 }
