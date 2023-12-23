@@ -23,7 +23,9 @@ fun NavGraphBuilder.gifticonGraph(
         }
 
         composable(GifticonDestination.Register.route) {
-            GifticonRegisterScreen()
+            GifticonRegisterScreen {
+                navHostController.popBackStack()
+            }
         }
     }
 }
