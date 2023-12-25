@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yapp.buddycon.designsystem.R
-import com.yapp.buddycon.designsystem.component.button.MainButton
+import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey50
 import com.yapp.buddycon.designsystem.theme.Grey60
@@ -114,13 +114,12 @@ fun OnBoardingScreen(
                 )
             }
         } else {
-            MainButton(
+            BuddyConButton(
                 text = stringResource(R.string.startup_onboarding_start),
                 modifier = Modifier
                     .padding(top = Paddings.extra, bottom = Paddings.xlarge)
                     .padding(horizontal = Paddings.xlarge)
                     .fillMaxWidth()
-                    .height(54.dp)
             ) {
                 onNavigateToLogin()
             }
