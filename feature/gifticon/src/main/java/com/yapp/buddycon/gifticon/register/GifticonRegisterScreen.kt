@@ -74,36 +74,40 @@ fun GifticonRegisterScreen(
         )
     }
 
-    Scaffold(topBar = {
-        TopAppBarWithBack(
-            title = stringResource(R.string.gifticon_register),
-            onBack = onBack
-        )
-    }, bottomBar = {
-        Row(
-            modifier = Modifier
-                .background(BuddyConTheme.colors.background)
-                .padding(bottom = Paddings.xlarge)
-                .padding(horizontal = Paddings.xlarge)
-        ) {
-            BuddyConButton(
-                text = stringResource(R.string.gifticon_cancel),
-                modifier = Modifier.weight(1f),
-                containerColor = Grey30,
-                contentColor = Grey70,
-                onClick = { }
+    Scaffold(
+        topBar = {
+            TopAppBarWithBack(
+                title = stringResource(R.string.gifticon_register),
+                onBack = onBack
             )
-            BuddyConButton(
-                text = stringResource(R.string.gifticon_save),
+        },
+        bottomBar = {
+            Row(
                 modifier = Modifier
-                    .padding(start = Paddings.xlarge)
-                    .weight(1f),
-                containerColor = BuddyConTheme.colors.primary,
-                contentColor = BuddyConTheme.colors.onPrimary,
-                onClick = { }
-            )
-        }
-    }, snackbarHost = { BuddyConSnackbar(snackbarHostState) }) { paddingValues ->
+                    .background(BuddyConTheme.colors.background)
+                    .padding(bottom = Paddings.xlarge)
+                    .padding(horizontal = Paddings.xlarge)
+            ) {
+                BuddyConButton(
+                    text = stringResource(R.string.gifticon_cancel),
+                    modifier = Modifier.weight(1f),
+                    containerColor = Grey30,
+                    contentColor = Grey70,
+                    onClick = { }
+                )
+                BuddyConButton(
+                    text = stringResource(R.string.gifticon_save),
+                    modifier = Modifier
+                        .padding(start = Paddings.xlarge)
+                        .weight(1f),
+                    containerColor = BuddyConTheme.colors.primary,
+                    contentColor = BuddyConTheme.colors.onPrimary,
+                    onClick = { }
+                )
+            }
+        },
+        snackbarHost = { BuddyConSnackbar(snackbarHostState) }
+    ) { paddingValues ->
         GifticonRegisterContent(
             modifier = Modifier
                 .padding(paddingValues)
