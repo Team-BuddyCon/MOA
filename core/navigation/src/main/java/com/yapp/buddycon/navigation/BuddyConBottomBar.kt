@@ -1,5 +1,6 @@
 package com.yapp.buddycon.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -43,6 +44,7 @@ internal fun BuddyConBottomBar(navHostController: NavHostController) {
         NavigationBar(
             modifier = Modifier
                 .height(72.dp)
+                .background(Color.White)
                 .graphicsLayer {
                     shape = RoundedCornerShape(
                         topStart = 25.dp,
