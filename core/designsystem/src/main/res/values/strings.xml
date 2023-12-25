@@ -46,4 +46,10 @@
     <string name="complete">완료!</string>
     <string name="welcome_greeting_format">버디콘의 소중한 회원이 되신 %s님,\n만나서 반가워요!</string>
     <string name="start">시작하기</string>
+
+    <string name="gifticon">기프티콘</string>
+    <string name="gifticon_register">기프티콘 등록하기</string>
+    <string name="gifticon_cancel">취소하기</string>
+    <string name="gifticon_save">저장하기</string>
+    <string name="gifticon_register_snackbar">기프티콘 정보를 등록해 주세요</string>
 </resources>
