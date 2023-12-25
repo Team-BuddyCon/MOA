@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
@@ -46,9 +49,6 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey30
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
-
-private const val GifticonImageDescription = "GifticonImage"
-private const val GifticonImageExpandDescription = "GifticonImageExpand"
 
 @Composable
 fun GifticonRegisterScreen(
@@ -119,7 +119,14 @@ private fun GifticonRegisterContent(
     modifier: Modifier = Modifier,
     imageUri: Uri? = null
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+
+    FullGifticonImage(
+        imageUri = imageUri,
+        isExpanded = isExpanded,
+        onExpandChanged = { isExpanded = it }
+    )
     Column(modifier.verticalScroll(scrollState)) {
         Box(
             modifier = Modifier
@@ -131,7 +138,7 @@ private fun GifticonRegisterContent(
         ) {
             AsyncImage(
                 model = imageUri,
-                contentDescription = GifticonImageDescription,
+                contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -140,14 +147,53 @@ private fun GifticonRegisterContent(
                     .align(Alignment.BottomEnd)
                     .padding(bottom = 12.dp, end = 12.dp)
                     .size(40.dp)
-                    .background(Black.copy(0.4f), CircleShape),
+                    .background(Black.copy(0.4f), CircleShape)
+                    .clickable { isExpanded = true },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_search),
-                    contentDescription = GifticonImageExpandDescription,
+                    contentDescription = null,
                     modifier = Modifier.size(24.dp),
                     tint = Color.Unspecified
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FullGifticonImage(
+    imageUri: Uri?,
+    isExpanded: Boolean = false,
+    onExpandChanged: (Boolean) -> Unit = {}
+) {
+    if (isExpanded) {
+        Dialog(
+            onDismissRequest = { onExpandChanged(isExpanded.not()) },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(vertical = 27.dp, horizontal = Paddings.xlarge)
+                    .fillMaxSize()
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_white_close),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .size(24.dp)
+                        .clickable { onExpandChanged(isExpanded.not()) },
+                    tint = Color.Unspecified
+                )
+                AsyncImage(
+                    model = imageUri,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(top = Paddings.medium)
+                        .fillMaxSize(),
+                    contentScale = ContentScale.FillBounds
                 )
             }
         }
