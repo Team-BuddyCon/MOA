@@ -1,6 +1,8 @@
 package com.yapp.buddycon.data.di
 
+import com.yapp.buddycon.data.repository.AuthRepositoryImpl
 import com.yapp.buddycon.data.repository.TokenRepositoryImpl
+import com.yapp.buddycon.domain.repository.AuthRepository
 import com.yapp.buddycon.domain.repository.TokenRepository
 import dagger.Binds
 import dagger.Module
@@ -16,4 +18,10 @@ interface RepositoryModule {
     fun bindTokenRepository(
         tokenRepositoryImpl: TokenRepositoryImpl
     ): TokenRepository
+
+    @Binds
+    @Singleton
+    fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
 }

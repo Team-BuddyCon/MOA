@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
     }
 }
 rootProject.name = "BuddyCon"
@@ -23,3 +24,4 @@ include ':feature:map'
 include ':feature:mypage'
 include ':feature:startup'
 include ':core:local'
+include ':core:network'

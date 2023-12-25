@@ -5,6 +5,9 @@ plugins {
     alias libs.plugins.kotlin.kapt
 }
 
+def Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     namespace 'com.yapp.buddycon'
     compileSdk 33
@@ -15,6 +18,8 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+
+        buildConfigField("String", "KAKAO_APP_KEY", properties.getProperty("KAKAO_APP_KEY"))
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -68,8 +73,8 @@ dependencies {
 
     // timber
     implementation libs.timber
-
     implementation libs.accompanist.systemuicontroller
+    implementation libs.kakao.user
 
     // test
     testImplementation libs.junit

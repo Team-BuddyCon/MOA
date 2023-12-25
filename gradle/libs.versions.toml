@@ -26,9 +26,13 @@ coil-compose = "2.4.0"
 
 ## retrofit2
 retrofit2 = "2.9.0"
+logging-interceptor = "4.11.0"
 
 ## coroutine
 coroutine-core = "1.6.4"
+
+## kakao
+kakao = "2.18.0"
 
 ## test
 junit = "4.13.2"
@@ -81,9 +85,13 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 ## retrofit2
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2" }
 converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit2" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "logging-interceptor" }
 
 ## coroutine
 coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutine-core" }
+
+## kakao
+kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
 
 ## test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -97,4 +105,4 @@ material = { group = "com.google.android.material", name = "material", version.r
 
 [bundles]
 androidx-compose = ["androidx-compose-ui", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-activity-compose", "androidx-compose-material3", "androidx-navigation-compose", "androidx-lifecycle-compose", "androidx-hilt-navigation-compose"]
-retrofit-bundle = ["retrofit", "converter-gson"]
+retrofit = ["retrofit", "converter-gson", "logging-interceptor"]
