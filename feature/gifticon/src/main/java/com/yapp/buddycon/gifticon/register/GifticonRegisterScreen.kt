@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -38,10 +39,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
+import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
+import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectUsage
+import com.yapp.buddycon.designsystem.component.input.EssentialInputText
+import com.yapp.buddycon.designsystem.component.input.NoEssentialInputText
+import com.yapp.buddycon.designsystem.component.modal.CalendarModalSheet
+import com.yapp.buddycon.designsystem.component.modal.CategoryModalSheet
 import com.yapp.buddycon.designsystem.component.snackbar.BuddyConSnackbar
 import com.yapp.buddycon.designsystem.component.snackbar.showBuddyConSnackBar
 import com.yapp.buddycon.designsystem.theme.Black
@@ -62,8 +71,10 @@ fun GifticonRegisterScreen(
         imageUri = uri
     }
 
-    LaunchedEffect(Unit) {
-        galleryLauncher.launch("image/*")
+    LaunchedEffect(imageUri) {
+        if (imageUri == null) {
+            galleryLauncher.launch("image/*")
+        }
     }
 
     if (imageUri != null) {
@@ -93,7 +104,13 @@ fun GifticonRegisterScreen(
                     modifier = Modifier.weight(1f),
                     containerColor = Grey30,
                     contentColor = Grey70,
-                    onClick = { }
+                    onClick = {
+                        if (imageUri == null) {
+                            onBack()
+                        } else {
+                            imageUri = null
+                        }
+                    }
                 )
                 BuddyConButton(
                     text = stringResource(R.string.gifticon_save),
@@ -118,18 +135,37 @@ fun GifticonRegisterScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GifticonRegisterContent(
     modifier: Modifier = Modifier,
+    gifticonRegisterViewModel: GifticonRegisterViewModel = hiltViewModel(),
     imageUri: Uri? = null
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+    var isImageExpanded by remember { mutableStateOf(false) }
+    var isShowCalendarModal by remember { mutableStateOf(false) }
+    var isShowCategoryModal by remember { mutableStateOf(false) }
+    val uiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
+
+    if (isShowCalendarModal) {
+        CalendarModalSheet(
+            onSelectDate = { gifticonRegisterViewModel.setExpirationDate(it) },
+            onDismiss = { isShowCalendarModal = false }
+        )
+    }
+
+    if (isShowCategoryModal) {
+        CategoryModalSheet(
+            onSelectCategory = { gifticonRegisterViewModel.setUsage(it.value) },
+            onDismiss = { isShowCategoryModal = false }
+        )
+    }
 
     FullGifticonImage(
         imageUri = imageUri,
-        isExpanded = isExpanded,
-        onExpandChanged = { isExpanded = it }
+        isExpanded = isImageExpanded,
+        onExpandChanged = { isImageExpanded = it }
     )
     Column(modifier.verticalScroll(scrollState)) {
         Box(
@@ -152,7 +188,7 @@ private fun GifticonRegisterContent(
                     .padding(bottom = 12.dp, end = 12.dp)
                     .size(40.dp)
                     .background(Black.copy(0.4f), CircleShape)
-                    .clickable { isExpanded = true },
+                    .clickable { isImageExpanded = true },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -163,6 +199,36 @@ private fun GifticonRegisterContent(
                 )
             }
         }
+        EssentialInputText(
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .fillMaxSize(),
+            title = stringResource(R.string.gifticon_name),
+            placeholder = stringResource(R.string.gifticon_name_placeholder),
+            value = uiState.name,
+            onValueChange = { gifticonRegisterViewModel.setName(it) }
+        )
+        EssentialInputSelectDate(
+            modifier = Modifier.fillMaxWidth(),
+            title = stringResource(R.string.gifticon_expiration_date),
+            placeholder = stringResource(R.string.gifticon_expiration_date_placeholder),
+            value = uiState.expiration_date,
+            action = { isShowCalendarModal = true }
+        )
+        EssentialInputSelectUsage(
+            modifier = Modifier.fillMaxWidth(),
+            title = stringResource(R.string.gifticon_usage),
+            placeholder = stringResource(R.string.gifticon_usage_placeholder),
+            value = uiState.usage,
+            action = { isShowCategoryModal = true }
+        )
+        NoEssentialInputText(
+            modifier = Modifier.fillMaxWidth(),
+            title = stringResource(R.string.gifticon_memo),
+            placeholder = stringResource(R.string.gifticon_memo_placeholder),
+            value = uiState.memo,
+            onValueChange = { gifticonRegisterViewModel.setMemo(it) }
+        )
     }
 }
 
