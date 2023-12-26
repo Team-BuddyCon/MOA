@@ -16,17 +16,18 @@ fun EssentialInputSelectDate(
     title: String,
     placeholder: String,
     value: String,
-    onValueChange: (String) -> Unit = {}
+    onValueChange: (String) -> Unit = {},
+    action: () -> Unit
 ) {
-    var value by remember { mutableStateOf("") }
     BuddyConInput(
         modifier = modifier,
         buddyConInputs = BuddyConInputs.EssentialSelectDate(
             title = title,
-            placeholder = placeholder
+            placeholder = placeholder,
+            action = action
         ),
         value = value,
-        onValueChange = { value = it }
+        onValueChange = onValueChange
     )
 }
 
@@ -40,7 +41,8 @@ private fun EssentialInputSelectDatePreview() {
             title = "유효기간",
             placeholder = "유효기간 선택",
             value = value,
-            onValueChange = { value = it }
+            onValueChange = { value = it },
+            action = {}
         )
     }
 }
