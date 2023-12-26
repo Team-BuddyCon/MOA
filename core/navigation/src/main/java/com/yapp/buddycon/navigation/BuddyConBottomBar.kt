@@ -1,8 +1,10 @@
 package com.yapp.buddycon.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -12,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,7 +42,17 @@ internal fun BuddyConBottomBar(navHostController: NavHostController) {
 
     if (hasBottomDestination) {
         NavigationBar(
-            modifier = Modifier.height(72.dp),
+            modifier = Modifier
+                .height(72.dp)
+                .background(Color.White)
+                .graphicsLayer {
+                    shape = RoundedCornerShape(
+                        topStart = 25.dp,
+                        topEnd = 25.dp
+                    )
+                    shadowElevation = 25f
+                    clip = true
+                },
             containerColor = Color.White,
             tonalElevation = 50.dp
         ) {

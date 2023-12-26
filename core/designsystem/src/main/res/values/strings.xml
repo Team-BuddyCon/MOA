@@ -60,5 +60,4 @@
     <string name="gifticon_usage_placeholder">사용처 선택</string>
     <string name="gifticon_memo">메모</string>
     <string name="gifticon_memo_placeholder">최대 50자 입력</string>
-
 </resources>

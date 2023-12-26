@@ -17,7 +17,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+
+<<<<<<< HEAD
 import androidx.compose.material3.ExperimentalMaterial3Api
+
+=======
+>>>>>>> develop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -39,18 +44,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+
+<<<<<<< HEAD
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
+=======
+>>>>>>> develop
 import coil.compose.AsyncImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
+
+<<<<<<< HEAD
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectUsage
 import com.yapp.buddycon.designsystem.component.input.EssentialInputText
 import com.yapp.buddycon.designsystem.component.input.NoEssentialInputText
 import com.yapp.buddycon.designsystem.component.modal.CalendarModalSheet
 import com.yapp.buddycon.designsystem.component.modal.CategoryModalSheet
+
+=======
+>>>>>>> develop
 import com.yapp.buddycon.designsystem.component.snackbar.BuddyConSnackbar
 import com.yapp.buddycon.designsystem.component.snackbar.showBuddyConSnackBar
 import com.yapp.buddycon.designsystem.theme.Black
@@ -104,13 +119,17 @@ fun GifticonRegisterScreen(
                     modifier = Modifier.weight(1f),
                     containerColor = Grey30,
                     contentColor = Grey70,
-                    onClick = {
-                        if (imageUri == null) {
-                            onBack()
-                        } else {
-                            imageUri = null
-                        }
+                    < < < < < < < HEAD
+                        onClick = {
+                    if (imageUri == null) {
+                        onBack()
+                    } else {
+                        imageUri = null
                     }
+                }
+                ====== =
+                onClick = { }
+                >>>>>>> develop
                 )
                 BuddyConButton(
                     text = stringResource(R.string.gifticon_save),
@@ -135,6 +154,7 @@ fun GifticonRegisterScreen(
     }
 }
 
+<<<<<<< HEAD
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GifticonRegisterContent(
@@ -166,106 +186,127 @@ private fun GifticonRegisterContent(
         imageUri = imageUri,
         isExpanded = isImageExpanded,
         onExpandChanged = { isImageExpanded = it }
-    )
-    Column(modifier.verticalScroll(scrollState)) {
-        Box(
-            modifier = Modifier
-                .padding(top = Paddings.medium)
-                .padding(horizontal = Paddings.xlarge)
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(20.dp))
-        ) {
-            AsyncImage(
-                model = imageUri,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 12.dp, end = 12.dp)
-                    .size(40.dp)
-                    .background(Black.copy(0.4f), CircleShape)
-                    .clickable { isImageExpanded = true },
-                contentAlignment = Alignment.Center
+                === === =
+            @Composable
+            private fun GifticonRegisterContent(
+                modifier: Modifier = Modifier,
+                imageUri: Uri? = null
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_search),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.Unspecified
-                )
-            }
-        }
-        EssentialInputText(
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .fillMaxSize(),
-            title = stringResource(R.string.gifticon_name),
-            placeholder = stringResource(R.string.gifticon_name_placeholder),
-            value = uiState.name,
-            onValueChange = { gifticonRegisterViewModel.setName(it) }
-        )
-        EssentialInputSelectDate(
-            modifier = Modifier.fillMaxWidth(),
-            title = stringResource(R.string.gifticon_expiration_date),
-            placeholder = stringResource(R.string.gifticon_expiration_date_placeholder),
-            value = uiState.expiration_date,
-            action = { isShowCalendarModal = true }
-        )
-        EssentialInputSelectUsage(
-            modifier = Modifier.fillMaxWidth(),
-            title = stringResource(R.string.gifticon_usage),
-            placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = uiState.usage,
-            action = { isShowCategoryModal = true }
-        )
-        NoEssentialInputText(
-            modifier = Modifier.fillMaxWidth(),
-            title = stringResource(R.string.gifticon_memo),
-            placeholder = stringResource(R.string.gifticon_memo_placeholder),
-            value = uiState.memo,
-            onValueChange = { gifticonRegisterViewModel.setMemo(it) }
-        )
-    }
-}
+                var isExpanded by remember { mutableStateOf(false) }
+                val scrollState = rememberScrollState()
 
-@Composable
-private fun FullGifticonImage(
-    imageUri: Uri?,
-    isExpanded: Boolean = false,
-    onExpandChanged: (Boolean) -> Unit = {}
-) {
-    if (isExpanded) {
-        Dialog(
-            onDismissRequest = { onExpandChanged(isExpanded.not()) },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
+                FullGifticonImage(
+                    imageUri = imageUri,
+                    isExpanded = isExpanded,
+                    onExpandChanged = { isExpanded = it }
+                            > > > > > > > develop
+                )
+                Column(modifier.verticalScroll(scrollState)) {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = Paddings.medium)
+                            .padding(horizontal = Paddings.xlarge)
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(20.dp))
+                    ) {
+                        AsyncImage(
+                            model = imageUri,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 12.dp, end = 12.dp)
+                                .size(40.dp)
+                                .background(Black.copy(0.4f), CircleShape)
+                                    < < < < < < < HEAD
+                                .clickable { isImageExpanded = true },
+                            === === =
+                                .clickable { isExpanded = true },
+                        >>>>>>> develop
+                        contentAlignment = Alignment.Center
+                        ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_search),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.Unspecified
+                        )
+                    }
+                    }
+                    <<<<<<< HEAD
+                    EssentialInputText(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .fillMaxSize(),
+                        title = stringResource(R.string.gifticon_name),
+                        placeholder = stringResource(R.string.gifticon_name_placeholder),
+                        value = uiState.name,
+                        onValueChange = { gifticonRegisterViewModel.setName(it) }
+                    )
+                    EssentialInputSelectDate(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = stringResource(R.string.gifticon_expiration_date),
+                        placeholder = stringResource(R.string.gifticon_expiration_date_placeholder),
+                        value = uiState.expiration_date,
+                        action = { isShowCalendarModal = true }
+                    )
+                    EssentialInputSelectUsage(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = stringResource(R.string.gifticon_usage),
+                        placeholder = stringResource(R.string.gifticon_usage_placeholder),
+                        value = uiState.usage,
+                        action = { isShowCategoryModal = true }
+                    )
+                    NoEssentialInputText(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = stringResource(R.string.gifticon_memo),
+                        placeholder = stringResource(R.string.gifticon_memo_placeholder),
+                        value = uiState.memo,
+                        onValueChange = { gifticonRegisterViewModel.setMemo(it) }
+                    )
+                    ====== =
+                    >>>>>>> develop
+                }
+            }
+
+        @Composable
+        private fun FullGifticonImage(
+            imageUri: Uri?,
+            isExpanded: Boolean = false,
+            onExpandChanged: (Boolean) -> Unit = {}
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(vertical = 27.dp, horizontal = Paddings.xlarge)
-                    .fillMaxSize()
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_white_close),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .size(24.dp)
-                        .clickable { onExpandChanged(isExpanded.not()) },
-                    tint = Color.Unspecified
-                )
-                AsyncImage(
-                    model = imageUri,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(top = Paddings.medium)
-                        .fillMaxSize(),
-                    contentScale = ContentScale.FillBounds
-                )
+            if (isExpanded) {
+                Dialog(
+                    onDismissRequest = { onExpandChanged(isExpanded.not()) },
+                    properties = DialogProperties(usePlatformDefaultWidth = false)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(vertical = 27.dp, horizontal = Paddings.xlarge)
+                            .fillMaxSize()
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_white_close),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .size(24.dp)
+                                .clickable { onExpandChanged(isExpanded.not()) },
+                            tint = Color.Unspecified
+                        )
+                        AsyncImage(
+                            model = imageUri,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(top = Paddings.medium)
+                                .fillMaxSize(),
+                            contentScale = ContentScale.FillBounds
+                        )
+                    }
+                }
             }
         }
-    }
-}
