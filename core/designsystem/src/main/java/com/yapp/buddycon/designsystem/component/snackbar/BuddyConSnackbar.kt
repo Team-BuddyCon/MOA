@@ -37,14 +37,16 @@ private val SNACKBAR_DISMISS_ICON_DESCRIPTION = "SNACKBAR_DISMISS"
 
 @Composable
 fun BuddyConSnackbar(
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    contentAlignment: Alignment = Alignment.BottomCenter
 ) {
     SnackbarHost(
         hostState = snackbarHostState
     ) { snackbarData ->
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = contentAlignment
         ) {
             Row(
                 modifier = Modifier
@@ -88,7 +90,7 @@ fun showBuddyConSnackBar(
     scope.launch {
         snackbarHostState.showSnackbar(
             message = message,
-            duration = SnackbarDuration.Long
+            duration = SnackbarDuration.Short
         )
     }
 }

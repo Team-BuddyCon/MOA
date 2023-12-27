@@ -123,7 +123,7 @@ fun GifticonRegisterScreen(
                 )
             }
         },
-        snackbarHost = { BuddyConSnackbar(snackbarHostState) }
+        snackbarHost = { BuddyConSnackbar(snackbarHostState = snackbarHostState) }
     ) { paddingValues ->
         GifticonRegisterContent(
             modifier = Modifier
