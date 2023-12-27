@@ -62,5 +62,6 @@
     <string name="gifticon_memo_placeholder">최대 50자 입력</string>
 
     <string name="map">지도</string>
+    <string name="map_location_permission">위치 정보를 허용했어요!</string>
 
 </resources>

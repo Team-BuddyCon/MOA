@@ -1,6 +1,7 @@
 package com.yapp.buddycon.designsystem.component.button
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +23,8 @@ private val CategoryButtonRadius = 20.dp
 @Composable
 fun CategoryButton(
     gifticonCategory: GifticonCategory,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -33,7 +35,7 @@ fun CategoryButton(
             .padding(
                 horizontal = CategoryButtonHorizontalPadding,
                 vertical = CategoryButtonVerticalPadding
-            ),
+            ).clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(
