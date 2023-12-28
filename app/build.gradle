@@ -20,7 +20,7 @@ android {
         versionName "1.0"
 
         buildConfigField("String", "KAKAO_APP_KEY", properties.getProperty("KAKAO_APP_KEY"))
-
+        resValue("string", "NAVER_CLIENT_ID", properties.getProperty("NAVER_CLIENT_ID"))
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

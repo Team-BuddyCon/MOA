@@ -68,7 +68,7 @@ fun BuddyConNavHost(
 
             composable(route = StartUpDestination.Login.route) {
                 LoginScreen {
-                    navHostController.navigate(StartUpDestination.SignUp.route)
+                    navHostController.navigate(GifticonDestination.Gifticon.route)
                 }
             }
 
