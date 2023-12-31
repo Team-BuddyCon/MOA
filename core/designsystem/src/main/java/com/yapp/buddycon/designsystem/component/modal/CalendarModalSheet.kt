@@ -32,7 +32,7 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
 
-private val CalendarModalSheetHeight = 500.dp
+private val CalendarModalSheetHeight = 550.dp
 private val CalendarModalSheetRadius = 24.dp
 private val CalendarModalSheetDragHandleTopPadding = 17.dp
 private val CalendarModalSheetDragHandleHeight = 24.dp

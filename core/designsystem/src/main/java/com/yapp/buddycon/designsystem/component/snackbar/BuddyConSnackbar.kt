@@ -88,7 +88,7 @@ fun showBuddyConSnackBar(
     scope.launch {
         snackbarHostState.showSnackbar(
             message = message,
-            duration = SnackbarDuration.Indefinite
+            duration = SnackbarDuration.Long
         )
     }
 }
