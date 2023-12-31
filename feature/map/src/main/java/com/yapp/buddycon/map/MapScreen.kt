@@ -11,6 +11,7 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,12 +24,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.NaverMap
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
@@ -46,13 +48,21 @@ import com.yapp.buddycon.designsystem.component.snackbar.showBuddyConSnackBar
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.domain.model.type.GifticonCategory
-import com.yapp.buddycon.utility.toDp
+import com.yapp.buddycon.utility.toPx
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen() {
+fun MapScreen(
+    mapViewModel: MapViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val density = context.resources.displayMetrics.density
+    val mapScreenHeightDp = (configuration.screenHeightDp - 244).toFloat()
+    val mapScreenHeightPx = mapScreenHeightDp.dp.toPx()
     val snackbarHostState = remember { SnackbarHostState() }
-    var offsetY by remember { mutableStateOf(111f) }
+    val mapUiState by mapViewModel.uiState.collectAsStateWithLifecycle()
+    val heightPx by rememberUpdatedState(mapUiState.heightDp * density)
 
     RequestLocationPermission(snackbarHostState)
     BottomSheetScaffold(
@@ -62,24 +72,39 @@ fun MapScreen() {
                     .background(BuddyConTheme.colors.background)
                     .draggable(
                         state = rememberDraggableState { delta ->
-                            if (offsetY > 0) {
-                                offsetY -= delta
+                            if ((heightPx - delta) in 0f..mapScreenHeightPx) {
+                                mapViewModel.changeHeightDp((heightPx - delta) / density)
                             }
                         },
-                        orientation = Orientation.Vertical
+                        orientation = Orientation.Vertical,
+                        onDragStarted = {
+                            mapViewModel.changeSheetValue(BottomSheetValue.Moving(mapUiState.heightDp))
+                        },
+                        onDragStopped = {
+                            mapViewModel.changeSheetValue(
+                                when (mapUiState.heightDp) {
+                                    in BottomSheetValue.PartiallyExpanded.sheetPeekHeightDp..(mapScreenHeightDp / 2f - 1) -> {
+                                        BottomSheetValue.PartiallyExpanded
+                                    }
+
+                                    in (mapScreenHeightDp / 2f)..mapScreenHeightDp -> BottomSheetValue.Expanded
+                                    else -> BottomSheetValue.Collapsed
+                                }
+                            )
+                        }
                     )
             )
         },
-        sheetPeekHeight = offsetY.toDp(),
+        sheetPeekHeight = mapUiState.heightDp.dp,
         sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         sheetContainerColor = BuddyConTheme.colors.background,
         sheetShadowElevation = 33.dp,
+        sheetDragHandle = null,
         topBar = {
             TopAppBarWithNotification(
                 title = stringResource(R.string.map)
             )
         },
-        sheetDragHandle = null,
         snackbarHost = {
             BuddyConSnackbar(
                 modifier = Modifier.padding(top = 162.dp),
@@ -87,10 +112,9 @@ fun MapScreen() {
                 contentAlignment = Alignment.TopCenter
             )
         }
-    ) { paddingValues ->
+    ) {
         MapContent(
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
                 .background(BuddyConTheme.colors.background)
         )
@@ -101,7 +125,7 @@ fun MapScreen() {
 private fun MapBottomSheet(
     modifier: Modifier = Modifier
 ) {
-    Box(modifier) {
+    Box(modifier.fillMaxHeight()) {
         GifticonInfoModalSheetContent(
             countOfUsableGifticon = 12,
             countOfImminetGifticon = 1
@@ -122,7 +146,12 @@ private fun MapContent(
             onCategoryChange = { mapViewModel.changeCategory(it) }
         )
         NaverMap(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            uiSettings = MapUiSettings(
+                isZoomControlEnabled = false,
+                isLogoClickEnabled = false,
+                isScaleBarEnabled = false
+            )
         )
     }
 }

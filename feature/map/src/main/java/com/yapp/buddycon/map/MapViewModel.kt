@@ -16,4 +16,20 @@ class MapViewModel @Inject constructor() : ViewModel() {
     fun changeCategory(category: GifticonCategory) {
         _uiState.value = _uiState.value.copy(category = category)
     }
+
+    fun changeSheetValue(sheetValue: BottomSheetValue) {
+        _uiState.value = _uiState.value.copy(
+            sheetValue = sheetValue,
+            heightDp = when (sheetValue) {
+                BottomSheetValue.Collapsed -> BottomSheetValue.Collapsed.sheetPeekHeightDp
+                BottomSheetValue.PartiallyExpanded -> BottomSheetValue.PartiallyExpanded.sheetPeekHeightDp
+                BottomSheetValue.Expanded -> BottomSheetValue.Expanded.sheetPeekHeightDp
+                is BottomSheetValue.Moving -> uiState.value.heightDp
+            }
+        )
+    }
+
+    fun changeHeightDp(heightDp: Float) {
+        _uiState.value = _uiState.value.copy(heightDp = heightDp)
+    }
 }
