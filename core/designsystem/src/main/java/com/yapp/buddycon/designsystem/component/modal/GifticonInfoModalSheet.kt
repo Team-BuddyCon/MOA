@@ -3,10 +3,11 @@ package com.yapp.buddycon.designsystem.component.modal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
+import com.yapp.buddycon.designsystem.theme.Grey40
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink100
 
@@ -36,42 +38,52 @@ fun GifticonInfoModalSheetContent(
     countOfUsableGifticon: Int,
     countOfImminetGifticon: Int
 ) {
-    Row(
+    Column(
         modifier = modifier
             .background(BuddyConTheme.colors.background)
             .fillMaxWidth()
-            .padding(horizontal = GifticonInfoModalHorizontalPadding)
-            .wrapContentHeight(),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = GifticonInfoModalHorizontalPadding),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = stringResource(R.string.modal_sheet_gifticon),
-                style = BuddyConTheme.typography.subTitle
-            )
-            Row(verticalAlignment = Alignment.Bottom) {
-                Text(
-                    text = "${countOfUsableGifticon}개",
-                    style = BuddyConTheme.typography.title01
-                )
-                Text(
-                    text = String.format(
-                        stringResource(R.string.modal_sheet_imminet_gifticon),
-                        countOfImminetGifticon
-                    ),
-                    modifier = Modifier.padding(start = Paddings.medium, bottom = Paddings.small),
-                    style = BuddyConTheme.typography.body04.copy(color = Pink100)
-                )
-            }
-        }
-        Icon(
-            painter = painterResource(R.drawable.ic_gifticon),
-            contentDescription = GifticonInfoModalDescription,
-            modifier = Modifier.size(GifticonInfoModalItemIconSize),
-            tint = Color.Unspecified
+        Spacer(
+            modifier = Modifier
+                .padding(vertical = Paddings.xlarge)
+                .size(32.dp, 4.dp)
+                .background(Grey40, RoundedCornerShape(100.dp))
         )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = stringResource(R.string.modal_sheet_gifticon),
+                    style = BuddyConTheme.typography.subTitle
+                )
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(
+                        text = "${countOfUsableGifticon}개",
+                        style = BuddyConTheme.typography.title01
+                    )
+                    Text(
+                        text = String.format(
+                            stringResource(R.string.modal_sheet_imminet_gifticon),
+                            countOfImminetGifticon
+                        ),
+                        modifier = Modifier.padding(start = Paddings.medium, bottom = Paddings.small),
+                        style = BuddyConTheme.typography.body04.copy(color = Pink100)
+                    )
+                }
+            }
+            Icon(
+                painter = painterResource(R.drawable.ic_gifticon),
+                contentDescription = GifticonInfoModalDescription,
+                modifier = Modifier.size(GifticonInfoModalItemIconSize),
+                tint = Color.Unspecified
+            )
+        }
     }
 }
 

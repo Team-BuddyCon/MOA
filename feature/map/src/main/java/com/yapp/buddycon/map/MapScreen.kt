@@ -5,15 +5,14 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -24,11 +23,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -42,27 +44,28 @@ import com.naver.maps.map.compose.NaverMap
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.button.CategoryButton
+import com.yapp.buddycon.designsystem.component.modal.GifticonInfoListModalSheet
 import com.yapp.buddycon.designsystem.component.modal.GifticonInfoModalSheetContent
 import com.yapp.buddycon.designsystem.component.snackbar.BuddyConSnackbar
 import com.yapp.buddycon.designsystem.component.snackbar.showBuddyConSnackBar
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
+import com.yapp.buddycon.domain.model.gifticon.GifticonModel
 import com.yapp.buddycon.domain.model.type.GifticonCategory
 import com.yapp.buddycon.utility.toPx
+import java.util.Calendar
+
+private const val MapBarSize = 260f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     mapViewModel: MapViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val configuration = LocalConfiguration.current
-    val density = context.resources.displayMetrics.density
-    val mapScreenHeightDp = (configuration.screenHeightDp - 244).toFloat()
-    val mapScreenHeightPx = mapScreenHeightDp.dp.toPx()
     val snackbarHostState = remember { SnackbarHostState() }
+    val configuration = LocalConfiguration.current
+    val mapHeightDp = configuration.screenHeightDp - MapBarSize
     val mapUiState by mapViewModel.uiState.collectAsStateWithLifecycle()
-    val heightPx by rememberUpdatedState(mapUiState.heightDp * density)
 
     RequestLocationPermission(snackbarHostState)
     BottomSheetScaffold(
@@ -70,29 +73,8 @@ fun MapScreen(
             MapBottomSheet(
                 modifier = Modifier
                     .background(BuddyConTheme.colors.background)
-                    .draggable(
-                        state = rememberDraggableState { delta ->
-                            if ((heightPx - delta) in 0f..mapScreenHeightPx) {
-                                mapViewModel.changeHeightDp((heightPx - delta) / density)
-                            }
-                        },
-                        orientation = Orientation.Vertical,
-                        onDragStarted = {
-                            mapViewModel.changeSheetValue(BottomSheetValue.Moving(mapUiState.heightDp))
-                        },
-                        onDragStopped = {
-                            mapViewModel.changeSheetValue(
-                                when (mapUiState.heightDp) {
-                                    in BottomSheetValue.PartiallyExpanded.sheetPeekHeightDp..(mapScreenHeightDp / 2f - 1) -> {
-                                        BottomSheetValue.PartiallyExpanded
-                                    }
-
-                                    in (mapScreenHeightDp / 2f)..mapScreenHeightDp -> BottomSheetValue.Expanded
-                                    else -> BottomSheetValue.Collapsed
-                                }
-                            )
-                        }
-                    )
+                    .height(mapHeightDp.dp),
+                mapHeightDp = mapHeightDp
             )
         },
         sheetPeekHeight = mapUiState.heightDp.dp,
@@ -123,13 +105,91 @@ fun MapScreen(
 
 @Composable
 private fun MapBottomSheet(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    mapViewModel: MapViewModel = hiltViewModel(),
+    mapHeightDp: Float
 ) {
-    Box(modifier.fillMaxHeight()) {
-        GifticonInfoModalSheetContent(
-            countOfUsableGifticon = 12,
-            countOfImminetGifticon = 1
-        )
+    val context = LocalContext.current
+    val density = context.resources.displayMetrics.density
+    val mapHeightPx = mapHeightDp.dp.toPx()
+    val mapUiState by mapViewModel.uiState.collectAsStateWithLifecycle()
+    var prevSheetValue: BottomSheetValue by remember { mutableStateOf(BottomSheetValue.Collapsed) }
+    val heightPx by rememberUpdatedState(mapUiState.heightDp * density)
+
+    Box(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectVerticalDragGestures(
+                    onDragStart = {
+                        prevSheetValue = mapUiState.sheetValue
+                        mapViewModel.changeSheetValue(BottomSheetValue.Moving(mapUiState.heightDp))
+                    },
+                    onDragEnd = {
+                        prevSheetValue = mapUiState.sheetValue
+                        mapViewModel.changeSheetValue(
+                            when (mapUiState.heightDp) {
+                                in BottomSheetValue.PartiallyExpanded.sheetPeekHeightDp..(mapHeightDp / 2f - 1) -> {
+                                    BottomSheetValue.PartiallyExpanded
+                                }
+
+                                in (mapHeightDp / 2f)..mapHeightDp -> BottomSheetValue.Expanded
+                                else -> BottomSheetValue.Collapsed
+                            }
+                        )
+                    },
+                    onVerticalDrag = { change, dragAmount ->
+                        if ((heightPx - dragAmount) in 0f..mapHeightPx) {
+                            mapViewModel.changeHeightDp((heightPx - dragAmount) / density)
+                        }
+                    }
+                )
+            }
+    ) {
+        if (mapUiState.sheetValue is BottomSheetValue.Moving) {
+            MapBottomSheetContent(prevSheetValue)
+        } else {
+            MapBottomSheetContent(mapUiState.sheetValue)
+        }
+    }
+}
+
+@Composable
+private fun MapBottomSheetContent(
+    sheetValue: BottomSheetValue
+) {
+    val today = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.time.time
+
+    when (sheetValue) {
+        BottomSheetValue.Collapsed,
+        BottomSheetValue.PartiallyExpanded -> {
+            GifticonInfoModalSheetContent(
+                countOfUsableGifticon = 12,
+                countOfImminetGifticon = 1
+            )
+        }
+
+        BottomSheetValue.Expanded -> {
+            GifticonInfoListModalSheet(
+                modifier = Modifier.fillMaxHeight(),
+                countOfUsableGifticon = 4,
+                countOfImminetGifticon = 1,
+                gifticonInfos = List(10) {
+                    GifticonModel(
+                        imageUrl = "https://github.com/Team-BuddyCon/ANDROID_V2/assets/34837583/5ab80674-4ffb-4c91-ab10-3743d8c87e58",
+                        category = GifticonCategory.STARBUCKS,
+                        name = "빙그레)바나나맛우유240",
+                        expirationTime = (today + 1000 * 60 * 60 * 24L * (-1..366).random())
+                    )
+                }
+            )
+        }
+
+        else -> Unit
     }
 }
 
