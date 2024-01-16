@@ -13,6 +13,7 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.button.FloatingActionButton
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
+import com.yapp.buddycon.gifticon.available.AvailabeGifticonScreen
 
 @Composable
 fun GifticonScreeen(
@@ -35,9 +36,10 @@ fun GifticonScreeen(
 }
 
 @Composable
-private fun GifticonContent(
+fun GifticonContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
+        AvailabeGifticonScreen()
     }
 }

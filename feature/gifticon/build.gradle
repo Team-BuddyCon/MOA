@@ -1,6 +1,8 @@
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
+    alias libs.plugins.hilt.android
+    alias libs.plugins.kotlin.kapt
 }
 
 android {
@@ -38,6 +40,9 @@ android {
 dependencies {
     implementation project(":core:designsystem")
     implementation project(":domain")
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
 
     implementation libs.coil.compose
     implementation libs.androidx.core.ktx
