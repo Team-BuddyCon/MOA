@@ -11,3 +11,4 @@ enum class GifticonCategory(val value: String) {
     ETC("기타"),
     TOTAL("전체")
 }
+

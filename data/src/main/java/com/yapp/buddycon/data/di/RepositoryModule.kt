@@ -33,3 +33,4 @@ interface RepositoryModule {
         availableGifticonRepositoryImpl: AvailableGifticonRepositoryImpl
     ): AvailableGifticonRepository
 }
+
