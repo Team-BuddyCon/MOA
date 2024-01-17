@@ -25,11 +25,11 @@ object NetworkModule {
     @Singleton
     fun provideBuddyConClient(
         @HttpLoggingInterceptorQualifier httpLoggingInterceptor: Interceptor,
-        //@BuddyConInterceptorQualifier buddyConInterceptor: Interceptor
+        // @BuddyConInterceptorQualifier buddyConInterceptor: Interceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
-            //.addInterceptor(buddyConInterceptor)
+            // .addInterceptor(buddyConInterceptor)
             .build()
 
     @BuddyConRetrofit

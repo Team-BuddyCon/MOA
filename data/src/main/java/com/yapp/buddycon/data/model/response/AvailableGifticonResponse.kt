@@ -35,7 +35,7 @@ data class Body(
         fun mapToAvailableGifticonInfo() = AvailableGifticon.AvailableGifticonInfo(
             imageUrl = this.imageUrl,
             name = this.name,
-            expireDate = this.expireDate,
+            expireDate = this.expireDate
             // 가게, 메뉴 카테고리 정보 mapping 추가 예정
         )
     }
