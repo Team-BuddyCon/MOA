@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -60,7 +60,6 @@ fun GifticonInfoListModalSheet(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = Paddings.xlarge)
-            .padding(bottom = Paddings.xlarge)
     ) {
         Spacer(
             modifier = Modifier
@@ -95,8 +94,10 @@ fun GifticonInfoListModalSheet(
             verticalArrangement = Arrangement.spacedBy(Paddings.xlarge),
             horizontalArrangement = Arrangement.spacedBy(Paddings.medium)
         ) {
-            items(gifticonInfos) {
-                Column {
+            itemsIndexed(gifticonInfos) { index, item ->
+                Column(
+                    modifier = Modifier.padding(bottom = if (index == gifticonInfos.lastIndex) Paddings.xlarge else 0.dp)
+                ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -107,8 +108,8 @@ fun GifticonInfoListModalSheet(
                             shape = RoundedCornerShape(GifticonInfoListModalSheetItemRadius)
                         ) {
                             AsyncImage(
-                                model = it.imageUrl,
-                                contentDescription = it.name,
+                                model = item.imageUrl,
+                                contentDescription = item.name,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.FillBounds
                             )
@@ -119,24 +120,24 @@ fun GifticonInfoListModalSheet(
                                     top = Paddings.medium,
                                     start = Paddings.medium
                                 ),
-                            dateMillis = it.expirationTime
+                            dateMillis = item.expirationTime
                         )
                     }
                     Text(
-                        text = it.category.value,
+                        text = item.category.value,
                         modifier = Modifier.padding(top = Paddings.large),
                         style = BuddyConTheme.typography.body03.copy(color = Pink100),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
                     Text(
-                        text = it.name,
+                        text = item.name,
                         style = BuddyConTheme.typography.body04,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
                     Text(
-                        text = "~${it.toExpirationDate()}",
+                        text = "~${item.toExpirationDate()}",
                         modifier = Modifier.padding(top = Paddings.medium),
                         style = BuddyConTheme.typography.body03.copy(color = Grey60)
                     )
