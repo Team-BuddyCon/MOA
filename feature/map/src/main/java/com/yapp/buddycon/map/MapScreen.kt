@@ -36,8 +36,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.naver.maps.map.MapView
-import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.MapLifeCycleCallback
+import com.kakao.vectormap.MapView
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.button.CategoryButton
@@ -49,6 +51,8 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.domain.model.gifticon.GifticonModel
 import com.yapp.buddycon.domain.model.type.GifticonCategory
+import timber.log.Timber
+import java.lang.Exception
 import java.util.Calendar
 
 // TopAppBarHeight(52) + BottomNavigationBarHeight(72) + MapCategoryTabHeight(60)
@@ -169,7 +173,6 @@ private fun MapBottomSheet(
     }
 }
 
-@OptIn(ExperimentalNaverMapApi::class)
 @Composable
 private fun MapContent(
     modifier: Modifier = Modifier,
@@ -185,6 +188,23 @@ private fun MapContent(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
                 MapView(context)
+            },
+            update = {
+                it.start(
+                    object : MapLifeCycleCallback() {
+                        override fun onMapDestroy() {
+                        }
+
+                        override fun onMapError(error: Exception?) {
+                            Timber.e("onMapError ${error?.message}")
+                        }
+                    },
+                    object : KakaoMapReadyCallback() {
+                        override fun onMapReady(kakaoMap: KakaoMap) {
+                            Timber.d("onMapReady")
+                        }
+                    }
+                )
             }
         )
     }
