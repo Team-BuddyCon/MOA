@@ -20,8 +20,7 @@ data class Body(
     val number: Int,
     val numberOfElements: Int,
     val pageable: Pageable,
-    val size: Int,
-    val sort: SortX
+    val size: Int
 ) {
     data class Content(
         val expireDate: String,
@@ -41,18 +40,10 @@ data class Body(
     }
 
     data class Pageable(
-        val offset: Int,
         val pageNumber: Int,
         val pageSize: Int,
         val paged: Boolean,
-        val sort: SortX,
         val unpaged: Boolean
-    )
-
-    data class SortX(
-        val empty: Boolean,
-        val sorted: Boolean,
-        val unsorted: Boolean
     )
 
     fun mapToAvailableGifticon() = AvailableGifticon(
