@@ -32,12 +32,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.naver.maps.map.MapView
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
-import com.naver.maps.map.compose.MapUiSettings
-import com.naver.maps.map.compose.NaverMap
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.button.CategoryButton
@@ -181,13 +181,11 @@ private fun MapContent(
             category = uiState.category,
             onCategoryChange = { mapViewModel.onCategoryChange(it) }
         )
-        NaverMap(
+        AndroidView(
             modifier = Modifier.fillMaxSize(),
-            uiSettings = MapUiSettings(
-                isZoomControlEnabled = false,
-                isLogoClickEnabled = false,
-                isScaleBarEnabled = false
-            )
+            factory = { context ->
+                MapView(context)
+            }
         )
     }
 }
