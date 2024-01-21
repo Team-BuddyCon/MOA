@@ -12,24 +12,24 @@ class MapViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState = _uiState.asStateFlow()
-
-    fun changeCategory(category: GifticonCategory) {
+    fun onCategoryChange(category: GifticonCategory) {
         _uiState.value = _uiState.value.copy(category = category)
     }
 
-    fun changeSheetValue(sheetValue: BottomSheetValue) {
+    fun onSheetValueChange(sheetValue: BottomSheetValue) {
         _uiState.value = _uiState.value.copy(
             sheetValue = sheetValue,
             heightDp = when (sheetValue) {
                 BottomSheetValue.Collapsed -> BottomSheetValue.Collapsed.sheetPeekHeightDp
                 BottomSheetValue.PartiallyExpanded -> BottomSheetValue.PartiallyExpanded.sheetPeekHeightDp
                 BottomSheetValue.Expanded -> BottomSheetValue.Expanded.sheetPeekHeightDp
-                is BottomSheetValue.Moving -> uiState.value.heightDp
             }
         )
     }
 
-    fun changeHeightDp(heightDp: Float) {
-        _uiState.value = _uiState.value.copy(heightDp = heightDp)
+    fun changeBottomSheetOffset(offsetY: Float) {
+        _uiState.value = _uiState.value.copy(
+            heightDp = _uiState.value.heightDp - offsetY
+        )
     }
 }

@@ -4,19 +4,12 @@ import com.yapp.buddycon.domain.model.type.GifticonCategory
 
 data class MapUiState(
     val category: GifticonCategory = GifticonCategory.TOTAL,
-    val sheetValue: BottomSheetValue = BottomSheetValue.PartiallyExpanded,
-    val heightDp: Float = 36f
+    val sheetValue: BottomSheetValue = BottomSheetValue.Collapsed,
+    val heightDp: Float = BottomSheetValue.Collapsed.sheetPeekHeightDp
 )
 
-sealed class BottomSheetValue(open val sheetPeekHeightDp: Float) {
-
-    object Collapsed : BottomSheetValue(36f)
-
-    object PartiallyExpanded : BottomSheetValue(111f)
-
-    object Expanded : BottomSheetValue(540f)
-
-    data class Moving(
-        override val sheetPeekHeightDp: Float
-    ) : BottomSheetValue(sheetPeekHeightDp)
+enum class BottomSheetValue(val sheetPeekHeightDp: Float) {
+    Collapsed(36f),
+    PartiallyExpanded(111f),
+    Expanded(540f)
 }
