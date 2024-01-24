@@ -11,6 +11,8 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
+        maven { url 'https://naver.jfrog.io/artifactory/maven/' }
+        maven { url 'https://devrepo.kakao.com/nexus/repository/kakaomap-releases/' }
     }
 }
 rootProject.name = "BuddyCon"
@@ -25,3 +27,4 @@ include ':feature:mypage'
 include ':feature:startup'
 include ':core:local'
 include ':core:network'
+include ':core:utility'

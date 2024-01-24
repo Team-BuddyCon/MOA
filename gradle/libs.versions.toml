@@ -33,6 +33,10 @@ coroutine-core = "1.6.4"
 
 ## kakao
 kakao = "2.18.0"
+kakao-map = "2.6.0"
+
+## naver-map
+naver-map-compose = "1.3.3"
 
 ## test
 junit = "4.13.2"
@@ -92,6 +96,10 @@ coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-a
 
 ## kakao
 kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
+kakao-map = { group = "com.kakao.maps.open", name = "android", version.ref = "kakao-map" }
+
+## naver-map
+naver-map-compose = { group = "io.github.fornewid", name = "naver-map-compose", version.ref = "naver-map-compose" }
 
 ## test
 junit = { group = "junit", name = "junit", version.ref = "junit" }

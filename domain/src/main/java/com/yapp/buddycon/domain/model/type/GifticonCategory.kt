@@ -1,6 +1,7 @@
 package com.yapp.buddycon.domain.model.type
 
 enum class GifticonCategory(val value: String) {
+    TOTAL("전체"),
     STARBUCKS("스타벅스"),
     TWOSOME("투썸플레이스"),
     MCDONALD("맥도날드"),
@@ -8,6 +9,5 @@ enum class GifticonCategory(val value: String) {
     GONGCHA("공차"),
     CU("CU"),
     GS25("GS25"),
-    ETC("기타"),
-    TOTAL("전체")
+    ETC("기타")
 }

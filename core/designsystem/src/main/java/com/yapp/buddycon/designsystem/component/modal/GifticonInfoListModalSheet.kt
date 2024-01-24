@@ -1,27 +1,24 @@
 package com.yapp.buddycon.designsystem.component.modal
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +35,7 @@ import coil.compose.AsyncImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.tag.DDayTag
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
+import com.yapp.buddycon.designsystem.theme.Grey40
 import com.yapp.buddycon.designsystem.theme.Grey60
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink100
@@ -53,59 +51,53 @@ private val GifticonInfoListModalSheetItemRadius = 8.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GifticonInfoListModalSheet(
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    modifier: Modifier = Modifier,
     countOfUsableGifticon: Int,
     countOfImminetGifticon: Int,
-    gifticonInfos: List<GifticonModel> = listOf(),
-    onDismiss: () -> Unit
+    gifticonInfos: List<GifticonModel> = listOf()
 ) {
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        modifier = Modifier
+    Column(
+        modifier = modifier
             .fillMaxWidth()
-            .height(GifticonInfoListModalSheetHeight),
-        sheetState = sheetState,
-        shape = RoundedCornerShape(
-            topStart = GifticonInfoListModalSheetRadius,
-            topEnd = GifticonInfoListModalSheetRadius
-        ),
-        containerColor = BuddyConTheme.colors.modalColor
+            .padding(horizontal = Paddings.xlarge)
     ) {
+        Spacer(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(vertical = Paddings.xlarge)
+                .size(32.dp, 4.dp)
+                .background(Grey40, RoundedCornerShape(100.dp))
+        )
+        Text(
+            text = stringResource(R.string.modal_sheet_gifticon),
+            style = BuddyConTheme.typography.subTitle
+        )
+        Row(verticalAlignment = Alignment.Bottom) {
+            Text(
+                text = "${countOfUsableGifticon}개",
+                style = BuddyConTheme.typography.title01
+            )
+            Text(
+                text = String.format(
+                    stringResource(R.string.modal_sheet_imminet_gifticon),
+                    countOfImminetGifticon
+                ),
+                modifier = Modifier.padding(start = Paddings.medium, bottom = Paddings.small),
+                style = BuddyConTheme.typography.body04.copy(color = Pink100)
+            )
+        }
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = Paddings.xlarge,
-                end = Paddings.xlarge,
-                bottom = Paddings.xlarge
-            ),
+            modifier = Modifier
+                .padding(top = Paddings.xlarge)
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Paddings.xlarge),
             horizontalArrangement = Arrangement.spacedBy(Paddings.medium)
         ) {
-            item(span = { GridItemSpan(2) }) {
-                Column {
-                    Text(
-                        text = stringResource(R.string.modal_sheet_gifticon),
-                        style = BuddyConTheme.typography.subTitle
-                    )
-                    Row(verticalAlignment = Alignment.Bottom) {
-                        Text(
-                            text = "${countOfUsableGifticon}개",
-                            style = BuddyConTheme.typography.title01
-                        )
-                        Text(
-                            text = String.format(
-                                stringResource(R.string.modal_sheet_imminet_gifticon),
-                                countOfImminetGifticon
-                            ),
-                            modifier = Modifier.padding(start = Paddings.medium, bottom = Paddings.small),
-                            style = BuddyConTheme.typography.body04.copy(color = Pink100)
-                        )
-                    }
-                }
-            }
-            items(gifticonInfos) {
-                Column {
+            itemsIndexed(gifticonInfos) { index, item ->
+                Column(
+                    modifier = Modifier.padding(bottom = if (index == gifticonInfos.lastIndex) Paddings.xlarge else 0.dp)
+                ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -116,8 +108,8 @@ fun GifticonInfoListModalSheet(
                             shape = RoundedCornerShape(GifticonInfoListModalSheetItemRadius)
                         ) {
                             AsyncImage(
-                                model = it.imageUrl,
-                                contentDescription = it.name,
+                                model = item.imageUrl,
+                                contentDescription = item.name,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.FillBounds
                             )
@@ -128,24 +120,24 @@ fun GifticonInfoListModalSheet(
                                     top = Paddings.medium,
                                     start = Paddings.medium
                                 ),
-                            dateMillis = it.expirationTime
+                            dateMillis = item.expirationTime
                         )
                     }
                     Text(
-                        text = it.category.value,
+                        text = item.category.value,
                         modifier = Modifier.padding(top = Paddings.large),
                         style = BuddyConTheme.typography.body03.copy(color = Pink100),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
                     Text(
-                        text = it.name,
+                        text = item.name,
                         style = BuddyConTheme.typography.body04,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
                     Text(
-                        text = "~${it.toExpirationDate()}",
+                        text = "~${item.toExpirationDate()}",
                         modifier = Modifier.padding(top = Paddings.medium),
                         style = BuddyConTheme.typography.body03.copy(color = Grey60)
                     )
@@ -156,7 +148,7 @@ fun GifticonInfoListModalSheet(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
+@Preview(showBackground = true, backgroundColor = 255)
 @Composable
 private fun GifticonInfoListModalSheetPreview() {
     var isShowModal by remember { mutableStateOf(true) }
@@ -168,20 +160,17 @@ private fun GifticonInfoListModalSheetPreview() {
     }.time.time
 
     BuddyConTheme {
-        if (isShowModal) {
-            GifticonInfoListModalSheet(
-                countOfUsableGifticon = 4,
-                countOfImminetGifticon = 1,
-                gifticonInfos = List(10) {
-                    GifticonModel(
-                        imageUrl = "https://github.com/Team-BuddyCon/ANDROID_V2/assets/34837583/5ab80674-4ffb-4c91-ab10-3743d8c87e58",
-                        category = GifticonCategory.STARBUCKS,
-                        name = "빙그레)바나나맛우유240",
-                        expirationTime = (today + 1000 * 60 * 60 * 24L * (-1..366).random())
-                    )
-                },
-                onDismiss = { isShowModal = false }
-            )
-        }
+        GifticonInfoListModalSheet(
+            countOfUsableGifticon = 4,
+            countOfImminetGifticon = 1,
+            gifticonInfos = List(10) {
+                GifticonModel(
+                    imageUrl = "https://github.com/Team-BuddyCon/ANDROID_V2/assets/34837583/5ab80674-4ffb-4c91-ab10-3743d8c87e58",
+                    category = GifticonCategory.STARBUCKS,
+                    name = "빙그레)바나나맛우유240",
+                    expirationTime = (today + 1000 * 60 * 60 * 24L * (-1..366).random())
+                )
+            }
+        )
     }
 }
