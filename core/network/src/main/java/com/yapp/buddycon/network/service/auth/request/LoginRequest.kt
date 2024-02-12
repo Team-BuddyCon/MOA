@@ -1,6 +1,6 @@
 package com.yapp.buddycon.network.service.auth.request
 
-data class AuthRequest(
+data class LoginRequest(
     val oauthAccessToken: String,
     val nickname: String,
     val email: String,

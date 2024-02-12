@@ -52,6 +52,13 @@ fun BuddyConNavHost(
                                 inclusive = true
                             }
                         }
+                    },
+                    onNavigateToGifticon = {
+                        navHostController.navigate(GifticonDestination.Gifticon.route) {
+                            popUpTo(StartUpDestination.Welcome.route) {
+                                inclusive = true
+                            }
+                        }
                     }
                 )
             }

@@ -1,19 +1,19 @@
 package com.yapp.buddycon.network.service.auth.response
 
-import com.yapp.buddycon.domain.model.auth.AuthModel
+import com.yapp.buddycon.domain.model.auth.LoginModel
 
-data class AuthResponse(
+data class LoginResponse(
     val status: Int,
     val message: String,
-    val body: AuthResponseBody
+    val body: LoginResponseBody
 )
 
-data class AuthResponseBody(
+data class LoginResponseBody(
     val accessToken: String,
     val refreshToken: String,
     val accessTokenExpiresIn: Long
 ) {
-    fun toModel() = AuthModel(
+    fun toModel() = LoginModel(
         accessToken = accessToken,
         refreshToken = refreshToken,
         accessTokenExpiresIn = accessTokenExpiresIn

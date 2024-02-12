@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +30,7 @@ import com.yapp.buddycon.designsystem.theme.Paddings
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import timber.log.Timber
+import java.util.Calendar
 import kotlin.coroutines.resume
 
 private val LoginBannerDescription = "LoginBanner"
@@ -42,6 +43,12 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        loginViewModel.loginResult.collect { loginResult ->
+            if (loginResult) onNavigateToSignUp()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -75,9 +82,16 @@ fun LoginScreen(
                         user?.let {
                             it.kakaoAccount?.profile?.nickname?.let { nickname ->
                                 loginViewModel.saveNickname(nickname)
+                                loginViewModel.fetchLogin(
+                                    oauthAccessToken = token.accessToken,
+                                    nickname = nickname,
+                                    age = it.kakaoAccount?.birthyear?.let {
+                                        (Calendar.getInstance().get(Calendar.YEAR) - it.toInt()).toString()
+                                    },
+                                    email = it.kakaoAccount?.email,
+                                    gender = it.kakaoAccount?.gender?.name
+                                )
                             }
-                            Timber.d("kakao token: $token")
-                            onNavigateToSignUp()
                         }
                     }
                 }
