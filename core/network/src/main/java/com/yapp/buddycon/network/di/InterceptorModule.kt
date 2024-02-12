@@ -1,7 +1,7 @@
-package com.yapp.buddycon.data.di
+package com.yapp.buddycon.network.di
 
-import com.yapp.buddycon.data.BuildConfig
-import com.yapp.buddycon.data.di.qualifiers.HttpLoggingInterceptorQualifier
+import com.yapp.buddycon.network.BuildConfig
+import com.yapp.buddycon.network.di.qualifiers.HttpLoggingInterceptorQualifier
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

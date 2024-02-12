@@ -1,8 +1,8 @@
-package com.yapp.buddycon.data.repository
+package com.yapp.buddycon.data.repository.remote
 
 import com.yapp.buddycon.domain.repository.AuthRepository
 import com.yapp.buddycon.network.service.auth.AuthService
-import com.yapp.buddycon.network.service.auth.request.LoginRequest
+import com.yapp.buddycon.network.service.auth.request.AuthRequest
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -13,20 +13,20 @@ class AuthRepositoryImpl @Inject constructor(
     override fun fetchLogin(
         oauthAccessToken: String,
         nickname: String,
-        email: String?,
-        gender: String?,
-        age: String?
+        email: String,
+        gender: String,
+        age: String
     ) = flow {
         emit(
             authService.fetchLogin(
-                loginRequest = LoginRequest(
+                authRequest = AuthRequest(
                     oauthAccessToken = oauthAccessToken,
                     nickname = nickname,
                     email = email,
                     gender = gender,
                     age = age
                 )
-            )
+            ).body.toModel()
         )
     }
 }

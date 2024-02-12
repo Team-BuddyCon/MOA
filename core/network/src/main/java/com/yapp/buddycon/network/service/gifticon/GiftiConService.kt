@@ -1,6 +1,6 @@
-package com.yapp.buddycon.data.api
+package com.yapp.buddycon.network.service.gifticon
 
-import com.yapp.buddycon.data.model.response.AvailableGifticonResponse
+import com.yapp.buddycon.network.service.gifticon.response.AvailableGifticonResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header

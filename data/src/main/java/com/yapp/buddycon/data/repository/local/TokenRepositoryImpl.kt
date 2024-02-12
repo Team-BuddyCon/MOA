@@ -1,4 +1,4 @@
-package com.yapp.buddycon.data.repository
+package com.yapp.buddycon.data.repository.local
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

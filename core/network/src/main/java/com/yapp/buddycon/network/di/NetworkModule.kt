@@ -1,11 +1,14 @@
 package com.yapp.buddycon.network.di
 
+import com.yapp.buddycon.network.di.qualifiers.BuddyConClient
+import com.yapp.buddycon.network.di.qualifiers.BuddyConRetrofit
+import com.yapp.buddycon.network.di.qualifiers.HttpLoggingInterceptorQualifier
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -13,26 +16,29 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BUDDYCON_BASE_URL = "http://3.37.88.131:8080/"
+    private const val BUDDYCON_BASE_URL = "http://43.202.14.1:8080/"
 
+    @BuddyConClient
     @Provides
     @Singleton
-    fun provideRetrofit(
-        okHttpClient: OkHttpClient
+    fun provideBuddyConClient(
+        @HttpLoggingInterceptorQualifier httpLoggingInterceptor: Interceptor,
+        // @BuddyConInterceptorQualifier buddyConInterceptor: Interceptor
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            // .addInterceptor(buddyConInterceptor)
+            .build()
+
+    @BuddyConRetrofit
+    @Provides
+    @Singleton
+    fun provideBuddyConRetrofit(
+        @BuddyConClient okHttpClient: OkHttpClient
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl(BUDDYCON_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
-
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(): OkHttpClient =
-        OkHttpClient.Builder()
-            .addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }
-            ).build()
 }

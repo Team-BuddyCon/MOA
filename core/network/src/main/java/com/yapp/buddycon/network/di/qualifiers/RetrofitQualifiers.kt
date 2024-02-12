@@ -1,11 +1,11 @@
-package com.yapp.buddycon.data.di.qualifiers
+package com.yapp.buddycon.network.di.qualifiers
 
 import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class LoginClient
+annotation class LoginRetrofit
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class BuddyConClient
+annotation class BuddyConRetrofit

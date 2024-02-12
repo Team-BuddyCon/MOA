@@ -29,6 +29,7 @@ import com.yapp.buddycon.designsystem.theme.Paddings
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import timber.log.Timber
 import kotlin.coroutines.resume
 
 private val LoginBannerDescription = "LoginBanner"
@@ -75,6 +76,7 @@ fun LoginScreen(
                             it.kakaoAccount?.profile?.nickname?.let { nickname ->
                                 loginViewModel.saveNickname(nickname)
                             }
+                            Timber.d("kakao token: $token")
                             onNavigateToSignUp()
                         }
                     }

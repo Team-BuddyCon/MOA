@@ -1,4 +1,4 @@
-package com.yapp.buddycon.data.di.qualifiers
+package com.yapp.buddycon.network.di.qualifiers
 
 import javax.inject.Qualifier
 
