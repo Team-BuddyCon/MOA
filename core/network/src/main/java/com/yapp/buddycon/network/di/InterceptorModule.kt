@@ -1,7 +1,11 @@
 package com.yapp.buddycon.network.di
 
+import com.yapp.buddycon.domain.repository.AuthRepository
+import com.yapp.buddycon.domain.repository.TokenRepository
 import com.yapp.buddycon.network.BuildConfig
+import com.yapp.buddycon.network.di.qualifiers.BuddyConInterceptorQualifier
 import com.yapp.buddycon.network.di.qualifiers.HttpLoggingInterceptorQualifier
+import com.yapp.buddycon.network.interceptor.BuddyConInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,4 +24,13 @@ object InterceptorModule {
         HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
         }
+
+    @BuddyConInterceptorQualifier
+    @Provides
+    @Singleton
+    fun provideBuddyConInterceptor(
+        authRepository: AuthRepository,
+        tokenRepository: TokenRepository
+    ): Interceptor =
+        BuddyConInterceptor(authRepository, tokenRepository)
 }

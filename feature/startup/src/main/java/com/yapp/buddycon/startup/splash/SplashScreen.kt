@@ -29,7 +29,7 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
         splashViewModel.loginToken.collect {
-            if (System.currentTimeMillis() <= it.accessTokenExpiresIn) {
+            if (it.accessTokenExpiresIn <= System.currentTimeMillis()) {
                 splashViewModel.fetchReissue()
             }
         }

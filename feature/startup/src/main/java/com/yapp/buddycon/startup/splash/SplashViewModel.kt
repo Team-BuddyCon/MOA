@@ -16,8 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val tokenRepository: TokenRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
     private val _isFirstInstallation = MutableStateFlow(false)
@@ -62,7 +62,11 @@ class SplashViewModel @Inject constructor(
         authRepository.fetchReissue(
             accessToken = _loginToken.value.accessToken,
             refreshToken = _loginToken.value.refreshToken
-        ).onEach { _loginToken.value = it }
-            .launchIn(viewModelScope)
+        ).onEach {
+            _loginToken.value = it
+            tokenRepository.saveAccessToken(it.accessToken)
+            tokenRepository.saveRefreshToken(it.refreshToken)
+            tokenRepository.saveAccessTokenExpiresIn(it.accessTokenExpiresIn)
+        }.launchIn(viewModelScope)
     }
 }

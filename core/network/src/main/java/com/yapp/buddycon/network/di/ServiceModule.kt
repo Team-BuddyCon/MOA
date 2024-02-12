@@ -1,6 +1,7 @@
 package com.yapp.buddycon.network.di
 
 import com.yapp.buddycon.network.di.qualifiers.BuddyConRetrofit
+import com.yapp.buddycon.network.di.qualifiers.LoginRetrofit
 import com.yapp.buddycon.network.service.auth.AuthService
 import com.yapp.buddycon.network.service.gifticon.GiftiConService
 import dagger.Module
@@ -18,7 +19,7 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideAuthService(
-        @BuddyConRetrofit retrofit: Retrofit
+        @LoginRetrofit retrofit: Retrofit
     ): AuthService =
         retrofit.create()
 
