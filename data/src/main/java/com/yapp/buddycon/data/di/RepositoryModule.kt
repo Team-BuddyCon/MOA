@@ -1,7 +1,7 @@
 package com.yapp.buddycon.data.di
 
-import com.yapp.buddycon.data.repository.AuthRepositoryImpl
-import com.yapp.buddycon.data.repository.TokenRepositoryImpl
+import com.yapp.buddycon.data.repository.remote.AuthRepositoryImpl
+import com.yapp.buddycon.data.repository.local.TokenRepositoryImpl
 import com.yapp.buddycon.data.repository.remote.AvailableGifticonRepositoryImpl
 import com.yapp.buddycon.domain.repository.AuthRepository
 import com.yapp.buddycon.domain.repository.AvailableGifticonRepository

@@ -1,4 +1,4 @@
-package com.yapp.buddycon.data.model.response
+package com.yapp.buddycon.network.service.gifticon.response
 
 import com.google.gson.annotations.SerializedName
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon

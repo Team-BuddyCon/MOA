@@ -1,6 +1,6 @@
 package com.yapp.buddycon.data.repository.remote
 
-import com.yapp.buddycon.data.api.GiftiConService
+import com.yapp.buddycon.network.service.gifticon.GiftiConService
 import com.yapp.buddycon.domain.repository.AvailableGifticonRepository
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
