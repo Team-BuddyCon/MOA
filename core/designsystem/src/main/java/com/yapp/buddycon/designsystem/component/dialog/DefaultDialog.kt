@@ -2,6 +2,8 @@ package com.yapp.buddycon.designsystem.component.dialog
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 
 @Composable
@@ -10,23 +12,28 @@ fun DefaultDialog(
     dismissText: String,
     confirmText: String,
     dialogContent: String? = null,
-    onDismiss: (() -> Unit)? = null,
-    onConfirm: (() -> Unit)? = null
+    onConfirm: (() -> Unit)? = null,
+    onDismissRequest: (() -> Unit) = {}
 ) {
-    BaseDialog(
-        dialogTitle = dialogTitle,
-        dialogContent = dialogContent,
-        dialogButtons = listOf(
-            DialogButtons.Dark(
-                title = dismissText,
-                action = onDismiss
-            ),
-            DialogButtons.Light(
-                title = confirmText,
-                action = onConfirm
+    Dialog(
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        onDismissRequest = onDismissRequest
+    ) {
+        BaseDialog(
+            dialogTitle = dialogTitle,
+            dialogContent = dialogContent,
+            dialogButtons = listOf(
+                DialogButtons.Dark(
+                    title = dismissText,
+                    action = onDismissRequest
+                ),
+                DialogButtons.Light(
+                    title = confirmText,
+                    action = onConfirm
+                )
             )
         )
-    )
+    }
 }
 
 @Preview

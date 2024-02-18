@@ -64,4 +64,7 @@
     <string name="map">지도</string>
     <string name="map_location_permission">위치 정보를 허용했어요!</string>
 
+    <!--    Error Popup-->
+    <string name="gifticon_register_error">쿠폰을 등록하지 못했어요</string>
+    <string name="gifticon_register_error_reason">바코드가 잘리거나 손상되지 않았는지\n확인 후에 다시 시도해 주세요.</string>
 </resources>

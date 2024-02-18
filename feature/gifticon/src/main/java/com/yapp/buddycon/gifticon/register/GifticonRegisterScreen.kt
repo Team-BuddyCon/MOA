@@ -60,11 +60,13 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey30
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
+import com.yapp.buddycon.gifticon.GifticonViewModel
 import timber.log.Timber
 import java.io.IOException
 
 @Composable
 fun GifticonRegisterScreen(
+    gifticonViewModel: GifticonViewModel = hiltViewModel(),
     onBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -82,9 +84,13 @@ fun GifticonRegisterScreen(
                             imageUri = uri
                         } else {
                             Timber.d("There is not barcode in image")
+                            gifticonViewModel.showGifticonRegisterError(true)
+                            onBack()
                         }
                     }.addOnFailureListener {
                         Timber.e("barcode scanner detection error: ${it.message}")
+                        gifticonViewModel.showGifticonRegisterError(true)
+                        onBack()
                     }
             }
         } catch (e: IOException) {

@@ -3,6 +3,8 @@ package com.yapp.buddycon.designsystem.component.dialog
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 
@@ -10,18 +12,24 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 fun ConfirmDialog(
     dialogTitle: String,
     dialogContent: String? = null,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    onDismissRequest: () -> Unit = {}
 ) {
-    BaseDialog(
-        dialogTitle = dialogTitle,
-        dialogContent = dialogContent,
-        dialogButtons = listOf(
-            DialogButtons.Light(
-                title = stringResource(id = R.string.confirm),
-                action = onClick
+    Dialog(
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        onDismissRequest = onDismissRequest
+    ) {
+        BaseDialog(
+            dialogTitle = dialogTitle,
+            dialogContent = dialogContent,
+            dialogButtons = listOf(
+                DialogButtons.Light(
+                    title = stringResource(id = R.string.confirm),
+                    action = onClick
+                )
             )
         )
-    )
+    }
 }
 
 @Preview
