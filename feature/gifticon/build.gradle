@@ -43,6 +43,7 @@ dependencies {
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler
+    implementation libs.accompanist.systemuicontroller
 
     implementation libs.coil.compose
     implementation libs.androidx.core.ktx

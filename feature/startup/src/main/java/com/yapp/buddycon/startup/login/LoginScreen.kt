@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -49,6 +50,9 @@ fun LoginScreen(
             if (loginResult) onNavigateToSignUp()
         }
     }
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(BuddyConTheme.colors.background)
 
     Column(
         modifier = Modifier

@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
@@ -65,6 +66,10 @@ fun OnBoardingScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState { items.size }
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(BuddyConTheme.colors.background)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
