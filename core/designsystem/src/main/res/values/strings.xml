@@ -20,8 +20,8 @@
 
     <string name="startup_onboarding_gifticon_title">기프티콘을 한곳에서 관리해요</string>
     <string name="startup_onboarding_gifticon_description">흩어져 있는 기프티콘을 한곳에서 확인하고\n만료 전 알림으로 유효기간을 관리해요</string>
-    <string name="startup_onboarding_map_title">지도 어쩌구 문장</string>
-    <string name="startup_onboarding_map_description">근처에서 사용 가능한 매장을 확인하고\n기프티콘을 사용해요</string>
+    <string name="startup_onboarding_map_title">사용처를 한눈에 확인</string>
+    <string name="startup_onboarding_map_description">지도를 통해 근처에서\n기프티콘 사용 가능한 매장을 확인해요</string>
     <string name="startup_onboarding_pager_skip">건너뛰기</string>
     <string name="startup_onboarding_pager_next">다음</string>
     <string name="startup_onboarding_start">시작하기</string>
@@ -46,6 +46,7 @@
     <string name="complete">완료!</string>
     <string name="welcome_greeting_format">버디콘의 소중한 회원이 되신 %s님,\n만나서 반가워요!</string>
     <string name="start">시작하기</string>
+    <string name="login_banner_description">선물 모아, 마음모아\n모으면 더 배가 되는 선물 받는 기쁨</string>
 
     <string name="gifticon">기프티콘</string>
     <string name="gifticon_register">기프티콘 등록하기</string>
