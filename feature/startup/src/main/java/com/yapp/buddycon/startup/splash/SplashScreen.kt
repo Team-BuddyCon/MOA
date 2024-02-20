@@ -33,16 +33,17 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
         Timber.d("SplashScreen Token Info : ${splashViewModel.loginToken.value}, currentTime : ${System.currentTimeMillis()}")
-        if (splashViewModel.isFirstInstallation.value) {
-            splashViewModel.checkIsFirstInstallation()
-            onNavigateToOnBoarding()
-        } else {
-            if (System.currentTimeMillis() <= splashViewModel.loginToken.value.accessTokenExpiresIn) {
-                onNavigateToGifticon()
-            } else {
-                onNavigateToLogin()
-            }
-        }
+        onNavigateToLogin()
+//        if (splashViewModel.isFirstInstallation.value) {
+//            splashViewModel.checkIsFirstInstallation()
+//            onNavigateToOnBoarding()
+//        } else {
+//            if (System.currentTimeMillis() <= splashViewModel.loginToken.value.accessTokenExpiresIn) {
+//                onNavigateToGifticon()
+//            } else {
+//                onNavigateToLogin()
+//            }
+//        }
     }
 
     Spacer(
