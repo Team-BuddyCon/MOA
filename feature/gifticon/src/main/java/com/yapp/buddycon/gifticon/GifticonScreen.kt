@@ -39,9 +39,6 @@ fun GifticonScreeen(
     systemUiController.setStatusBarColor(BuddyConTheme.colors.background)
 
     Scaffold(
-        topBar = {
-            TopAppBarWithNotification(stringResource(R.string.gifticon))
-        },
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = { FloatingActionButton(onNavigateToRegister) }
     ) { paddingValues ->
