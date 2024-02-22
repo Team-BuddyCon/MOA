@@ -131,13 +131,7 @@ fun GifticonRegisterScreen(
                     modifier = Modifier.weight(1f),
                     containerColor = Grey30,
                     contentColor = Grey70,
-                    onClick = {
-                        if (imageUri == null) {
-                            onBack()
-                        } else {
-                            imageUri = null
-                        }
-                    }
+                    onClick = onBack
                 )
                 BuddyConButton(
                     text = stringResource(R.string.gifticon_save),
