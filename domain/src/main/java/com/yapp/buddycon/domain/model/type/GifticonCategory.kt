@@ -1,5 +1,7 @@
 package com.yapp.buddycon.domain.model.type
 
+import java.lang.IllegalStateException
+
 enum class GifticonCategory(val value: String) {
     TOTAL("전체"),
     STARBUCKS("스타벅스"),
@@ -14,3 +16,18 @@ enum class GifticonCategory(val value: String) {
     CU("CU"),
     ETC("기타")
 }
+
+fun convertGifticonCategory(name: String) =
+    when (name) {
+        GifticonCategory.STARBUCKS.value -> GifticonCategory.STARBUCKS
+        GifticonCategory.TWOSOME_PLACE.value -> GifticonCategory.TWOSOME_PLACE
+        GifticonCategory.ANGELINUS.value -> GifticonCategory.ANGELINUS
+        GifticonCategory.MEGA_COFFEE.value -> GifticonCategory.MEGA_COFFEE
+        GifticonCategory.COFFEE_BEAN.value -> GifticonCategory.COFFEE_BEAN
+        GifticonCategory.GONG_CHA.value -> GifticonCategory.GONG_CHA
+        GifticonCategory.BASKINROBBINS.value -> GifticonCategory.BASKINROBBINS
+        GifticonCategory.MCDONALD.value -> GifticonCategory.MCDONALD
+        GifticonCategory.GS25.value -> GifticonCategory.GS25
+        GifticonCategory.CU.value -> GifticonCategory.CU
+        else -> throw IllegalStateException()
+    }

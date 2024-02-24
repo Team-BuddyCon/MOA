@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
-import timber.log.Timber
 
 private const val SplashIconDescription = "SplashIcon"
 
@@ -32,7 +31,6 @@ fun SplashScreen(
     }
 
     LaunchedEffect(Unit) {
-        Timber.d("SplashScreen Token Info : ${splashViewModel.loginToken.value}, currentTime : ${System.currentTimeMillis()}")
         if (splashViewModel.isFirstInstallation.value) {
             splashViewModel.checkIsFirstInstallation()
             onNavigateToOnBoarding()

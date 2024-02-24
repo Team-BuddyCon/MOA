@@ -63,10 +63,13 @@ import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.gifticon.GifticonViewModel
 import timber.log.Timber
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun GifticonRegisterScreen(
     gifticonViewModel: GifticonViewModel = hiltViewModel(),
+    gifticonRegisterViewModel: GifticonRegisterViewModel = hiltViewModel(),
     onBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -98,9 +101,23 @@ fun GifticonRegisterScreen(
         }
     }
 
+    val uiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(imageUri) {
         if (imageUri == null) {
             galleryLauncher.launch("image/*")
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        gifticonRegisterViewModel.isCompleted.collect { isCompleted ->
+            if (isCompleted) {
+                showBuddyConSnackBar(
+                    message = context.getString(R.string.gifticon_register_success),
+                    scope = coroutineScope,
+                    snackbarHostState = snackbarHostState
+                )
+            }
         }
     }
 
@@ -140,7 +157,11 @@ fun GifticonRegisterScreen(
                         .weight(1f),
                     containerColor = BuddyConTheme.colors.primary,
                     contentColor = BuddyConTheme.colors.onPrimary,
-                    onClick = { }
+                    onClick = {
+                        gifticonRegisterViewModel.registerNewGifticon(
+                            imagePath = imageUri?.toString() ?: ""
+                        )
+                    }
                 )
             }
         },
@@ -151,7 +172,8 @@ fun GifticonRegisterScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
                 .background(BuddyConTheme.colors.background),
-            imageUri = imageUri
+            imageUri = imageUri,
+            uiState = uiState
         )
     }
 }
@@ -161,13 +183,13 @@ fun GifticonRegisterScreen(
 private fun GifticonRegisterContent(
     modifier: Modifier = Modifier,
     gifticonRegisterViewModel: GifticonRegisterViewModel = hiltViewModel(),
-    imageUri: Uri? = null
+    imageUri: Uri? = null,
+    uiState: GifticonRegisterUiState
 ) {
     val scrollState = rememberScrollState()
     var isImageExpanded by remember { mutableStateOf(false) }
     var isShowCalendarModal by remember { mutableStateOf(false) }
     var isShowCategoryModal by remember { mutableStateOf(false) }
-    val uiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
 
     if (isShowCalendarModal) {
         CalendarModalSheet(
@@ -233,14 +255,18 @@ private fun GifticonRegisterContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_expiration_date),
             placeholder = stringResource(R.string.gifticon_expiration_date_placeholder),
-            value = uiState.expiration_date,
+            value = if (uiState.expireDate == 0L) {
+                ""
+            } else {
+                SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(uiState.expireDate)
+            },
             action = { isShowCalendarModal = true }
         )
         EssentialInputSelectUsage(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_usage),
             placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = uiState.usage,
+            value = uiState.store,
             action = { isShowCategoryModal = true }
         )
         NoEssentialInputText(
@@ -261,7 +287,7 @@ private fun FullGifticonImage(
 ) {
     if (isExpanded) {
         Dialog(
-            onDismissRequest = { onExpandChanged(isExpanded.not()) },
+            onDismissRequest = { onExpandChanged(false) },
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
             Column(
@@ -275,7 +301,7 @@ private fun FullGifticonImage(
                     modifier = Modifier
                         .align(Alignment.End)
                         .size(24.dp)
-                        .clickable { onExpandChanged(isExpanded.not()) },
+                        .clickable { onExpandChanged(false) },
                     tint = Color.Unspecified
                 )
                 AsyncImage(
