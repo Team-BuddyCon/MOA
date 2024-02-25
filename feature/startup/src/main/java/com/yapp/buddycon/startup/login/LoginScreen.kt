@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -17,8 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -50,25 +54,28 @@ fun LoginScreen(
         }
     }
 
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(BuddyConTheme.colors.background)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(BuddyConTheme.colors.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.weight(118f))
+        Spacer(Modifier.weight(279f))
         Image(
-            painter = painterResource(R.drawable.ic_login),
+            painter = painterResource(R.drawable.ic_full_logo),
             contentDescription = LoginBannerDescription,
-            modifier = Modifier.size(290.dp, 300.dp),
+            modifier = Modifier.size(97.dp),
             contentScale = ContentScale.FillBounds
         )
-        Spacer(Modifier.padding(top = Paddings.extra))
-        Image(
-            painter = painterResource(R.drawable.ic_logo),
-            contentDescription = BuddyConLogoDescription
+        Text(
+            text = stringResource(R.string.login_banner_description),
+            style = BuddyConTheme.typography.body03,
+            textAlign = TextAlign.Center
         )
-        Spacer(Modifier.weight(146f))
+        Spacer(Modifier.weight(238f))
         LoginButton(
             modifier = Modifier
                 .padding(bottom = Paddings.xlarge)

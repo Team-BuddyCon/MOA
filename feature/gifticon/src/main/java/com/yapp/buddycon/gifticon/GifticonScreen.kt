@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.button.FloatingActionButton
@@ -33,6 +34,9 @@ fun GifticonScreeen(
             onDismissRequest = { gifticonViewModel.showGifticonRegisterError(false) }
         )
     }
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(BuddyConTheme.colors.background)
 
     Scaffold(
         topBar = {

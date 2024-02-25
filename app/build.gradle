@@ -60,6 +60,7 @@ dependencies {
 
     // androidx
     implementation libs.androidx.core.ktx
+    implementation libs.androidx.splashscreen
 
     // compose
     implementation libs.androidx.activity.compose
