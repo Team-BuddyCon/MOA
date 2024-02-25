@@ -35,7 +35,9 @@ android {
 dependencies {
     implementation project(":core:local")
     implementation project(":core:network")
+    implementation project(":core:utility")
     implementation project(":domain")
+
     implementation libs.androidx.datastore.preferences
     implementation libs.hilt.android
     kapt libs.hilt.compiler

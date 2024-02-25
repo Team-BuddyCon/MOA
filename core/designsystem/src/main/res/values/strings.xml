@@ -61,6 +61,7 @@
     <string name="gifticon_usage_placeholder">사용처 선택</string>
     <string name="gifticon_memo">메모</string>
     <string name="gifticon_memo_placeholder">최대 50자 입력</string>
+    <string name="gifticon_register_success">기프티콘이 성공적으로 등록됐어요.</string>
 
     <string name="map">지도</string>
     <string name="map_location_permission">위치 정보를 허용했어요!</string>

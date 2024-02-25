@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,6 +50,7 @@ class SplashViewModel @Inject constructor(
             tokenRepository.getRefreshToken(),
             tokenRepository.getAccessTokenExpiresIn()
         ) { accessToken, refreshToken, accessTokenExpiresIn ->
+            Timber.d("getLoginToken accessToken: $accessToken, currentTime : ${System.currentTimeMillis()}, accessTokenExpiresIn; $accessTokenExpiresIn")
             LoginModel(
                 accessToken = accessToken,
                 refreshToken = refreshToken,
