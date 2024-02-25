@@ -1,5 +1,7 @@
 package com.yapp.buddycon.navigation.gifticon
 
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -22,10 +24,12 @@ fun NavGraphBuilder.gifticonGraph(
             }
         }
 
-        composable(GifticonDestination.Register.route) {
-            GifticonRegisterScreen {
-                navHostController.popBackStack()
-            }
+        composable(GifticonDestination.Register.route) { entry ->
+            val parentEntry = remember(entry) { navHostController.getBackStackEntry(GifticonDestination.Gifticon.route) }
+            GifticonRegisterScreen(
+                gifticonViewModel = hiltViewModel(parentEntry),
+                onBack = { navHostController.popBackStack() }
+            )
         }
     }
 }

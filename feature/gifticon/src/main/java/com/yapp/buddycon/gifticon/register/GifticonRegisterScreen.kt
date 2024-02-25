@@ -42,6 +42,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.common.InputImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
@@ -58,9 +60,13 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey30
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
+import com.yapp.buddycon.gifticon.GifticonViewModel
+import timber.log.Timber
+import java.io.IOException
 
 @Composable
 fun GifticonRegisterScreen(
+    gifticonViewModel: GifticonViewModel = hiltViewModel(),
     onBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -68,7 +74,28 @@ fun GifticonRegisterScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        imageUri = uri
+        try {
+            val image = uri?.let { InputImage.fromFilePath(context, it) }
+            val scanner = BarcodeScanning.getClient()
+            image?.let { image ->
+                scanner.process(image)
+                    .addOnSuccessListener { barcodes ->
+                        if (barcodes.isNotEmpty()) {
+                            imageUri = uri
+                        } else {
+                            Timber.d("There is not barcode in image")
+                            gifticonViewModel.showGifticonRegisterError(true)
+                            onBack()
+                        }
+                    }.addOnFailureListener {
+                        Timber.e("barcode scanner detection error: ${it.message}")
+                        gifticonViewModel.showGifticonRegisterError(true)
+                        onBack()
+                    }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 
     LaunchedEffect(imageUri) {
