@@ -73,4 +73,9 @@
     <string name="moa_login_error_description">다시 한 번 시도해 주세요</string>
     <string name="gifticon_register_error">쿠폰을 등록하지 못했어요</string>
     <string name="gifticon_register_error_reason">바코드가 잘리거나 손상되지 않았는지\n확인 후에 다시 시도해 주세요.</string>
+    <string name="gifticon_register_max_length_name">최대값 초과</string>
+    <string name="gifticon_register_max_length_name_description">쿠폰 이름은 최대 16자로\n입력할 수 있어요.</string>
+    <string name="gifticon_register_empty_name">쿠폰 이름을 입력해 주세요</string>
+    <string name="gifticon_register_empty_expire_date">유효기간을 선택해 주세요</string>
+    <string name="gifticon_register_max_length_memo">메모는 최대 50자로\n입력할 수 있어요</string>
 </resources>

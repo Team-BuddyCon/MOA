@@ -47,6 +47,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
+import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectUsage
 import com.yapp.buddycon.designsystem.component.input.EssentialInputText
@@ -102,6 +103,7 @@ fun GifticonRegisterScreen(
     }
 
     val uiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
+    var showErrorPopup by remember { mutableStateOf(false) }
 
     LaunchedEffect(imageUri) {
         if (imageUri == null) {
@@ -126,6 +128,29 @@ fun GifticonRegisterScreen(
             message = context.getString(R.string.gifticon_register_snackbar),
             scope = coroutineScope,
             snackbarHostState = snackbarHostState
+        )
+    }
+
+    if (showErrorPopup) {
+        ConfirmDialog(
+            dialogTitle = stringResource(
+                if (uiState.name.length > 16) {
+                    R.string.gifticon_register_max_length_name
+                } else if (uiState.name.isEmpty()) {
+                    R.string.gifticon_register_empty_name
+                } else if (uiState.expireDate == 0L) {
+                    R.string.gifticon_register_empty_expire_date
+                } else {
+                    R.string.gifticon_register_max_length_memo
+                }
+            ),
+            dialogContent = if (uiState.name.length > 16) {
+                stringResource(R.string.gifticon_register_max_length_name_description)
+            } else {
+                null
+            },
+            onClick = { showErrorPopup = false },
+            onDismissRequest = { showErrorPopup = false }
         )
     }
 
@@ -158,9 +183,19 @@ fun GifticonRegisterScreen(
                     containerColor = BuddyConTheme.colors.primary,
                     contentColor = BuddyConTheme.colors.onPrimary,
                     onClick = {
-                        gifticonRegisterViewModel.registerNewGifticon(
-                            imagePath = imageUri?.toString() ?: ""
-                        )
+                        if (uiState.name.isEmpty() ||
+                            uiState.name.length > 16 ||
+                            uiState.expireDate == 0L ||
+                            uiState.memo.length > 50
+                        ) {
+                            showErrorPopup = true
+                        } else {
+                            if (uiState.name.isNotEmpty() && uiState.expireDate != 0L && uiState.store.isNotEmpty()) {
+                                gifticonRegisterViewModel.registerNewGifticon(
+                                    imagePath = imageUri?.toString() ?: ""
+                                )
+                            }
+                        }
                     }
                 )
             }
