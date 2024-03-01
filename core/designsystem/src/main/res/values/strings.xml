@@ -38,13 +38,13 @@
     <!-- Login -->
     <string name="login_kakao_talk">카카오톡으로 로그인</string>
     <string name="signup">회원가입</string>
-    <string name="signup_terms_title">버티콘의 서비스\n이용약관에 동의해주세요</string>
+    <string name="signup_terms_title">모아의 서비스\n이용약관에 동의해주세요</string>
     <string name="signup_all_terms_agree">전체 동의하기</string>
     <string name="signup_terms_of_use_agree">[필수] 이용약관 동의</string>
     <string name="signup_privacy_policy_agree">[필수] 개인정보 처리방침 동의</string>
     <string name="signup_complete">회원가입 완료</string>
     <string name="complete">완료!</string>
-    <string name="welcome_greeting_format">버디콘의 소중한 회원이 되신 %s님,\n만나서 반가워요!</string>
+    <string name="welcome_greeting_format">MOA의 소중한 회원이 되신 %s님,\n만나서 반가워요!</string>
     <string name="start">시작하기</string>
     <string name="login_banner_description">선물 모아, 마음모아\n모으면 더 배가 되는 선물 받는 기쁨</string>
 
