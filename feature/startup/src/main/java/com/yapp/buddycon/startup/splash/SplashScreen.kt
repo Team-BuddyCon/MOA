@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
+import kotlinx.coroutines.delay
 
 private const val SplashIconDescription = "SplashIcon"
 
@@ -31,6 +32,7 @@ fun SplashScreen(
     }
 
     LaunchedEffect(Unit) {
+        delay(10)
         if (splashViewModel.isFirstInstallation.value) {
             splashViewModel.checkIsFirstInstallation()
             onNavigateToOnBoarding()
