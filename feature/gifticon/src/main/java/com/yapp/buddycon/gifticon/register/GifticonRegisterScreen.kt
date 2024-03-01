@@ -48,6 +48,7 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
+import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectUsage
 import com.yapp.buddycon.designsystem.component.input.EssentialInputText
@@ -77,6 +78,7 @@ fun GifticonRegisterScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var showedSnackbar by remember { mutableStateOf(false) }
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         try {
             val image = uri?.let { InputImage.fromFilePath(context, it) }
@@ -104,6 +106,7 @@ fun GifticonRegisterScreen(
 
     val uiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
     var showErrorPopup by remember { mutableStateOf(false) }
+    var stopRegisterPopup by remember { mutableStateOf(false) }
 
     LaunchedEffect(imageUri) {
         if (imageUri == null) {
@@ -123,12 +126,13 @@ fun GifticonRegisterScreen(
         }
     }
 
-    if (imageUri != null) {
+    if (imageUri != null && showedSnackbar.not()) {
         showBuddyConSnackBar(
             message = context.getString(R.string.gifticon_register_snackbar),
             scope = coroutineScope,
             snackbarHostState = snackbarHostState
         )
+        showedSnackbar = true
     }
 
     if (showErrorPopup) {
@@ -154,6 +158,19 @@ fun GifticonRegisterScreen(
         )
     }
 
+    if (stopRegisterPopup) {
+        DefaultDialog(
+            dialogTitle = stringResource(R.string.gifticon_register_stop),
+            dismissText = stringResource(R.string.gifticon_register_stop_dismiss),
+            confirmText = stringResource(R.string.gifticon_register_stop_confirm),
+            onDismissRequest = { stopRegisterPopup = false },
+            onConfirm = {
+                stopRegisterPopup = false
+                onBack()
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBarWithBack(
@@ -173,7 +190,7 @@ fun GifticonRegisterScreen(
                     modifier = Modifier.weight(1f),
                     containerColor = Grey30,
                     contentColor = Grey70,
-                    onClick = onBack
+                    onClick = { stopRegisterPopup = true }
                 )
                 BuddyConButton(
                     text = stringResource(R.string.gifticon_save),

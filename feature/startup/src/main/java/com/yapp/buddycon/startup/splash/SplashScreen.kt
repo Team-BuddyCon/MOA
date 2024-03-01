@@ -32,7 +32,7 @@ fun SplashScreen(
     }
 
     LaunchedEffect(Unit) {
-        delay(10)
+        delay(100)
         if (splashViewModel.isFirstInstallation.value) {
             splashViewModel.checkIsFirstInstallation()
             onNavigateToOnBoarding()

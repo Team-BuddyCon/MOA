@@ -78,4 +78,7 @@
     <string name="gifticon_register_empty_name">쿠폰 이름을 입력해 주세요</string>
     <string name="gifticon_register_empty_expire_date">유효기간을 선택해 주세요</string>
     <string name="gifticon_register_max_length_memo">메모는 최대 50자로\n입력할 수 있어요</string>
+    <string name="gifticon_register_stop">쿠폰 등록을 그만할까요?</string>
+    <string name="gifticon_register_stop_dismiss">계속 작성</string>
+    <string name="gifticon_register_stop_confirm">나가기</string>
 </resources>
