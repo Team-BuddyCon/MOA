@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.buddycon.designsystem.R
+import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey40
 import com.yapp.buddycon.designsystem.theme.Paddings
@@ -37,7 +38,7 @@ fun SortTag(
             text = sortType.value,
             style = BuddyConTheme.typography.body02.copy(color = Grey40)
         )
-        Spacer(Modifier.padding(Paddings.small))
+        SpacerHorizontal(Paddings.small)
         Icon(
             painter = painterResource(R.drawable.ic_down_arrow),
             contentDescription = sortType.value,

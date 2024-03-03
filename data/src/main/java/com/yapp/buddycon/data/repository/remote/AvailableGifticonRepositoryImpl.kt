@@ -1,6 +1,7 @@
 package com.yapp.buddycon.data.repository.remote
 
 import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
+import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.network.service.gifticon.GiftiConService
 import com.yapp.buddycon.domain.repository.AvailableGifticonRepository
 import kotlinx.coroutines.flow.catch
@@ -13,16 +14,18 @@ class AvailableGifticonRepositoryImpl @Inject constructor(
 ) : AvailableGifticonRepository {
     override fun getAvailableGifiticon(
         gifticonStoreCategory: GifticonStoreCategory,
+        gifticonSortType: SortType,
         currentPage: Int
     ) = flow {
         emit(
             gifticonService.requestAvailableGiftiCons(
                 pageNumber = currentPage,
-                gifticonStoreCategory = gifticonStoreCategory.mapToStringValueForRequest()
+                gifticonStoreCategory = gifticonStoreCategory.mapGifiticonStoreCategoryToStringValue(),
+                gifticonSortType = gifticonSortType.mapSortTypeToStringValue()
             )
         )
     }.catch { error ->
-        throw Throwable("catch error!", error)
+        throw Throwable("[getAvailableGifiticon] catch error!", error)
     }.map { response ->
         if (response.isSuccessful) {
             (response.body() ?: throw NullPointerException("null response")).body.mapToAvailableGifticon()

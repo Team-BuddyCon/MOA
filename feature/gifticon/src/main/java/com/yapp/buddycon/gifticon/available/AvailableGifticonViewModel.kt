@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
 import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
+import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.domain.repository.AvailableGifticonRepository
 import com.yapp.buddycon.domain.result.DataResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,40 +15,46 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
 @HiltViewModel
 class AvailableGifticonViewModel @Inject constructor(
     private val availableGifticonRepository: AvailableGifticonRepository
 ) : ViewModel() {
-    private var _currentStoreCategoryTab = MutableStateFlow(GifticonStoreCategory.TOTAL)
-    val currentStoreCategoryTab = _currentStoreCategoryTab.asStateFlow()
-
     private var _availabeGifticonDataResult = MutableStateFlow<DataResult<AvailableGifticon>>(DataResult.None)
     val availableGifticonDataResult = _availabeGifticonDataResult.asStateFlow()
 
     private var _currentAvailableGifiticons = MutableStateFlow(arrayListOf<AvailableGifticon.AvailableGifticonInfo>())
     val currentAvailableGifticons = _currentAvailableGifiticons.asStateFlow()
 
-    private var currentTabPage = -1
-    private var isCurrentTabLastPage = false
+    private var _availableGifticonDetailState = MutableStateFlow(AvailableGifticonDetailState())
+    val availableGifticonDetailState = _availableGifticonDetailState.asStateFlow()
+
+    private var availableGifticonPageState = AvailableGifticonPageState()
 
     fun getAvailableGifiticon() {
-        if (isCurrentTabLastPage.not()) {
+        if (availableGifticonPageState.isCurrentTabLastPage.not()) {
             viewModelScope.launch {
+                availableGifticonPageState = availableGifticonPageState.copy(currentPage = availableGifticonPageState.currentPage + 1)
+
                 availableGifticonRepository.getAvailableGifiticon(
-                    gifticonStoreCategory = _currentStoreCategoryTab.value,
-                    currentPage = ++currentTabPage
+                    gifticonStoreCategory = _availableGifticonDetailState.value.currentStoreCategory,
+                    gifticonSortType = availableGifticonDetailState.value.currentSortType,
+                    currentPage = availableGifticonPageState.currentPage
                 ).onStart {
                     // set loading state
-                    Log.e("BuddyConTest", "loading...")
+                    Log.e("MOATest", "loading...")
                     _availabeGifticonDataResult.value = DataResult.Loading
                 }.catch { throwable ->
                     // error handling
-                    Log.e("BuddyConTest", "catch error!")
+                    Log.e("MOATest", "catch error!}")
+                    throwable.stackTrace.forEach {
+                        Log.e("MOATest", "[stackTrace] : $it")
+                    }
                     _availabeGifticonDataResult.value = DataResult.Failure(throwable = throwable)
                 }.collectLatest { availableGifticon ->
-                    Log.e("BuddyConTest", "collect data : $availableGifticon")
+                    Log.e("MOATest", "collect data : $availableGifticon")
                     _availabeGifticonDataResult.value = DataResult.Success(data = availableGifticon)
                 }
             }
@@ -55,10 +62,19 @@ class AvailableGifticonViewModel @Inject constructor(
     }
 
     fun updateCurrentStoreCategoryTab(newStoreCategory: GifticonStoreCategory) {
-        if (_currentStoreCategoryTab.value != newStoreCategory) {
-            _currentStoreCategoryTab.value = newStoreCategory // 새로운 탭 상태
-            currentTabPage = -1 // page 초기화
-            isCurrentTabLastPage = false // 마지막 page 여부 초기화
+        if (_availableGifticonDetailState.value.currentStoreCategory != newStoreCategory) {
+            _availableGifticonDetailState.value = _availableGifticonDetailState.value.copy(currentStoreCategory = newStoreCategory)
+            availableGifticonPageState = availableGifticonPageState.copy(currentPage = -1, isCurrentTabLastPage = false)
+
+            getAvailableGifiticon()
+        }
+    }
+
+    fun updateCurrentSortType(newSortType: SortType) {
+        if (_availableGifticonDetailState.value.currentSortType != newSortType) {
+            _availableGifticonDetailState.value = _availableGifticonDetailState.value.copy(currentSortType = newSortType)
+            availableGifticonPageState = availableGifticonPageState.copy(currentPage = -1, isCurrentTabLastPage = false)
+
             getAvailableGifiticon()
         }
     }
@@ -72,6 +88,17 @@ class AvailableGifticonViewModel @Inject constructor(
         }
 
         _currentAvailableGifiticons.value = tempList
-        isCurrentTabLastPage = addedAvailableGifticon.isLastPage
+        availableGifticonPageState = availableGifticonPageState.copy(isCurrentTabLastPage = addedAvailableGifticon.isLastPage)
     }
 }
+
+@Immutable
+data class AvailableGifticonDetailState(
+    val currentStoreCategory: GifticonStoreCategory = GifticonStoreCategory.TOTAL,
+    val currentSortType: SortType = SortType.EXPIRATION_DATE,
+)
+
+data class AvailableGifticonPageState(
+    val currentPage: Int = -1,
+    val isCurrentTabLastPage: Boolean = false
+)

@@ -1,5 +1,6 @@
 package com.yapp.buddycon.network.interceptor
 
+import android.util.Log
 import com.yapp.buddycon.domain.repository.AuthRepository
 import com.yapp.buddycon.domain.repository.TokenRepository
 import kotlinx.coroutines.flow.first
@@ -39,6 +40,9 @@ class BuddyConInterceptor @Inject constructor(
         val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer $accessToken")
             .build()
+
+        Log.e("MOATest", "token : Bearer $accessToken")
+
         return chain.proceed(newRequest)
     }
 }

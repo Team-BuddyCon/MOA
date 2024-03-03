@@ -20,18 +20,19 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +59,9 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.appbar.getTopAppBarHeight
 import com.yapp.buddycon.designsystem.component.button.CategoryStoreButton
+import com.yapp.buddycon.designsystem.component.modal.FilterModalSheet
+import com.yapp.buddycon.designsystem.component.tag.SortTag
+import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey60
 import com.yapp.buddycon.designsystem.theme.Paddings
@@ -65,11 +69,13 @@ import com.yapp.buddycon.designsystem.theme.Pink100
 import com.yapp.buddycon.designsystem.theme.White
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
 import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
+import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.gifticon.available.base.HandleDataResult
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 private val TabHeight = 60.dp
-private val TAG = "BuddyConTest"
+private val TAG = "MOATest"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,20 +84,32 @@ fun AvailabeGifticonScreen(
 ) {
     Log.e(TAG, "[AvailabeGifticonScreen] : ${availableGifticonViewModel.hashCode()}")
 
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val modalBottomSheetState = rememberModalBottomSheetState()
+    var isBottomSheetOpen by remember { mutableStateOf(false) }
 
-    BottomSheetScaffold(
-        sheetContent = {
-            GifticonFilterBottomSheet()
-        },
-        sheetPeekHeight = 0.dp
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        AvailabeGifticonContent(availableGifticonViewModel)
+        AvailabeGifticonContent(
+            availableGifticonViewModel = availableGifticonViewModel,
+            onFilterClicked = { isBottomSheetOpen = true }
+        )
+
+        if (isBottomSheetOpen) {
+            GifticonFilterBottomSheet(
+                modalBottomSheetState = modalBottomSheetState,
+                availableGifticonViewModel = availableGifticonViewModel,
+                onDismiss = { isBottomSheetOpen = false }
+            )
+        }
     }
 }
 
 @Composable
-private fun AvailabeGifticonContent(availableGifticonViewModel: AvailableGifticonViewModel) {
+private fun AvailabeGifticonContent(
+    availableGifticonViewModel: AvailableGifticonViewModel,
+    onFilterClicked: () -> Unit
+) {
     val topAppBarHeight = getTopAppBarHeight()
     val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
 
@@ -107,7 +125,7 @@ private fun AvailabeGifticonContent(availableGifticonViewModel: AvailableGiftico
         }
     }
 
-    val currentStoreCategory by availableGifticonViewModel.currentStoreCategoryTab.collectAsState()
+    val availableGifticonDetailState by availableGifticonViewModel.availableGifticonDetailState.collectAsState()
     val currentAvailabeGifticons by availableGifticonViewModel.currentAvailableGifticons.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -145,10 +163,12 @@ private fun AvailabeGifticonContent(availableGifticonViewModel: AvailableGiftico
 
         TopAppBarWithTab(
             topAppBarOffsetHeightPx = topAppBarOffsetHeightPx,
-            currentStoreCategory = currentStoreCategory,
+            currentStoreCategory = availableGifticonDetailState.currentStoreCategory,
+            currentSortType = availableGifticonDetailState.currentSortType,
             onSelectedTabChanged = { newStoreCategory ->
                 availableGifticonViewModel.updateCurrentStoreCategoryTab(newStoreCategory)
-            }
+            },
+            onFilterClicked = onFilterClicked
         )
     }
 }
@@ -239,7 +259,9 @@ private fun AvailableGifticonItem(
 private fun TopAppBarWithTab(
     topAppBarOffsetHeightPx: Float,
     currentStoreCategory: GifticonStoreCategory,
-    onSelectedTabChanged: (newStoreCategory: GifticonStoreCategory) -> Unit
+    currentSortType: SortType,
+    onSelectedTabChanged: (newStoreCategory: GifticonStoreCategory) -> Unit,
+    onFilterClicked: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -257,7 +279,8 @@ private fun TopAppBarWithTab(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Paddings.xlarge)
+                .padding(horizontal = Paddings.xlarge),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             GifticonStoreCategoryTabUI(
                 modifier = Modifier.weight(1f),
@@ -265,8 +288,12 @@ private fun TopAppBarWithTab(
                 onSelectedTabChanged = { onSelectedTabChanged(it) }
             )
 
-            // Todo
-            FilterUI()
+            SpacerHorizontal(width = 30.dp)
+
+            FilterUI(
+                currentSortType = currentSortType,
+                onFilterClicked = onFilterClicked
+            )
         }
     }
 }
@@ -306,13 +333,38 @@ private fun GifticonStoreCategoryTabUI(
 }
 
 @Composable
-private fun FilterUI() {
-    // Todo : BottomSheet
+private fun FilterUI(
+    currentSortType: SortType,
+    onFilterClicked: () -> Unit
+) {
+    SortTag(
+        sortType = currentSortType,
+        onAction = onFilterClicked
+    )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun GifticonFilterBottomSheet() {
-    // Todo : BottomSheet
+private fun GifticonFilterBottomSheet(
+    modalBottomSheetState: SheetState,
+    availableGifticonViewModel: AvailableGifticonViewModel,
+    onDismiss: () -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    val availableGifticonDetailState by availableGifticonViewModel.availableGifticonDetailState.collectAsState()
+
+    FilterModalSheet(
+        sheetState = modalBottomSheetState,
+        sortType = availableGifticonDetailState.currentSortType,
+        onChangeSortType = { newSortType ->
+            scope.launch {
+                availableGifticonViewModel.updateCurrentSortType(newSortType = newSortType)
+                modalBottomSheetState.hide()
+                onDismiss()
+            }
+        },
+        onDismiss = onDismiss
+    )
 }
 
 @Composable
