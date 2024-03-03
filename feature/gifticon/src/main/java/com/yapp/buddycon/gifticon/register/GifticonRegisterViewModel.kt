@@ -2,6 +2,7 @@ package com.yapp.buddycon.gifticon.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.buddycon.domain.model.type.GifticonCategory
 import com.yapp.buddycon.domain.repository.GifticonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -33,8 +35,8 @@ class GifticonRegisterViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(expireDate = expireDate)
     }
 
-    fun setUsage(store: String) {
-        _uiState.value = _uiState.value.copy(store = store)
+    fun setCategory(category: GifticonCategory) {
+        _uiState.value = _uiState.value.copy(category = category)
     }
 
     fun setMemo(memo: String) {
@@ -45,8 +47,8 @@ class GifticonRegisterViewModel @Inject constructor(
         gifticonRepository.createGifticon(
             imagePath = imagePath,
             name = uiState.value.name,
-            expireDate = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(uiState.value.expireDate),
-            store = uiState.value.store,
+            expireDate = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(Date(uiState.value.expireDate)),
+            store = uiState.value.category.name,
             memo = uiState.value.memo
         ).onEach {
             _isCompleted.emit(it)

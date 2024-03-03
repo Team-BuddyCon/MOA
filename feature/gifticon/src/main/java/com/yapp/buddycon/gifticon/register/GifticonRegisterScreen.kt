@@ -62,6 +62,7 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey30
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
+import com.yapp.buddycon.domain.model.type.GifticonCategory
 import com.yapp.buddycon.gifticon.GifticonViewModel
 import timber.log.Timber
 import java.io.IOException
@@ -207,7 +208,7 @@ fun GifticonRegisterScreen(
                         ) {
                             showErrorPopup = true
                         } else {
-                            if (uiState.name.isNotEmpty() && uiState.expireDate != 0L && uiState.store.isNotEmpty()) {
+                            if (uiState.category != GifticonCategory.ETC) {
                                 gifticonRegisterViewModel.registerNewGifticon(
                                     imagePath = imageUri?.toString() ?: ""
                                 )
@@ -252,7 +253,7 @@ private fun GifticonRegisterContent(
 
     if (isShowCategoryModal) {
         CategoryModalSheet(
-            onSelectCategory = { gifticonRegisterViewModel.setUsage(it.value) },
+            onSelectCategory = { gifticonRegisterViewModel.setCategory(it) },
             onDismiss = { isShowCategoryModal = false }
         )
     }
@@ -318,7 +319,7 @@ private fun GifticonRegisterContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_usage),
             placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = uiState.store,
+            value = if (uiState.category == GifticonCategory.ETC) "" else uiState.category.value,
             action = { isShowCategoryModal = true }
         )
         NoEssentialInputText(
