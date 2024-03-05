@@ -31,6 +31,9 @@ class AvailableGifticonViewModel @Inject constructor(
     private var _availableGifticonDetailState = MutableStateFlow(AvailableGifticonDetailState())
     val availableGifticonDetailState = _availableGifticonDetailState.asStateFlow()
 
+    private var _availableGifticonScreenUiState = MutableStateFlow<AvailableGifticonScreenUiState>(AvailableGifticonScreenUiState.None)
+    val availableGifticonScreenUiState = _availableGifticonScreenUiState.asStateFlow()
+
     private var availableGifticonPageState = AvailableGifticonPageState()
 
     fun getAvailableGifiticon() {
@@ -90,6 +93,10 @@ class AvailableGifticonViewModel @Inject constructor(
         _currentAvailableGifiticons.value = tempList
         availableGifticonPageState = availableGifticonPageState.copy(isCurrentTabLastPage = addedAvailableGifticon.isLastPage)
     }
+
+    fun updateAvailableScreenUiState(newAvailableGifticonScreenUiState: AvailableGifticonScreenUiState) {
+        _availableGifticonScreenUiState.value = newAvailableGifticonScreenUiState
+    }
 }
 
 @Immutable
@@ -102,3 +109,10 @@ data class AvailableGifticonPageState(
     val currentPage: Int = -1,
     val isCurrentTabLastPage: Boolean = false
 )
+
+@Immutable
+sealed class AvailableGifticonScreenUiState {
+    object None : AvailableGifticonScreenUiState()
+    object Loading : AvailableGifticonScreenUiState()
+    object Failure : AvailableGifticonScreenUiState()
+}

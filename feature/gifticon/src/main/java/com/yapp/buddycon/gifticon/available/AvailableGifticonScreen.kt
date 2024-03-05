@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
@@ -62,6 +64,7 @@ import com.yapp.buddycon.designsystem.component.button.CategoryStoreButton
 import com.yapp.buddycon.designsystem.component.modal.FilterModalSheet
 import com.yapp.buddycon.designsystem.component.tag.SortTag
 import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
+import com.yapp.buddycon.designsystem.theme.Black
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey60
 import com.yapp.buddycon.designsystem.theme.Paddings
@@ -125,8 +128,10 @@ private fun AvailabeGifticonContent(
         }
     }
 
-    val availableGifticonDetailState by availableGifticonViewModel.availableGifticonDetailState.collectAsState()
-    val currentAvailabeGifticons by availableGifticonViewModel.currentAvailableGifticons.collectAsState()
+    val availableGifticonDetailState by availableGifticonViewModel.availableGifticonDetailState.collectAsStateWithLifecycle()
+    val currentAvailabeGifticons by availableGifticonViewModel.currentAvailableGifticons.collectAsStateWithLifecycle()
+
+    val availableGifticonScreenUiState by availableGifticonViewModel.availableGifticonScreenUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         availableGifticonViewModel.getAvailableGifiticon()
@@ -135,14 +140,15 @@ private fun AvailabeGifticonContent(
     HandleDataResult(
         dataResultStateFlow = availableGifticonViewModel.availableGifticonDataResult,
         onSuccess = {
-            Log.e(TAG, "[HandleDataResult] - onSuccess : ${it.data}")
             availableGifticonViewModel.updateCurrentAvailabeGifticons(it.data)
+            availableGifticonViewModel.updateAvailableScreenUiState(AvailableGifticonScreenUiState.None)
         },
         onFailure = {
-            Log.e(TAG, "[HandleDataResult] - onFailure : ${it.throwable}") // failure 처리 필요
+            // failure 처리 필요
+            availableGifticonViewModel.updateAvailableScreenUiState(AvailableGifticonScreenUiState.Failure)
         },
         onLoading = {
-            Log.e(TAG, "[HandleDataResult] - onLoading") // loading ui ?
+            availableGifticonViewModel.updateAvailableScreenUiState(AvailableGifticonScreenUiState.Loading)
         }
     )
 
@@ -170,6 +176,10 @@ private fun AvailabeGifticonContent(
             },
             onFilterClicked = onFilterClicked
         )
+
+        if (availableGifticonScreenUiState == AvailableGifticonScreenUiState.Loading) {
+            LoadingStateScreen()
+        }
     }
 }
 
@@ -398,4 +408,16 @@ private fun NoAvailableGifticonContent(topAppBarHeight: Dp) {
     }
 }
 
-
+@Composable
+fun LoadingStateScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Black.copy(alpha = 0.3f)),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = Pink100
+        )
+    }
+}
