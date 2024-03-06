@@ -1,6 +1,5 @@
 package com.yapp.buddycon.startup.welcome
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +11,6 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -41,7 +39,7 @@ fun WelcomeScreen(
             .fillMaxSize()
             .background(BuddyConTheme.colors.background)
     ) {
-        Spacer(Modifier.weight(152f))
+        Spacer(Modifier.weight(242f))
         Icon(
             painter = painterResource(R.drawable.ic_welcome),
             contentDescription = null,
@@ -71,13 +69,7 @@ fun WelcomeScreen(
                 .fillMaxWidth(),
             style = BuddyConTheme.typography.body01
         )
-        Spacer(Modifier.weight(68f))
-        Image(
-            painter = painterResource(R.drawable.ic_welcome_illustration),
-            contentDescription = null,
-            modifier = Modifier.align(Alignment.End)
-        )
-        Spacer(Modifier.weight(75.24f))
+        Spacer(Modifier.weight(260f))
         BuddyConButton(
             modifier = Modifier
                 .padding(bottom = Paddings.xlarge)

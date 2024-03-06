@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.yapp.buddycon.domain.repository.AuthRepository
 import com.yapp.buddycon.domain.repository.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -18,8 +18,8 @@ class LoginViewModel @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
-    private val _loginResult = MutableStateFlow(false)
-    val loginResult = _loginResult.asStateFlow()
+    private val _effect = MutableSharedFlow<LoginSideEffect>()
+    val effect = _effect.asSharedFlow()
 
     fun saveNickname(nickname: String) {
         viewModelScope.launch {
@@ -44,7 +44,19 @@ class LoginViewModel @Inject constructor(
             tokenRepository.saveAccessToken(it.accessToken)
             tokenRepository.saveRefreshToken(it.refreshToken)
             tokenRepository.saveAccessTokenExpiresIn(it.accessTokenExpiresIn)
-            _loginResult.value = true
+            _effect.emit(LoginSideEffect.Success)
         }.launchIn(viewModelScope)
+    }
+
+    fun handleKAKAOLoginError() {
+        viewModelScope.launch {
+            _effect.emit(LoginSideEffect.KakaoLoginError)
+        }
+    }
+
+    fun handleMOALoginError() {
+        viewModelScope.launch {
+            _effect.emit(LoginSideEffect.MoaLoginError)
+        }
     }
 }

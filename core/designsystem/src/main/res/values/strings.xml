@@ -38,13 +38,13 @@
     <!-- Login -->
     <string name="login_kakao_talk">카카오톡으로 로그인</string>
     <string name="signup">회원가입</string>
-    <string name="signup_terms_title">버티콘의 서비스\n이용약관에 동의해주세요</string>
+    <string name="signup_terms_title">모아의 서비스\n이용약관에 동의해주세요</string>
     <string name="signup_all_terms_agree">전체 동의하기</string>
     <string name="signup_terms_of_use_agree">[필수] 이용약관 동의</string>
     <string name="signup_privacy_policy_agree">[필수] 개인정보 처리방침 동의</string>
     <string name="signup_complete">회원가입 완료</string>
     <string name="complete">완료!</string>
-    <string name="welcome_greeting_format">버디콘의 소중한 회원이 되신 %s님,\n만나서 반가워요!</string>
+    <string name="welcome_greeting_format">MOA의 소중한 회원이 되신 %s님,\n만나서 반가워요!</string>
     <string name="start">시작하기</string>
     <string name="login_banner_description">선물 모아, 마음모아\n모으면 더 배가 되는 선물 받는 기쁨</string>
 
@@ -67,6 +67,18 @@
     <string name="map_location_permission">위치 정보를 허용했어요!</string>
 
     <!--    Error Popup-->
+    <string name="kakao_login_error_title">카카오톡으로 시작할 수 없어요</string>
+    <string name="kakao_login_error_description">카카오톡 서버에 로그인 오류가 있어요\n다시 한 번 시도해 주세요</string>
+    <string name="moa_login_error_title">일시적인 오류가 발생했어요</string>
+    <string name="moa_login_error_description">다시 한 번 시도해 주세요</string>
     <string name="gifticon_register_error">쿠폰을 등록하지 못했어요</string>
     <string name="gifticon_register_error_reason">바코드가 잘리거나 손상되지 않았는지\n확인 후에 다시 시도해 주세요.</string>
+    <string name="gifticon_register_max_length_name">최대값 초과</string>
+    <string name="gifticon_register_max_length_name_description">쿠폰 이름은 최대 16자로\n입력할 수 있어요.</string>
+    <string name="gifticon_register_empty_name">쿠폰 이름을 입력해 주세요</string>
+    <string name="gifticon_register_empty_expire_date">유효기간을 선택해 주세요</string>
+    <string name="gifticon_register_max_length_memo">메모는 최대 50자로\n입력할 수 있어요</string>
+    <string name="gifticon_register_stop">쿠폰 등록을 그만할까요?</string>
+    <string name="gifticon_register_stop_dismiss">계속 작성</string>
+    <string name="gifticon_register_stop_confirm">나가기</string>
 </resources>

@@ -47,6 +47,8 @@ import com.google.mlkit.vision.common.InputImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
+import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
+import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectUsage
 import com.yapp.buddycon.designsystem.component.input.EssentialInputText
@@ -60,6 +62,7 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey30
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
+import com.yapp.buddycon.domain.model.type.GifticonCategory
 import com.yapp.buddycon.gifticon.GifticonViewModel
 import timber.log.Timber
 import java.io.IOException
@@ -76,6 +79,7 @@ fun GifticonRegisterScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var showedSnackbar by remember { mutableStateOf(false) }
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         try {
             val image = uri?.let { InputImage.fromFilePath(context, it) }
@@ -102,6 +106,8 @@ fun GifticonRegisterScreen(
     }
 
     val uiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
+    var showErrorPopup by remember { mutableStateOf(false) }
+    var stopRegisterPopup by remember { mutableStateOf(false) }
 
     LaunchedEffect(imageUri) {
         if (imageUri == null) {
@@ -121,11 +127,48 @@ fun GifticonRegisterScreen(
         }
     }
 
-    if (imageUri != null) {
+    if (imageUri != null && showedSnackbar.not()) {
         showBuddyConSnackBar(
             message = context.getString(R.string.gifticon_register_snackbar),
             scope = coroutineScope,
             snackbarHostState = snackbarHostState
+        )
+        showedSnackbar = true
+    }
+
+    if (showErrorPopup) {
+        ConfirmDialog(
+            dialogTitle = stringResource(
+                if (uiState.name.length > 16) {
+                    R.string.gifticon_register_max_length_name
+                } else if (uiState.name.isEmpty()) {
+                    R.string.gifticon_register_empty_name
+                } else if (uiState.expireDate == 0L) {
+                    R.string.gifticon_register_empty_expire_date
+                } else {
+                    R.string.gifticon_register_max_length_memo
+                }
+            ),
+            dialogContent = if (uiState.name.length > 16) {
+                stringResource(R.string.gifticon_register_max_length_name_description)
+            } else {
+                null
+            },
+            onClick = { showErrorPopup = false },
+            onDismissRequest = { showErrorPopup = false }
+        )
+    }
+
+    if (stopRegisterPopup) {
+        DefaultDialog(
+            dialogTitle = stringResource(R.string.gifticon_register_stop),
+            dismissText = stringResource(R.string.gifticon_register_stop_dismiss),
+            confirmText = stringResource(R.string.gifticon_register_stop_confirm),
+            onDismissRequest = { stopRegisterPopup = false },
+            onConfirm = {
+                stopRegisterPopup = false
+                onBack()
+            }
         )
     }
 
@@ -148,7 +191,7 @@ fun GifticonRegisterScreen(
                     modifier = Modifier.weight(1f),
                     containerColor = Grey30,
                     contentColor = Grey70,
-                    onClick = onBack
+                    onClick = { stopRegisterPopup = true }
                 )
                 BuddyConButton(
                     text = stringResource(R.string.gifticon_save),
@@ -158,9 +201,19 @@ fun GifticonRegisterScreen(
                     containerColor = BuddyConTheme.colors.primary,
                     contentColor = BuddyConTheme.colors.onPrimary,
                     onClick = {
-                        gifticonRegisterViewModel.registerNewGifticon(
-                            imagePath = imageUri?.toString() ?: ""
-                        )
+                        if (uiState.name.isEmpty() ||
+                            uiState.name.length > 16 ||
+                            uiState.expireDate == 0L ||
+                            uiState.memo.length > 50
+                        ) {
+                            showErrorPopup = true
+                        } else {
+                            if (uiState.category != GifticonCategory.ETC) {
+                                gifticonRegisterViewModel.registerNewGifticon(
+                                    imagePath = imageUri?.toString() ?: ""
+                                )
+                            }
+                        }
                     }
                 )
             }
@@ -200,7 +253,7 @@ private fun GifticonRegisterContent(
 
     if (isShowCategoryModal) {
         CategoryModalSheet(
-            onSelectCategory = { gifticonRegisterViewModel.setUsage(it.value) },
+            onSelectCategory = { gifticonRegisterViewModel.setCategory(it) },
             onDismiss = { isShowCategoryModal = false }
         )
     }
@@ -266,7 +319,7 @@ private fun GifticonRegisterContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_usage),
             placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = uiState.store,
+            value = if (uiState.category == GifticonCategory.ETC) "" else uiState.category.value,
             action = { isShowCategoryModal = true }
         )
         NoEssentialInputText(

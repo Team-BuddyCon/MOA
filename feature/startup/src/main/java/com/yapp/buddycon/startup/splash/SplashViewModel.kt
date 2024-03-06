@@ -21,7 +21,7 @@ class SplashViewModel @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
-    private val _isFirstInstallation = MutableStateFlow(false)
+    private val _isFirstInstallation = MutableStateFlow(true)
     val isFirstInstallation = _isFirstInstallation.asStateFlow()
 
     private val _loginToken = MutableStateFlow(LoginModel())
