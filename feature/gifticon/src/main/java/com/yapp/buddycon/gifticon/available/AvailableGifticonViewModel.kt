@@ -9,7 +9,10 @@ import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.domain.repository.AvailableGifticonRepository
 import com.yapp.buddycon.domain.result.DataResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -34,11 +37,20 @@ class AvailableGifticonViewModel @Inject constructor(
     private var _availableGifticonScreenUiState = MutableStateFlow<AvailableGifticonScreenUiState>(AvailableGifticonScreenUiState.None)
     val availableGifticonScreenUiState = _availableGifticonScreenUiState.asStateFlow()
 
+    private var _scrollToTopEvent = MutableSharedFlow<Boolean>()
+    val scrollToTopEvent = _scrollToTopEvent.asSharedFlow()
+
     private var availableGifticonPageState = AvailableGifticonPageState()
 
     fun getAvailableGifiticon() {
-        if (availableGifticonPageState.isCurrentTabLastPage.not()) {
+        if (availableGifticonPageState.isCurrentTabLastPage.not() && _availabeGifticonDataResult.value != DataResult.Loading) {
             viewModelScope.launch {
+                Log.e("MOATest", "[AvailableGifticonViewModel] - getAvailableGifiticon real called")
+
+                if (availableGifticonPageState.currentPage == -1) {
+                    _scrollToTopEvent.emit(true)
+                }
+
                 availableGifticonPageState = availableGifticonPageState.copy(currentPage = availableGifticonPageState.currentPage + 1)
 
                 availableGifticonRepository.getAvailableGifiticon(
@@ -49,6 +61,7 @@ class AvailableGifticonViewModel @Inject constructor(
                     // set loading state
                     Log.e("MOATest", "loading...")
                     _availabeGifticonDataResult.value = DataResult.Loading
+                    delay(300L)
                 }.catch { throwable ->
                     // error handling
                     Log.e("MOATest", "catch error!}")
@@ -94,7 +107,7 @@ class AvailableGifticonViewModel @Inject constructor(
         availableGifticonPageState = availableGifticonPageState.copy(isCurrentTabLastPage = addedAvailableGifticon.isLastPage)
     }
 
-    fun updateAvailableScreenUiState(newAvailableGifticonScreenUiState: AvailableGifticonScreenUiState) {
+    fun updateAvailableGifticonScreenUiState(newAvailableGifticonScreenUiState: AvailableGifticonScreenUiState) {
         _availableGifticonScreenUiState.value = newAvailableGifticonScreenUiState
     }
 }

@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -43,6 +45,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -55,7 +58,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.AsyncImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
@@ -74,6 +79,7 @@ import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
 import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
 import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.gifticon.available.base.HandleDataResult
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -128,27 +134,48 @@ private fun AvailabeGifticonContent(
         }
     }
 
-    val availableGifticonDetailState by availableGifticonViewModel.availableGifticonDetailState.collectAsStateWithLifecycle()
+    val lifeCycleOwner = LocalLifecycleOwner.current
+
     val currentAvailabeGifticons by availableGifticonViewModel.currentAvailableGifticons.collectAsStateWithLifecycle()
 
+    val availableGifticonDetailState by availableGifticonViewModel.availableGifticonDetailState.collectAsStateWithLifecycle()
     val availableGifticonScreenUiState by availableGifticonViewModel.availableGifticonScreenUiState.collectAsStateWithLifecycle()
+    val lazyGridState = rememberLazyGridState()
 
     LaunchedEffect(Unit) {
         availableGifticonViewModel.getAvailableGifiticon()
+    }
+
+    LaunchedEffect(Unit) {
+        lifeCycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            availableGifticonViewModel.scrollToTopEvent.collectLatest {
+                if (it) {
+                    topAppBarOffsetHeightPx = 0f
+                    lazyGridState.scrollToItem(0)
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(lazyGridState.canScrollForward) {
+        if (lazyGridState.canScrollForward.not() && availableGifticonScreenUiState != AvailableGifticonScreenUiState.Loading) {
+            Log.e("AppTest", "[AvailabeGifticonContent] - getAvailableGifiticon")
+            availableGifticonViewModel.getAvailableGifiticon()
+        }
     }
 
     HandleDataResult(
         dataResultStateFlow = availableGifticonViewModel.availableGifticonDataResult,
         onSuccess = {
             availableGifticonViewModel.updateCurrentAvailabeGifticons(it.data)
-            availableGifticonViewModel.updateAvailableScreenUiState(AvailableGifticonScreenUiState.None)
+            availableGifticonViewModel.updateAvailableGifticonScreenUiState(AvailableGifticonScreenUiState.None)
         },
         onFailure = {
             // failure 처리 필요
-            availableGifticonViewModel.updateAvailableScreenUiState(AvailableGifticonScreenUiState.Failure)
+            availableGifticonViewModel.updateAvailableGifticonScreenUiState(AvailableGifticonScreenUiState.Failure)
         },
         onLoading = {
-            availableGifticonViewModel.updateAvailableScreenUiState(AvailableGifticonScreenUiState.Loading)
+            availableGifticonViewModel.updateAvailableGifticonScreenUiState(AvailableGifticonScreenUiState.Loading)
         }
     )
 
@@ -160,6 +187,7 @@ private fun AvailabeGifticonContent(
     ) {
         if (currentAvailabeGifticons.isNotEmpty()) {
             AvailableGifticons(
+                lazyGridState = lazyGridState,
                 topAppBarHeight = topAppBarHeight,
                 currentAvailableGifticons = currentAvailabeGifticons
             )
@@ -185,15 +213,20 @@ private fun AvailabeGifticonContent(
 
 @Composable
 private fun AvailableGifticons(
+    lazyGridState: LazyGridState,
     topAppBarHeight: Dp,
-    currentAvailableGifticons: List<AvailableGifticon.AvailableGifticonInfo>
+    currentAvailableGifticons: List<AvailableGifticon.AvailableGifticonInfo>,
 ) {
+    Log.e("MOATest", "AvailableGifticons")
+
     LazyVerticalGrid(
+        state = lazyGridState,
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(top = topAppBarHeight + TabHeight),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
-            .fillMaxWidth()
+            //.fillMaxWidth()
+            .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp)
     ) {
         itemsIndexed(
