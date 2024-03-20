@@ -25,6 +25,8 @@
     <string name="startup_onboarding_pager_skip">건너뛰기</string>
     <string name="startup_onboarding_pager_next">다음</string>
     <string name="startup_onboarding_start">시작하기</string>
+    <string name="startup_use_information_terms">모아 이용약관</string>
+    <string name="startup_privacy_information_terms">개인정보 처리방침</string>
 
     <!-- My Page Setting -->
     <string name="setting_bar_notification">알림</string>
