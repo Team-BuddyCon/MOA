@@ -37,8 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -47,6 +45,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
+import com.yapp.buddycon.designsystem.component.custom.FullGifticonImage
 import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
 import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
@@ -329,43 +328,5 @@ private fun GifticonRegisterContent(
             value = uiState.memo,
             onValueChange = { gifticonRegisterViewModel.setMemo(it) }
         )
-    }
-}
-
-@Composable
-private fun FullGifticonImage(
-    imageUri: Uri?,
-    isExpanded: Boolean = false,
-    onExpandChanged: (Boolean) -> Unit = {}
-) {
-    if (isExpanded) {
-        Dialog(
-            onDismissRequest = { onExpandChanged(false) },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(vertical = 27.dp, horizontal = Paddings.xlarge)
-                    .fillMaxSize()
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_white_close),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .size(24.dp)
-                        .clickable { onExpandChanged(false) },
-                    tint = Color.Unspecified
-                )
-                AsyncImage(
-                    model = imageUri,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(top = Paddings.medium)
-                        .fillMaxSize(),
-                    contentScale = ContentScale.FillBounds
-                )
-            }
-        }
     }
 }

@@ -3,11 +3,13 @@ package com.yapp.buddycon.data.repository.remote
 import android.content.Context
 import android.net.Uri
 import com.google.gson.Gson
+import com.yapp.buddycon.domain.model.gifticon.GifticonDetailModel
 import com.yapp.buddycon.domain.repository.GifticonRepository
 import com.yapp.buddycon.network.service.gifticon.GiftiConService
 import com.yapp.buddycon.network.service.gifticon.request.CreateGifticonRequest
 import com.yapp.buddycon.utility.getAbsolutePath
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -47,6 +49,14 @@ class GifticonRepositoryImpl @Inject constructor(
                 image = imageMultipartBody,
                 dto = requestBody
             ).statue == 200
+        )
+    }
+
+    override fun requestGifticonDetail(gifticonId: Int): Flow<GifticonDetailModel> = flow {
+        emit(
+            giftiConService.getGifticonDetail(gifticonId = gifticonId)
+                .body
+                .toModel()
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.yapp.buddycon.domain.repository
 
+import com.yapp.buddycon.domain.model.gifticon.GifticonDetailModel
 import kotlinx.coroutines.flow.Flow
 
 interface GifticonRepository {
@@ -10,4 +11,8 @@ interface GifticonRepository {
         store: String,
         memo: String
     ): Flow<Boolean>
+
+    fun requestGifticonDetail(
+        gifticonId: Int
+    ): Flow<GifticonDetailModel>
 }

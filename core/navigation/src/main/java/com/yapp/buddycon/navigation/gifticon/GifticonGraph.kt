@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.gifticon.GifticonScreeen
+import com.yapp.buddycon.gifticon.detail.GifticonDetailScreen
 import com.yapp.buddycon.gifticon.register.GifticonRegisterScreen
 
 private const val GIFTICON_GRAPH = "gifticon_graph"
@@ -19,8 +20,10 @@ fun NavGraphBuilder.gifticonGraph(
         route = GIFTICON_GRAPH
     ) {
         composable(GifticonDestination.Gifticon.route) {
+            val gifticonId = 33
             GifticonScreeen {
-                navHostController.navigate(GifticonDestination.Register.route)
+                // navHostController.navigate(GifticonDestination.Register.route)
+                navHostController.navigate("${GifticonDestination.Detail.route}/$gifticonId")
             }
         }
 
@@ -29,6 +32,16 @@ fun NavGraphBuilder.gifticonGraph(
             GifticonRegisterScreen(
                 gifticonViewModel = hiltViewModel(parentEntry),
                 onBack = { navHostController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = GifticonDestination.Detail.routeWithArg,
+            arguments = GifticonDestination.Detail.arguments
+        ) { entry ->
+            val gifticonId = entry.arguments?.getInt(GifticonDestination.Detail.gifticonIdArg)
+            GifticonDetailScreen(
+                gifticonId = gifticonId
             )
         }
     }
