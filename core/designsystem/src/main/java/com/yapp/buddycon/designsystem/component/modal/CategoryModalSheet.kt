@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 
 private val CategoryModalSheetHeight = 498.dp
 private val CategoryModalSheetRadius = 24.dp
@@ -53,7 +53,7 @@ private val CateogryModalSheetCloseDescription = "Close"
 @Composable
 fun CategoryModalSheet(
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-    onSelectCategory: (GifticonCategory) -> Unit = {},
+    onSelectCategory: (GifticonStore) -> Unit = {},
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
@@ -104,7 +104,7 @@ fun CategoryModalSheet(
             verticalArrangement = Arrangement.spacedBy(Paddings.xextra),
             horizontalArrangement = Arrangement.spacedBy(Paddings.xlarge)
         ) {
-            items(GifticonCategory.values().copyOfRange(1, GifticonCategory.values().size - 1)) {
+            items(GifticonStore.values().copyOfRange(1, GifticonStore.values().size - 1)) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -133,18 +133,18 @@ fun CategoryModalSheet(
     }
 }
 
-private fun GifticonCategory.logo(): Int = when (this) {
-    GifticonCategory.STARBUCKS -> R.drawable.ic_starbucks
-    GifticonCategory.TWOSOME_PLACE -> R.drawable.ic_twosome
-    GifticonCategory.ANGELINUS -> R.drawable.ic_angelinus
-    GifticonCategory.MEGA_COFFEE -> R.drawable.ic_mega_coffee
-    GifticonCategory.COFFEE_BEAN -> R.drawable.ic_coffee_bean
-    GifticonCategory.GONG_CHA -> R.drawable.ic_gongcha
-    GifticonCategory.BASKINROBBINS -> R.drawable.ic_baskinrobbins
-    GifticonCategory.MCDONALD -> R.drawable.ic_mcdonald
-    GifticonCategory.GS25 -> R.drawable.ic_gs25
-    GifticonCategory.CU -> R.drawable.ic_cu
-    GifticonCategory.ETC -> R.drawable.ic_etc
+private fun GifticonStore.logo(): Int = when (this) {
+    GifticonStore.STARBUCKS -> R.drawable.ic_starbucks
+    GifticonStore.TWOSOME_PLACE -> R.drawable.ic_twosome
+    GifticonStore.ANGELINUS -> R.drawable.ic_angelinus
+    GifticonStore.MEGA_COFFEE -> R.drawable.ic_mega_coffee
+    GifticonStore.COFFEE_BEAN -> R.drawable.ic_coffee_bean
+    GifticonStore.GONG_CHA -> R.drawable.ic_gongcha
+    GifticonStore.BASKINROBBINS -> R.drawable.ic_baskinrobbins
+    GifticonStore.MCDONALD -> R.drawable.ic_mcdonald
+    GifticonStore.GS25 -> R.drawable.ic_gs25
+    GifticonStore.CU -> R.drawable.ic_cu
+    GifticonStore.ETC -> R.drawable.ic_etc
     else -> throw IllegalStateException()
 }
 

@@ -1,7 +1,7 @@
 package com.yapp.buddycon.network.service.gifticon.response
 
 import com.yapp.buddycon.domain.model.gifticon.GifticonDetailModel
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
 
 data class GifticonDetailResponse(
@@ -25,7 +25,7 @@ data class GifticonDetailResponseBody(
         name = name,
         memo = memo,
         expireDate = expireDate,
-        gifticonStore = GifticonCategory.valueOf(gifticonStore),
+        gifticonStore = GifticonStore.valueOf(gifticonStore),
         gifticonStoreCategory = GifticonStoreCategory.valueOf(gifticonStoreCategory)
     )
 }

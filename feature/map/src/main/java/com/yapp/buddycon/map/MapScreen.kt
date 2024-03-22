@@ -50,7 +50,7 @@ import com.yapp.buddycon.designsystem.component.snackbar.showBuddyConSnackBar
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.domain.model.gifticon.GifticonModel
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import timber.log.Timber
 import java.lang.Exception
 import java.util.Calendar
@@ -155,7 +155,7 @@ private fun MapBottomSheet(
                     gifticonInfos = List(5) {
                         GifticonModel(
                             imageUrl = "https://github.com/Team-BuddyCon/ANDROID_V2/assets/34837583/5ab80674-4ffb-4c91-ab10-3743d8c87e58",
-                            category = GifticonCategory.STARBUCKS,
+                            category = GifticonStore.STARBUCKS,
                             name = "빙그레)바나나맛우유240",
                             expirationTime = (today + 1000 * 60 * 60 * 24L * (-1..366).random())
                         )
@@ -212,8 +212,8 @@ private fun MapContent(
 
 @Composable
 private fun MapCategoryTab(
-    category: GifticonCategory,
-    onCategoryChange: (GifticonCategory) -> Unit = { }
+    category: GifticonStore,
+    onCategoryChange: (GifticonStore) -> Unit = { }
 ) {
     LazyRow(
         modifier = Modifier
@@ -223,7 +223,7 @@ private fun MapCategoryTab(
             .padding(top = Paddings.xlarge, bottom = Paddings.large),
         horizontalArrangement = Arrangement.spacedBy(Paddings.small)
     ) {
-        items(GifticonCategory.values()) {
+        items(GifticonStore.values()) {
             CategoryButton(
                 gifticonCategory = it,
                 isSelected = it == category,

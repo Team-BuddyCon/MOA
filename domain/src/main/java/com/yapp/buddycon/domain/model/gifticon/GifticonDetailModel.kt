@@ -1,6 +1,6 @@
 package com.yapp.buddycon.domain.model.gifticon
 
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
 
 data class GifticonDetailModel(
@@ -9,6 +9,6 @@ data class GifticonDetailModel(
     val name: String = "",
     val memo: String = "",
     val expireDate: String = "",
-    val gifticonStore: GifticonCategory = GifticonCategory.ETC,
+    val gifticonStore: GifticonStore = GifticonStore.ETC,
     val gifticonStoreCategory: GifticonStoreCategory = GifticonStoreCategory.OTHERS
 )

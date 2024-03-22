@@ -61,7 +61,7 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey30
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.gifticon.GifticonViewModel
 import timber.log.Timber
 import java.io.IOException
@@ -207,7 +207,7 @@ fun GifticonRegisterScreen(
                         ) {
                             showErrorPopup = true
                         } else {
-                            if (uiState.category != GifticonCategory.ETC) {
+                            if (uiState.category != GifticonStore.ETC) {
                                 gifticonRegisterViewModel.registerNewGifticon(
                                     imagePath = imageUri?.toString() ?: ""
                                 )
@@ -318,7 +318,7 @@ private fun GifticonRegisterContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_usage),
             placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = if (uiState.category == GifticonCategory.ETC) "" else uiState.category.value,
+            value = if (uiState.category == GifticonStore.ETC) "" else uiState.category.value,
             action = { isShowCategoryModal = true }
         )
         NoEssentialInputText(

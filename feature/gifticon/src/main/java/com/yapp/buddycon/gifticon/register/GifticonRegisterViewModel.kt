@@ -2,7 +2,7 @@ package com.yapp.buddycon.gifticon.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.domain.repository.GifticonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,7 +35,7 @@ class GifticonRegisterViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(expireDate = expireDate)
     }
 
-    fun setCategory(category: GifticonCategory) {
+    fun setCategory(category: GifticonStore) {
         _uiState.value = _uiState.value.copy(category = category)
     }
 

@@ -1,9 +1,9 @@
 package com.yapp.buddycon.map
 
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 
 data class MapUiState(
-    val category: GifticonCategory = GifticonCategory.TOTAL,
+    val category: GifticonStore = GifticonStore.TOTAL,
     val sheetValue: BottomSheetValue = BottomSheetValue.Collapsed,
     val heightDp: Float = BottomSheetValue.Collapsed.sheetPeekHeightDp
 )
