@@ -3,7 +3,7 @@ package com.yapp.buddycon.network.service.gifticon.response
 import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
-import com.yapp.buddycon.domain.model.type.convertStringValueToGifticonCategory
+import com.yapp.buddycon.domain.model.type.convertStringValueToGifticonStore
 
 data class AvailableGifticonResponse(
     @SerializedName("body")
@@ -38,7 +38,7 @@ data class Body(
             imageUrl = this.imageUrl,
             name = this.name,
             expireDate = this.expireDate,
-            category = convertStringValueToGifticonCategory(gifticonStore)
+            category = convertStringValueToGifticonStore(gifticonStore)
             // 가게 카테고리 정보 mapping 추가 예정
         )
     }

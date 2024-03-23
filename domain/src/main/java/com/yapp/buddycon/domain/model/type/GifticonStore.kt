@@ -14,3 +14,18 @@ enum class GifticonStore(val value: String) {
     CU("CU"),
     ETC("기타")
 }
+
+fun convertStringValueToGifticonStore(stringValue: String) =
+    when (stringValue) {
+        GifticonStore.STARBUCKS.name -> GifticonStore.STARBUCKS
+        GifticonStore.TWOSOME_PLACE.name -> GifticonStore.TWOSOME_PLACE
+        GifticonStore.ANGELINUS.name -> GifticonStore.ANGELINUS
+        GifticonStore.MEGA_COFFEE.name -> GifticonStore.MEGA_COFFEE
+        GifticonStore.COFFEE_BEAN.name -> GifticonStore.COFFEE_BEAN
+        GifticonStore.GONG_CHA.name -> GifticonStore.GONG_CHA
+        GifticonStore.BASKINROBBINS.name -> GifticonStore.BASKINROBBINS
+        GifticonStore.MCDONALD.name -> GifticonStore.MCDONALD
+        GifticonStore.GS25.name -> GifticonStore.GS25
+        GifticonStore.CU.name -> GifticonStore.CU
+        else -> GifticonStore.ETC
+    }
