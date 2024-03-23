@@ -10,6 +10,7 @@ data class AvailableGifticon(
     val pageNumber: Int = 0,
 ) {
     data class AvailableGifticonInfo(
+        val gifticonId: Int = -1,
         val imageUrl: String = "",
         val category: GifticonStore = GifticonStore.ETC,
         val storeCategory: GifticonStoreCategory = GifticonStoreCategory.OTHERS,

@@ -189,3 +189,5 @@ fun TopAppBarForSetting(
         )
     )
 }
+
+fun getTopAppBarHeight() = AppbarHeight
