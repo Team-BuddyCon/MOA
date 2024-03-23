@@ -48,7 +48,7 @@ class GifticonRepositoryImpl @Inject constructor(
             giftiConService.createGifticon(
                 image = imageMultipartBody,
                 dto = requestBody
-            ).statue == 200
+            ).body
         )
     }
 

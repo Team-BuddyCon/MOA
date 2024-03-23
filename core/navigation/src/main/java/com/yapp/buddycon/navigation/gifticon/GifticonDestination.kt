@@ -24,11 +24,16 @@ sealed class GifticonDestination : BuddyConDestination {
 
     object Detail : GifticonDestination() {
         override val route = GIFTICON_DETAIL
-        const val gifticonIdArg = "gifticonID"
-        val routeWithArg = "$route/{$gifticonIdArg}"
+        const val gifticonIdArg = "gifticonId"
+        const val fromRegisterArg = "fromRegister"
+        val routeWithArg = "$route/{$gifticonIdArg}/{$fromRegisterArg}"
         val arguments = listOf(
             navArgument(gifticonIdArg) {
                 type = NavType.IntType
+            },
+            navArgument(fromRegisterArg) {
+                type = NavType.BoolType
+                defaultValue = false
             }
         )
     }

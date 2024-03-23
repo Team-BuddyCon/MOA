@@ -22,8 +22,7 @@ fun NavGraphBuilder.gifticonGraph(
         composable(GifticonDestination.Gifticon.route) {
             val gifticonId = 33
             GifticonScreeen {
-                // navHostController.navigate(GifticonDestination.Register.route)
-                navHostController.navigate("${GifticonDestination.Detail.route}/$gifticonId")
+                navHostController.navigate(GifticonDestination.Register.route)
             }
         }
 
@@ -31,6 +30,14 @@ fun NavGraphBuilder.gifticonGraph(
             val parentEntry = remember(entry) { navHostController.getBackStackEntry(GifticonDestination.Gifticon.route) }
             GifticonRegisterScreen(
                 gifticonViewModel = hiltViewModel(parentEntry),
+                onNavigateToGifticonDetail = { id ->
+                    val fromRegister = true
+                    navHostController.navigate("${GifticonDestination.Detail.route}/$id/$fromRegister") {
+                        popUpTo(GifticonDestination.Gifticon.route) {
+                            inclusive = false
+                        }
+                    }
+                },
                 onBack = { navHostController.popBackStack() }
             )
         }
@@ -40,8 +47,11 @@ fun NavGraphBuilder.gifticonGraph(
             arguments = GifticonDestination.Detail.arguments
         ) { entry ->
             val gifticonId = entry.arguments?.getInt(GifticonDestination.Detail.gifticonIdArg)
+            val fromRegister = entry.arguments?.getBoolean(GifticonDestination.Detail.fromRegisterArg)
             GifticonDetailScreen(
-                gifticonId = gifticonId
+                gifticonId = gifticonId,
+                fromRegister = fromRegister,
+                onBack = { navHostController.popBackStack() }
             )
         }
     }

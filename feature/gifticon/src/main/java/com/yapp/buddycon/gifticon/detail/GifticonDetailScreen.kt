@@ -27,6 +27,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,9 +58,8 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.MapType
 import com.kakao.vectormap.MapView
-import com.kakao.vectormap.MapViewInfo
+import com.kakao.vectormap.label.LabelManager
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
@@ -68,6 +68,8 @@ import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBackAndEdit
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.component.custom.FullGifticonImage
 import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
+import com.yapp.buddycon.designsystem.component.snackbar.BuddyConSnackbar
+import com.yapp.buddycon.designsystem.component.snackbar.showBuddyConSnackBar
 import com.yapp.buddycon.designsystem.component.tag.DDayTag
 import com.yapp.buddycon.designsystem.component.utils.DividerHorizontal
 import com.yapp.buddycon.designsystem.theme.Black
@@ -75,19 +77,38 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink50
+import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import timber.log.Timber
 import java.text.SimpleDateFormat
 
 @Composable
 fun GifticonDetailScreen(
-    gifticonId: Int?
+    gifticonId: Int?,
+    fromRegister: Boolean?,
+    onBack: () -> Unit
 ) {
     checkNotNull(gifticonId)
+    checkNotNull(fromRegister)
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showedSnackbar by remember { mutableStateOf(false) }
+
+    if (fromRegister && showedSnackbar.not()) {
+        showBuddyConSnackBar(
+            message = context.getString(R.string.gifticon_register_complete_snackbar),
+            scope = coroutineScope,
+            snackbarHostState = snackbarHostState
+        )
+        showedSnackbar = true
+    }
 
     Scaffold(
         topBar = {
             TopAppBarWithBackAndEdit(
-                title = stringResource(R.string.gifticon)
+                title = stringResource(R.string.gifticon),
+                onBack = onBack
             )
         },
         floatingActionButton = {
@@ -99,7 +120,8 @@ fun GifticonDetailScreen(
             ) {
             }
         },
-        floatingActionButtonPosition = FabPosition.Center
+        floatingActionButtonPosition = FabPosition.Center,
+        snackbarHost = { BuddyConSnackbar(snackbarHostState = snackbarHostState) }
     ) { paddingValues ->
         GifticonDetailContent(
             modifier = Modifier
@@ -122,9 +144,20 @@ private fun GifticonDetailContent(
     var isImageExpanded by remember { mutableStateOf(false) }
     val gifticonDetailModel by gifticonDetailViewModel.gifticonDetailModel.collectAsStateWithLifecycle()
     var currentLocation by remember { mutableStateOf<Location?>(null) }
+    val searchPlaceModels by gifticonDetailViewModel.searchPlacesModel.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         gifticonDetailViewModel.requestGifticonDetail(gifticonId)
+    }
+
+    LaunchedEffect(currentLocation) {
+        currentLocation?.let { location ->
+            gifticonDetailViewModel.searchPlacesByKeyword(
+                query = gifticonDetailModel.gifticonStore.value,
+                x = location.longitude.toString(),
+                y = location.latitude.toString()
+            )
+        }
     }
 
     FullGifticonImage(
@@ -193,7 +226,10 @@ private fun GifticonDetailContent(
             info = stringResource(R.string.gifticon_memo),
             value = gifticonDetailModel.memo
         )
-        GifticonMap(location = currentLocation) {
+        GifticonMap(
+            location = currentLocation,
+            searchPlaceModels = searchPlaceModels
+        ) {
             getCurrentLocation(context) {
                 currentLocation = it
             }
@@ -230,16 +266,16 @@ private fun GifticonDetailInfoRow(
 @Composable
 private fun GifticonMap(
     location: Location?,
+    searchPlaceModels: List<SearchPlaceModel> = listOf(),
     onGranted: () -> Unit = {}
 ) {
     val context = LocalContext.current
-
     // 위치 권한 체크
     var isGrantedPermission by remember {
         mutableStateOf(checkLocationPermission(context))
     }
 
-    // 위치 권한 유도 팝업 
+    // 위치 권한 유도 팝업
     var showPermissonDialog by remember { mutableStateOf(false) }
 
     // 위치 권한 요청
@@ -288,8 +324,7 @@ private fun GifticonMap(
             factory = { context ->
                 MapView(context)
             },
-            update = {
-                val mapViewInfo = MapViewInfo.from("openmap", MapType.NORMAL)
+            update = { it ->
                 it.start(
                     object : MapLifeCycleCallback() {
                         override fun onMapDestroy() {
@@ -303,25 +338,29 @@ private fun GifticonMap(
                         override fun onMapReady(kakaoMap: KakaoMap) {
                             location?.let { location ->
                                 kakaoMap.labelManager?.let { manager ->
-                                    val style = manager.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.ic_location)))
-                                    val option = LabelOptions.from(LatLng.from(location.latitude, location.longitude))
-                                        .setStyles(style)
-                                    val layer = manager.layer
-                                    val label = layer?.addLabel(option)
+                                    getLocationLabel(
+                                        labelManager = manager,
+                                        latitude = location.latitude,
+                                        longitude = location.longitude
+                                    )
+
+                                    searchPlaceModels.forEach { seachPlaceModel ->
+                                        getLocationLabel(
+                                            labelManager = manager,
+                                            latitude = seachPlaceModel.y.toDouble(),
+                                            longitude = seachPlaceModel.x.toDouble()
+                                        )
+                                    }
                                 }
                             }
                         }
 
                         override fun getPosition(): LatLng {
-                            location?.let {
-                                return LatLng.from(it.latitude, it.longitude)
+                            location?.let { location ->
+                                return LatLng.from(location.latitude, location.longitude)
                             } ?: kotlin.run {
                                 return super.getPosition()
                             }
-                        }
-
-                        override fun getMapViewInfo(): MapViewInfo {
-                            return mapViewInfo
                         }
                     }
                 )
@@ -421,4 +460,19 @@ private fun getCurrentLocation(
     fusedLocationClient.lastLocation.addOnSuccessListener {
         onSuccess(it)
     }
+}
+
+// 지도 위 마커 추가
+private fun getLocationLabel(
+    labelManager: LabelManager,
+    latitude: Double,
+    longitude: Double
+) {
+    labelManager.layer
+        ?.addLabel(
+            LabelOptions.from(LatLng.from(latitude, longitude))
+                .setStyles(
+                    labelManager.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.ic_location)))
+                )
+        )
 }

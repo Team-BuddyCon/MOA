@@ -24,8 +24,8 @@ class GifticonRegisterViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(GifticonRegisterUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _isCompleted = MutableSharedFlow<Boolean>()
-    val isCompleted = _isCompleted.asSharedFlow()
+    private val _gifticonId = MutableSharedFlow<Int>()
+    val gifticonId = _gifticonId.asSharedFlow()
 
     fun setName(name: String) {
         _uiState.value = _uiState.value.copy(name = name)
@@ -51,7 +51,7 @@ class GifticonRegisterViewModel @Inject constructor(
             store = uiState.value.category.name,
             memo = uiState.value.memo
         ).onEach {
-            _isCompleted.emit(it)
+            _gifticonId.emit(it)
         }.launchIn(viewModelScope)
     }
 }

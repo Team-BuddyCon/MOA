@@ -10,7 +10,7 @@ interface GifticonRepository {
         expireDate: String,
         store: String,
         memo: String
-    ): Flow<Boolean>
+    ): Flow<Int>
 
     fun requestGifticonDetail(
         gifticonId: Int

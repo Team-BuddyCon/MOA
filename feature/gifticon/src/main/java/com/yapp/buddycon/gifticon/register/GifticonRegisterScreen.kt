@@ -72,6 +72,7 @@ import java.util.Locale
 fun GifticonRegisterScreen(
     gifticonViewModel: GifticonViewModel = hiltViewModel(),
     gifticonRegisterViewModel: GifticonRegisterViewModel = hiltViewModel(),
+    onNavigateToGifticonDetail: (Int) -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -115,14 +116,13 @@ fun GifticonRegisterScreen(
     }
 
     LaunchedEffect(Unit) {
-        gifticonRegisterViewModel.isCompleted.collect { isCompleted ->
-            if (isCompleted) {
-                showBuddyConSnackBar(
-                    message = context.getString(R.string.gifticon_register_success),
-                    scope = coroutineScope,
-                    snackbarHostState = snackbarHostState
-                )
-            }
+        gifticonRegisterViewModel.gifticonId.collect { gifticonId ->
+            showBuddyConSnackBar(
+                message = context.getString(R.string.gifticon_register_success),
+                scope = coroutineScope,
+                snackbarHostState = snackbarHostState
+            )
+            onNavigateToGifticonDetail(gifticonId)
         }
     }
 

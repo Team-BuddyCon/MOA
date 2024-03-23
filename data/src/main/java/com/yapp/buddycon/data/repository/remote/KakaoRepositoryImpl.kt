@@ -11,12 +11,14 @@ class KakaoRepositoryImpl @Inject constructor(
     private val kakaoService: KakaoService
 ) : KakaoRepository {
     override fun searchPlacesByKeyword(query: String, x: String, y: String, radius: Int): Flow<List<SearchPlaceModel>> = flow {
-        kakaoService.searchPlacesByKeyword(
-            query = query,
-            x = x,
-            y = y,
-            radius = radius
-        ).places
-            .map { it.toModel() }
+        emit(
+            kakaoService.searchPlacesByKeyword(
+                query = query,
+                x = x,
+                y = y,
+                radius = radius
+            ).places
+                .map { it.toModel() }
+        )
     }
 }
