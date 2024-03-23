@@ -9,3 +9,7 @@ annotation class LoginClient
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class BuddyConClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class KakaoClient

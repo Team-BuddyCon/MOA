@@ -5,6 +5,9 @@ plugins {
     alias libs.plugins.kotlin.kapt
 }
 
+def Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     namespace 'com.yapp.buddycon.network'
     compileSdk 33
@@ -12,6 +15,7 @@ android {
     defaultConfig {
         minSdk 26
 
+        buildConfigField("String", "KAKAO_REST_API_KEY", properties.getProperty("KAKAO_REST_API_KEY"))
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }

@@ -4,6 +4,9 @@ import com.yapp.buddycon.network.di.qualifiers.BuddyConClient
 import com.yapp.buddycon.network.di.qualifiers.BuddyConInterceptorQualifier
 import com.yapp.buddycon.network.di.qualifiers.BuddyConRetrofit
 import com.yapp.buddycon.network.di.qualifiers.HttpLoggingInterceptorQualifier
+import com.yapp.buddycon.network.di.qualifiers.KakaoClient
+import com.yapp.buddycon.network.di.qualifiers.KakaoInterceptorQualifier
+import com.yapp.buddycon.network.di.qualifiers.KakaoRetrofit
 import com.yapp.buddycon.network.di.qualifiers.LoginClient
 import com.yapp.buddycon.network.di.qualifiers.LoginRetrofit
 import dagger.Module
@@ -20,6 +23,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     private const val BUDDYCON_BASE_URL = "http://43.202.14.1:8080/"
+    private const val KAKAO_BASE_URL = "https://dapi.kakao.com/v2/"
 
     @LoginClient
     @Provides
@@ -63,6 +67,28 @@ object NetworkModule {
     ): Retrofit =
         Retrofit.Builder()
             .baseUrl(BUDDYCON_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+    @KakaoClient
+    @Provides
+    @Singleton
+    fun provideKakaoClient(
+        @KakaoInterceptorQualifier interceptor: Interceptor
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .build()
+
+    @KakaoRetrofit
+    @Provides
+    @Singleton
+    fun provideKakaoRetrofit(
+        @KakaoClient okHttpClient: OkHttpClient
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(KAKAO_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
