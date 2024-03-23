@@ -1,11 +1,18 @@
 package com.yapp.buddycon.gifticon.detail
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,27 +33,38 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.google.android.gms.location.LocationServices
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
+import com.kakao.vectormap.MapType
 import com.kakao.vectormap.MapView
-import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBackAndEdit
+import com.kakao.vectormap.MapViewInfo
 import com.yapp.buddycon.designsystem.R
+import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBackAndEdit
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.component.custom.FullGifticonImage
+import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.tag.DDayTag
 import com.yapp.buddycon.designsystem.component.utils.DividerHorizontal
 import com.yapp.buddycon.designsystem.theme.Black
@@ -55,7 +73,6 @@ import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink50
 import timber.log.Timber
-import java.lang.Exception
 import java.text.SimpleDateFormat
 
 @Composable
@@ -97,11 +114,13 @@ private fun GifticonDetailContent(
     gifticonDetailViewModel: GifticonDetailViewModel = hiltViewModel(),
     gifticonId: Int
 ) {
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
     var isImageExpanded by remember { mutableStateOf(false) }
     val gifticonDetailModel by gifticonDetailViewModel.gifticonDetailModel.collectAsStateWithLifecycle()
+    var currentLocation by remember { mutableStateOf<Location?>(null) }
 
-    LaunchedEffect(gifticonDetailViewModel) {
+    LaunchedEffect(Unit) {
         gifticonDetailViewModel.requestGifticonDetail(gifticonId)
     }
 
@@ -171,51 +190,9 @@ private fun GifticonDetailContent(
             info = stringResource(R.string.gifticon_memo),
             value = gifticonDetailModel.memo
         )
-        Box(
-            modifier = Modifier
-                .padding(top = Paddings.xlarge, bottom = 89.dp)
-                .padding(horizontal = Paddings.xlarge)
-                .fillMaxWidth()
-                .height(166.dp)
-                .clip(RoundedCornerShape(20.dp))
-        ) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { context ->
-                    MapView(context)
-                },
-                update = {
-                    it.start(
-                        object : MapLifeCycleCallback() {
-                            override fun onMapDestroy() {
-                            }
-
-                            override fun onMapError(error: Exception?) {
-                                Timber.e("onMapError ${error?.message}")
-                            }
-                        },
-                        object : KakaoMapReadyCallback() {
-                            override fun onMapReady(kakaoMap: KakaoMap) {
-                                Timber.d("onMapReady")
-                            }
-                        }
-                    )
-                }
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 12.dp, end = 12.dp)
-                    .background(Pink50, RoundedCornerShape((18.5).dp))
-                    .padding(horizontal = 22.dp, vertical = 10.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.gifticon_map_enlargement),
-                    style = BuddyConTheme.typography.body04.copy(
-                        color = BuddyConTheme.colors.primary
-                    )
-                )
+        GifticonMap(location = currentLocation) {
+            getCurrentLocation(context) {
+                currentLocation = it
             }
         }
     }
@@ -244,5 +221,192 @@ private fun GifticonDetailInfoRow(
                 .padding(horizontal = Paddings.xlarge)
                 .padding(bottom = Paddings.small)
         )
+    }
+}
+
+@Composable
+private fun GifticonMap(
+    location: Location?,
+    onGranted: () -> Unit = {}
+) {
+    val context = LocalContext.current
+
+    // 위치 권한 체크
+    var isGrantedPermission by remember {
+        mutableStateOf(checkLocationPermission(context))
+    }
+
+    // 위치 권한 유도 팝업 
+    var showPermissonDialog by remember { mutableStateOf(false) }
+
+    // 위치 권한 요청
+    var requestPermissionEvent by remember { mutableStateOf(false) }
+
+    if (isGrantedPermission) {
+        onGranted()
+    }
+
+    if (showPermissonDialog) {
+        DefaultDialog(
+            dialogTitle = stringResource(R.string.location_permission_dialog_title),
+            dismissText = stringResource(R.string.location_permission_later),
+            confirmText = stringResource(R.string.location_permission_granted),
+            dialogContent = stringResource(R.string.location_permission_dialog_content),
+            onConfirm = {
+                showPermissonDialog = false
+                requestPermissionEvent = true
+            },
+            onDismissRequest = { showPermissonDialog = false }
+        )
+    }
+
+    if (requestPermissionEvent) {
+        RequestLocationPermission(
+            onGranted = {
+                isGrantedPermission = true
+            },
+            onDeny = {
+                isGrantedPermission = false
+                requestPermissionEvent = false
+            }
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .padding(top = Paddings.xlarge, bottom = 89.dp)
+            .padding(horizontal = Paddings.xlarge)
+            .fillMaxWidth()
+            .height(166.dp)
+            .clip(RoundedCornerShape(20.dp))
+    ) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { context ->
+                MapView(context)
+            },
+            update = {
+                val mapViewInfo = MapViewInfo.from("openmap", MapType.NORMAL)
+                it.start(
+                    object : MapLifeCycleCallback() {
+                        override fun onMapDestroy() {
+                        }
+
+                        override fun onMapError(error: Exception?) {
+                            Timber.e("onMapError ${error?.message}")
+                        }
+                    },
+                    object : KakaoMapReadyCallback() {
+                        override fun onMapReady(kakaoMap: KakaoMap) {
+                        }
+
+                        override fun getPosition(): LatLng {
+                            location?.let {
+                                return LatLng.from(it.latitude, it.longitude)
+                            } ?: kotlin.run {
+                                return super.getPosition()
+                            }
+                        }
+
+                        override fun getMapViewInfo(): MapViewInfo {
+                            return mapViewInfo
+                        }
+                    }
+                )
+            }
+        )
+        if (isGrantedPermission.not()) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Black.copy(0.4f))
+            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .background(BuddyConTheme.colors.background, RoundedCornerShape((22.5).dp))
+                    .padding(horizontal = 20.dp, vertical = 14.dp)
+                    .clickable { showPermissonDialog = true },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(Color.Red)) {
+                            append("위치 허용")
+                        }
+                        append("을 해야 사용할 수 있어요")
+                    },
+                    style = BuddyConTheme.typography.body04.copy(color = Grey70)
+                )
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 12.dp, end = 12.dp)
+                    .background(Pink50, RoundedCornerShape((18.5).dp))
+                    .padding(horizontal = 22.dp, vertical = 10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.gifticon_map_enlargement),
+                    style = BuddyConTheme.typography.body04.copy(
+                        color = BuddyConTheme.colors.primary
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RequestLocationPermission(
+    onGranted: () -> Unit = {},
+    onDeny: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val permissions = arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val isGranted = permissions.values.all { it }
+        if (isGranted) {
+            onGranted()
+        } else {
+            onDeny()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (permissions.any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED }) {
+            permissionsLauncher.launch(permissions)
+        }
+    }
+}
+
+private fun checkLocationPermission(
+    context: Context
+): Boolean {
+    val permissions = arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+    return permissions.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
+}
+
+// 내 위치 정보
+@SuppressLint("MissingPermission")
+private fun getCurrentLocation(
+    context: Context,
+    onSuccess: (Location) -> Unit
+) {
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    fusedLocationClient.lastLocation.addOnSuccessListener {
+        onSuccess(it)
     }
 }

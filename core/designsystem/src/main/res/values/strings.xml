@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- common -->
     <string name="button_default_name">버튼</string>
     <string name="confirm">확인</string>
     <string name="tag_expiration">만료</string>
@@ -17,6 +18,10 @@
     <string name="modal_sheet_place_distance_format">"%.1f km</string>
     <string name="modal_sheet_category_title">사용처</string>
     <string name="modal_sheet_calendar_title">유효기간</string>
+    <string name="location_permission_dialog_title">위치 허용이 필요해요</string>
+    <string name="location_permission_dialog_content">위치 정보를 동의하기 전까지\n지도 기능을 사용할 수 없어요.</string>
+    <string name="location_permission_later">다음에 하기</string>
+    <string name="location_permission_granted">허용하기</string>
 
     <string name="startup_onboarding_gifticon_title">기프티콘을 한곳에서 관리해요</string>
     <string name="startup_onboarding_gifticon_description">흩어져 있는 기프티콘을 한곳에서 확인하고\n만료 전 알림으로 유효기간을 관리해요</string>
