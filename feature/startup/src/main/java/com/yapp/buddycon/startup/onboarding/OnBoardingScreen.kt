@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -64,9 +63,7 @@ fun OnBoardingScreen(
         )
     )
 
-    val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState { items.size }
-
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(BuddyConTheme.colors.background)
 
@@ -75,89 +72,101 @@ fun OnBoardingScreen(
             .fillMaxSize()
             .background(BuddyConTheme.colors.background)
     ) {
-        Spacer(Modifier.weight(100f))
-        HorizontalPager(pagerState) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) {
             OnBoardingPagerContent(
-                modifier = Modifier
-                    .padding(horizontal = 35.dp)
-                    .fillMaxWidth(),
-                onBoardingItem = items[it]
+                modifier = Modifier.fillMaxSize(),
+                onBoardingItem = items[it],
+                pagerState = pagerState,
+                onNavigateToLogin = onNavigateToLogin
             )
-        }
-        Spacer(Modifier.weight(88f))
-        DynamicHorizontalPagerIndicator(
-            pagerState = pagerState,
-            pageCount = items.size,
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (pagerState.currentPage != items.lastIndex) {
-            Row(
-                modifier = Modifier
-                    .padding(top = 48.dp, bottom = Paddings.extra)
-                    .padding(horizontal = Paddings.xlarge)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.startup_onboarding_pager_skip),
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(items.lastIndex)
-                        }
-                    },
-                    style = BuddyConTheme.typography.subTitle.copy(color = Grey60)
-                )
-                Spacer(Modifier.weight(1f))
-                Text(
-                    text = stringResource(R.string.startup_onboarding_pager_next),
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(pagerState.currentPage + 1)
-                        }
-                    },
-                    style = BuddyConTheme.typography.subTitle.copy(color = Pink100)
-                )
-            }
-        } else {
-            BuddyConButton(
-                text = stringResource(R.string.startup_onboarding_start),
-                modifier = Modifier
-                    .padding(top = Paddings.extra, bottom = Paddings.xlarge)
-                    .padding(horizontal = Paddings.xlarge)
-                    .fillMaxWidth()
-            ) {
-                onNavigateToLogin()
-            }
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun OnBoardingPagerContent(
     modifier: Modifier = Modifier,
-    onBoardingItem: OnBoardingItem
+    onBoardingItem: OnBoardingItem,
+    pagerState: PagerState,
+    onNavigateToLogin: () -> Unit = {}
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(Modifier.weight(100f))
         Image(
             painter = painterResource(onBoardingItem.drawableRes),
             contentDescription = onBoardingItem.title,
             modifier = Modifier.size(290.dp, 300.dp),
             contentScale = ContentScale.FillBounds
         )
+        Spacer(Modifier.weight(40f))
         Text(
             text = onBoardingItem.title,
-            modifier = Modifier.padding(top = 40.dp),
             style = BuddyConTheme.typography.title01
         )
+        Spacer(Modifier.weight(16f))
         Text(
             text = onBoardingItem.description,
-            modifier = Modifier.padding(top = Paddings.xlarge),
             style = BuddyConTheme.typography.body01.copy(color = Grey60),
             textAlign = TextAlign.Center
         )
+        Spacer(Modifier.weight(88f))
+        DynamicHorizontalPagerIndicator(
+            pagerState = pagerState,
+            pageCount = pagerState.pageCount,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Column(
+            modifier = Modifier.weight(94f),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            if (pagerState.currentPage < pagerState.pageCount - 1) {
+                Row(
+                    modifier = Modifier
+                        .padding(bottom = 24.dp)
+                        .padding(horizontal = Paddings.xlarge)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.startup_onboarding_pager_skip),
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(pagerState.pageCount - 1)
+                            }
+                        },
+                        style = BuddyConTheme.typography.subTitle.copy(color = Grey60)
+                    )
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = stringResource(R.string.startup_onboarding_pager_next),
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(pagerState.currentPage + 1)
+                            }
+                        },
+                        style = BuddyConTheme.typography.subTitle.copy(color = Pink100)
+                    )
+                }
+            } else {
+                BuddyConButton(
+                    text = stringResource(R.string.startup_onboarding_start),
+                    modifier = Modifier
+                        .padding(bottom = Paddings.xlarge)
+                        .padding(horizontal = Paddings.xlarge)
+                        .fillMaxWidth()
+                ) {
+                    onNavigateToLogin()
+                }
+            }
+        }
     }
 }
 
