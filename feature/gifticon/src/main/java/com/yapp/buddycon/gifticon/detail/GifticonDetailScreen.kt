@@ -60,6 +60,9 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapType
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.MapViewInfo
+import com.kakao.vectormap.label.LabelOptions
+import com.kakao.vectormap.label.LabelStyle
+import com.kakao.vectormap.label.LabelStyles
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBackAndEdit
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
@@ -298,6 +301,15 @@ private fun GifticonMap(
                     },
                     object : KakaoMapReadyCallback() {
                         override fun onMapReady(kakaoMap: KakaoMap) {
+                            location?.let { location ->
+                                kakaoMap.labelManager?.let { manager ->
+                                    val style = manager.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.ic_location)))
+                                    val option = LabelOptions.from(LatLng.from(location.latitude, location.longitude))
+                                        .setStyles(style)
+                                    val layer = manager.layer
+                                    val label = layer?.addLabel(option)
+                                }
+                            }
                         }
 
                         override fun getPosition(): LatLng {
