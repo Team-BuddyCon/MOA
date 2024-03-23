@@ -6,7 +6,7 @@ enum class SortType(val value: String) {
     NAME("이름순");
 
     fun mapSortTypeToStringValue(): String {
-        return when(this) {
+        return when (this) {
             EXPIRATION_DATE -> "EXPIRE_DATE"
             REGISTRATION -> "CREATED_AT"
             NAME -> "NAME"

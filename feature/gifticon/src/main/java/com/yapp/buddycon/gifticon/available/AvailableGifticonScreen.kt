@@ -179,7 +179,6 @@ private fun AvailabeGifticonContent(
         }
     )
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -225,8 +224,7 @@ private fun AvailableGifticons(
         contentPadding = PaddingValues(top = topAppBarHeight + TabHeight),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
-            //.fillMaxWidth()
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp)
     ) {
         itemsIndexed(
@@ -424,7 +422,7 @@ private fun NoAvailableGifticonContent(topAppBarHeight: Dp) {
                 .fillMaxWidth()
                 .padding(horizontal = 30.dp),
             painter = painterResource(R.drawable.img_empty_box),
-            contentDescription = null,
+            contentDescription = null
         )
         Text(
             modifier = Modifier.fillMaxWidth(),

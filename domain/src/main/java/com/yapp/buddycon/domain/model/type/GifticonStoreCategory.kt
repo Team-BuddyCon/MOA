@@ -7,7 +7,7 @@ enum class GifticonStoreCategory(val value: String) {
     OTHERS("기타");
 
     fun mapGifiticonStoreCategoryToStringValue(): String? {
-        return when(this) {
+        return when (this) {
             TOTAL -> null
             CAFE -> "CAFE"
             CONVENIENCESTORE -> "CONVENIENCE_STORE"

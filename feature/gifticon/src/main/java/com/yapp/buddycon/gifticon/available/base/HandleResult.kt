@@ -16,7 +16,7 @@ fun <T> HandleDataResult(
     val dataResult = dataResultStateFlow.collectAsState().value
 
     LaunchedEffect(dataResult) {
-        when(dataResult) {
+        when (dataResult) {
             is DataResult.Success -> {
                 onSuccess(dataResult)
             }

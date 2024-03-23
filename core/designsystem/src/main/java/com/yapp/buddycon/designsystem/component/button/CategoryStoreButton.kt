@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey50
-import com.yapp.buddycon.domain.model.type.GifticonCategory
 import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
 
 private val CategoryButtonHorizontalPadding = 12.dp
