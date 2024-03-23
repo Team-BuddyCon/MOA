@@ -48,6 +48,7 @@ dependencies {
     implementation project(":domain")
     implementation libs.accompanist.systemuicontroller
     implementation libs.accompanist.pager
+    implementation libs.accompanist.webview
     implementation libs.accompanist.pager.indicators
     implementation libs.hilt.android
     kapt libs.hilt.compiler
