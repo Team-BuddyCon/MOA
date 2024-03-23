@@ -14,7 +14,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yapp.buddycon.designsystem.R
-import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.button.FloatingActionButton
 import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
@@ -39,9 +38,6 @@ fun GifticonScreeen(
     systemUiController.setStatusBarColor(BuddyConTheme.colors.background)
 
     Scaffold(
-        topBar = {
-            TopAppBarWithNotification(stringResource(R.string.gifticon))
-        },
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = { FloatingActionButton(onNavigateToRegister) }
     ) { paddingValues ->

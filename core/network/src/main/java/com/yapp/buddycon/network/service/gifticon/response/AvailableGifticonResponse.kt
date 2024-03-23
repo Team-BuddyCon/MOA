@@ -1,7 +1,9 @@
 package com.yapp.buddycon.network.service.gifticon.response
 
+import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
+import com.yapp.buddycon.domain.model.type.convertStringValueToGifticonCategory
 
 data class AvailableGifticonResponse(
     @SerializedName("body")
@@ -23,19 +25,21 @@ data class Body(
     val size: Int
 ) {
     data class Content(
-        val expireDate: String,
         val gifticonId: Int,
+        val imageUrl: String,
+        val name: String,
+        val memo: String,
+        val expireDate: String,
         val gifticonStore: String,
         val gifticonStoreCategory: String,
-        val imageUrl: String,
-        val memo: String,
-        val name: String
     ) {
         fun mapToAvailableGifticonInfo() = AvailableGifticon.AvailableGifticonInfo(
+            gifticonId = gifticonId,
             imageUrl = this.imageUrl,
             name = this.name,
-            expireDate = this.expireDate
-            // 가게, 메뉴 카테고리 정보 mapping 추가 예정
+            expireDate = this.expireDate,
+            category = convertStringValueToGifticonCategory(gifticonStore)
+            // 가게 카테고리 정보 mapping 추가 예정
         )
     }
 
@@ -47,7 +51,7 @@ data class Body(
     )
 
     fun mapToAvailableGifticon() = AvailableGifticon(
-        availableGifticons = this.content.map { it.mapToAvailableGifticonInfo() },
+        availableGifticons = this.content.map { it.mapToAvailableGifticonInfo() }.also { Log.e("MOATest", "size : ${this.content.size}") },
         isFirstPage = this.first,
         isLastPage = this.last,
         pageNumber = this.pageable.pageNumber
