@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -147,6 +148,7 @@ private fun GifticonDetailContent(
     val searchPlaceModels by gifticonDetailViewModel.searchPlacesModel.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
+        Log.e("MOATest", "gifticonDetailViewModel hashcode : ${gifticonDetailViewModel.hashCode()}")
         gifticonDetailViewModel.requestGifticonDetail(gifticonId)
     }
 

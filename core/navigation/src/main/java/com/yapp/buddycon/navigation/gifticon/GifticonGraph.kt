@@ -20,10 +20,15 @@ fun NavGraphBuilder.gifticonGraph(
         route = GIFTICON_GRAPH
     ) {
         composable(GifticonDestination.Gifticon.route) {
-            val gifticonId = 33
-            GifticonScreeen {
-                navHostController.navigate(GifticonDestination.Register.route)
-            }
+            GifticonScreeen(
+                onNavigateToRegister = {
+                    navHostController.navigate(GifticonDestination.Register.route)
+                },
+                onNavigateToGifticonDetail = { gifticonId ->
+                    val fromRegister = false
+                    navHostController.navigate("${GifticonDestination.Detail.route}/$gifticonId/$fromRegister")
+                }
+            )
         }
 
         composable(GifticonDestination.Register.route) { entry ->

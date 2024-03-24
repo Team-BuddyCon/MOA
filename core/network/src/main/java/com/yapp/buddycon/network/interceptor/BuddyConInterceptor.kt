@@ -41,7 +41,7 @@ class BuddyConInterceptor @Inject constructor(
             .addHeader("Authorization", "Bearer $accessToken")
             .build()
 
-        Log.e("MOATest", "token : Bearer $accessToken")
+        Log.e("MOATest", "token : Bearer $accessToken") // test용 로그 출력 -> 추후 삭제 예정
 
         return chain.proceed(newRequest)
     }

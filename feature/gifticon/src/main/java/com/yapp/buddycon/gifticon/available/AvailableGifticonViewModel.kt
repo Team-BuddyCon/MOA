@@ -110,6 +110,10 @@ class AvailableGifticonViewModel @Inject constructor(
     fun updateAvailableGifticonScreenUiState(newAvailableGifticonScreenUiState: AvailableGifticonScreenUiState) {
         _availableGifticonScreenUiState.value = newAvailableGifticonScreenUiState
     }
+
+    fun initPagingState() { // paging 상태 초기화
+        availableGifticonPageState = AvailableGifticonPageState()
+    }
 }
 
 @Immutable

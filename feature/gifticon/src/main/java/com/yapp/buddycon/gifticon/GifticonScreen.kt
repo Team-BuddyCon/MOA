@@ -1,5 +1,6 @@
 package com.yapp.buddycon.gifticon
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,8 +24,13 @@ import com.yapp.buddycon.gifticon.available.AvailabeGifticonScreen
 @Composable
 fun GifticonScreeen(
     gifticonViewModel: GifticonViewModel = hiltViewModel(),
-    onNavigateToRegister: () -> Unit = {}
+    onNavigateToRegister: () -> Unit = {},
+    onNavigateToGifticonDetail: (Int) -> Unit = {}
 ) {
+    LaunchedEffect(Unit) {
+        Log.e("MOAtest", "[GifticonScreeen] - [LaunchedEffect(Unit)]")
+    }
+
     val showErrorPopup by gifticonViewModel.showErrorPopup.collectAsStateWithLifecycle()
     if (showErrorPopup) {
         ConfirmDialog(
@@ -45,16 +52,24 @@ fun GifticonScreeen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(BuddyConTheme.colors.background)
+                .background(BuddyConTheme.colors.background),
+            onNavigateToGifticonDetail = { gifticonId ->
+                onNavigateToGifticonDetail(gifticonId)
+            }
         )
     }
 }
 
 @Composable
 fun GifticonContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToGifticonDetail: (Int) -> Unit
 ) {
     Column(modifier) {
-        AvailabeGifticonScreen()
+        AvailabeGifticonScreen(
+            onNavigateToGifticonDetail = { gifticonId ->
+                onNavigateToGifticonDetail(gifticonId)
+            }
+        )
     }
 }

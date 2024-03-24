@@ -3,6 +3,7 @@ package com.yapp.buddycon.gifticon.available
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -89,7 +90,8 @@ private val TAG = "MOATest"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AvailabeGifticonScreen(
-    availableGifticonViewModel: AvailableGifticonViewModel = hiltViewModel()
+    availableGifticonViewModel: AvailableGifticonViewModel = hiltViewModel(),
+    onNavigateToGifticonDetail: (Int) -> Unit
 ) {
     Log.e(TAG, "[AvailabeGifticonScreen] : ${availableGifticonViewModel.hashCode()}")
 
@@ -101,7 +103,10 @@ fun AvailabeGifticonScreen(
     ) {
         AvailabeGifticonContent(
             availableGifticonViewModel = availableGifticonViewModel,
-            onFilterClicked = { isBottomSheetOpen = true }
+            onFilterClicked = { isBottomSheetOpen = true },
+            onGifticonItemClicked = { gifticonId ->
+                onNavigateToGifticonDetail(gifticonId)
+            }
         )
 
         if (isBottomSheetOpen) {
@@ -117,7 +122,8 @@ fun AvailabeGifticonScreen(
 @Composable
 private fun AvailabeGifticonContent(
     availableGifticonViewModel: AvailableGifticonViewModel,
-    onFilterClicked: () -> Unit
+    onFilterClicked: () -> Unit,
+    onGifticonItemClicked: (Int) -> Unit
 ) {
     val topAppBarHeight = getTopAppBarHeight()
     val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
@@ -143,6 +149,7 @@ private fun AvailabeGifticonContent(
     val lazyGridState = rememberLazyGridState()
 
     LaunchedEffect(Unit) {
+        Log.e("MOAtest", "[AvailabeGifticonContent] - [LaunchedEffect(Unit)]")
         availableGifticonViewModel.getAvailableGifiticon()
     }
 
@@ -188,7 +195,10 @@ private fun AvailabeGifticonContent(
             AvailableGifticons(
                 lazyGridState = lazyGridState,
                 topAppBarHeight = topAppBarHeight,
-                currentAvailableGifticons = currentAvailabeGifticons
+                currentAvailableGifticons = currentAvailabeGifticons,
+                onGifticonItemClicked = { gifticonId ->
+                    onGifticonItemClicked(gifticonId)
+                }
             )
         } else {
             NoAvailableGifticonContent(topAppBarHeight = topAppBarHeight)
@@ -215,6 +225,7 @@ private fun AvailableGifticons(
     lazyGridState: LazyGridState,
     topAppBarHeight: Dp,
     currentAvailableGifticons: List<AvailableGifticon.AvailableGifticonInfo>,
+    onGifticonItemClicked: (Int) -> Unit
 ) {
     Log.e("MOATest", "AvailableGifticons")
 
@@ -234,7 +245,10 @@ private fun AvailableGifticons(
             AvailableGifticonItem(
                 availablieGifticonInfo = availablieGifticonInfo,
                 topPadding = 16.dp,
-                bottomPadding = if (index == currentAvailableGifticons.lastIndex) 56.dp else 0.dp
+                bottomPadding = if (index == currentAvailableGifticons.lastIndex) 56.dp else 0.dp,
+                onGifticonItemClicked = { gifticonId ->
+                    onGifticonItemClicked(gifticonId)
+                }
             )
         }
     }
@@ -244,10 +258,15 @@ private fun AvailableGifticons(
 private fun AvailableGifticonItem(
     availablieGifticonInfo: AvailableGifticon.AvailableGifticonInfo,
     topPadding: Dp,
-    bottomPadding: Dp
+    bottomPadding: Dp,
+    onGifticonItemClicked: (Int) -> Unit
 ) {
     Column(
-        modifier = Modifier.padding(top = topPadding, bottom = bottomPadding)
+        modifier = Modifier
+            .padding(top = topPadding, bottom = bottomPadding)
+            .clickable {
+                onGifticonItemClicked(availablieGifticonInfo.gifticonId)
+            }
     ) {
         Box(
             modifier = Modifier
