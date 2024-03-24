@@ -119,6 +119,10 @@ class AvailableGifticonViewModel @Inject constructor(
     fun initPagingState() { // paging 상태 초기화
         availableGifticonPageState = AvailableGifticonPageState()
     }
+
+    fun initAvailabeGifticonDataResult() {
+        _availabeGifticonDataResult.value = DataResult.None
+    }
 }
 
 @Immutable

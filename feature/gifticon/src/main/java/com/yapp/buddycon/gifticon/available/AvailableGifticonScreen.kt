@@ -68,6 +68,7 @@ import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.appbar.getTopAppBarHeight
 import com.yapp.buddycon.designsystem.component.button.CategoryStoreButton
 import com.yapp.buddycon.designsystem.component.modal.FilterModalSheet
+import com.yapp.buddycon.designsystem.component.tag.DDayTag
 import com.yapp.buddycon.designsystem.component.tag.SortTag
 import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
 import com.yapp.buddycon.designsystem.theme.Black
@@ -82,6 +83,7 @@ import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.gifticon.available.base.HandleDataResult
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
 private val TabHeight = 60.dp
@@ -180,8 +182,11 @@ private fun AvailabeGifticonContent(
     HandleDataResult(
         dataResultStateFlow = availableGifticonViewModel.availableGifticonDataResult,
         onSuccess = {
-            availableGifticonViewModel.updateCurrentAvailabeGifticons(it.data)
-            availableGifticonViewModel.updateAvailableGifticonScreenUiState(AvailableGifticonScreenUiState.None)
+            with (availableGifticonViewModel) {
+                updateCurrentAvailabeGifticons(it.data)
+                updateAvailableGifticonScreenUiState(AvailableGifticonScreenUiState.None)
+                initAvailabeGifticonDataResult()
+            }
         },
         onFailure = {
             // failure 처리 필요
@@ -290,15 +295,17 @@ private fun AvailableGifticonItem(
                     contentScale = ContentScale.FillBounds
                 )
             }
-//  날짜 로직 추가 후 완성 예정
-//            DDayTag(
-//                modifier = Modifier
-//                    .padding(
-//                        top = Paddings.medium,
-//                        start = Paddings.medium
-//                    ),
-//                dateMillis = availablieGifticonInfo.
-//            )
+
+            if (availablieGifticonInfo.expireDate.isNotEmpty()) {
+                DDayTag(
+                    modifier = Modifier
+                        .padding(
+                            top = Paddings.medium,
+                            start = Paddings.medium
+                        ),
+                    dateMillis = SimpleDateFormat("yyyy-MM-dd").parse(availablieGifticonInfo.expireDate).time
+                )
+            }
         }
         Text(
             text = availablieGifticonInfo.category.value,
