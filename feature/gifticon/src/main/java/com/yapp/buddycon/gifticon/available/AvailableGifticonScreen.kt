@@ -91,7 +91,8 @@ private val TAG = "MOATest"
 @Composable
 fun AvailabeGifticonScreen(
     availableGifticonViewModel: AvailableGifticonViewModel = hiltViewModel(),
-    onNavigateToGifticonDetail: (Int) -> Unit
+    onNavigateToGifticonDetail: (Int) -> Unit,
+    afterGifticonRegistrationCompletes: Boolean?
 ) {
     Log.e(TAG, "[AvailabeGifticonScreen] : ${availableGifticonViewModel.hashCode()}")
 
@@ -106,7 +107,8 @@ fun AvailabeGifticonScreen(
             onFilterClicked = { isBottomSheetOpen = true },
             onGifticonItemClicked = { gifticonId ->
                 onNavigateToGifticonDetail(gifticonId)
-            }
+            },
+            afterGifticonRegistrationCompletes = afterGifticonRegistrationCompletes
         )
 
         if (isBottomSheetOpen) {
@@ -123,7 +125,8 @@ fun AvailabeGifticonScreen(
 private fun AvailabeGifticonContent(
     availableGifticonViewModel: AvailableGifticonViewModel,
     onFilterClicked: () -> Unit,
-    onGifticonItemClicked: (Int) -> Unit
+    onGifticonItemClicked: (Int) -> Unit,
+    afterGifticonRegistrationCompletes: Boolean?
 ) {
     val topAppBarHeight = getTopAppBarHeight()
     val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
@@ -150,7 +153,11 @@ private fun AvailabeGifticonContent(
 
     LaunchedEffect(Unit) {
         Log.e("MOAtest", "[AvailabeGifticonContent] - [LaunchedEffect(Unit)]")
-        availableGifticonViewModel.getAvailableGifiticon()
+
+        if (afterGifticonRegistrationCompletes == true) {
+            availableGifticonViewModel.initPagingState()
+            availableGifticonViewModel.getAvailableGifiticon()
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -166,7 +173,6 @@ private fun AvailabeGifticonContent(
 
     LaunchedEffect(lazyGridState.canScrollForward) {
         if (lazyGridState.canScrollForward.not() && availableGifticonScreenUiState != AvailableGifticonScreenUiState.Loading) {
-            Log.e("AppTest", "[AvailabeGifticonContent] - getAvailableGifiticon")
             availableGifticonViewModel.getAvailableGifiticon()
         }
     }

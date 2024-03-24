@@ -42,6 +42,11 @@ class AvailableGifticonViewModel @Inject constructor(
 
     private var availableGifticonPageState = AvailableGifticonPageState()
 
+    init {
+        Log.e("MOATest", "[AvailableGifticonViewModel] - init !!!")
+        getAvailableGifiticon()
+    }
+
     fun getAvailableGifiticon() {
         if (availableGifticonPageState.isCurrentTabLastPage.not() && _availabeGifticonDataResult.value != DataResult.Loading) {
             viewModelScope.launch {
