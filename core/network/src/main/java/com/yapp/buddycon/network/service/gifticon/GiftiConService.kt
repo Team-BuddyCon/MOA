@@ -2,6 +2,7 @@ package com.yapp.buddycon.network.service.gifticon
 
 import com.yapp.buddycon.network.service.gifticon.response.AvailableGifticonResponse
 import com.yapp.buddycon.network.service.gifticon.response.CreateGifticonResponse
+import com.yapp.buddycon.network.service.gifticon.response.GifticonDetailResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -9,6 +10,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GiftiConService {
@@ -26,4 +28,9 @@ interface GiftiConService {
         @Part image: MultipartBody.Part,
         @Part("dto") dto: RequestBody
     ): CreateGifticonResponse
+
+    @GET("api/v1/gifticons/{gifticonId}")
+    suspend fun getGifticonDetail(
+        @Path("gifticonId") gifticonId: Int
+    ): GifticonDetailResponse
 }

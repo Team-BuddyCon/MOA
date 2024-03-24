@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey50
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 
 private val CategoryButtonHorizontalPadding = 12.dp
 private val CategoryButtonVerticalPadding = 6.dp
@@ -22,7 +22,7 @@ private val CategoryButtonRadius = 20.dp
 
 @Composable
 fun CategoryButton(
-    gifticonCategory: GifticonCategory,
+    gifticonCategory: GifticonStore,
     isSelected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
@@ -52,7 +52,7 @@ fun CategoryButton(
 private fun CategoryButtonPreview() {
     BuddyConTheme {
         CategoryButton(
-            gifticonCategory = GifticonCategory.ETC,
+            gifticonCategory = GifticonStore.ETC,
             isSelected = true
         )
     }

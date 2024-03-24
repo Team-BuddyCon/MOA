@@ -40,7 +40,7 @@ import com.yapp.buddycon.designsystem.theme.Grey60
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink100
 import com.yapp.buddycon.domain.model.gifticon.GifticonModel
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import java.util.Calendar
 
 private val GifticonInfoListModalSheetHeight = 573.dp
@@ -166,7 +166,7 @@ private fun GifticonInfoListModalSheetPreview() {
             gifticonInfos = List(10) {
                 GifticonModel(
                     imageUrl = "https://github.com/Team-BuddyCon/ANDROID_V2/assets/34837583/5ab80674-4ffb-4c91-ab10-3743d8c87e58",
-                    category = GifticonCategory.STARBUCKS,
+                    category = GifticonStore.STARBUCKS,
                     name = "빙그레)바나나맛우유240",
                     expirationTime = (today + 1000 * 60 * 60 * 24L * (-1..366).random())
                 )

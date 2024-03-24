@@ -37,8 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -47,6 +45,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
+import com.yapp.buddycon.designsystem.component.custom.FullGifticonImage
 import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
 import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
@@ -62,7 +61,7 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey30
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
-import com.yapp.buddycon.domain.model.type.GifticonCategory
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.gifticon.GifticonViewModel
 import timber.log.Timber
 import java.io.IOException
@@ -73,6 +72,7 @@ import java.util.Locale
 fun GifticonRegisterScreen(
     gifticonViewModel: GifticonViewModel = hiltViewModel(),
     gifticonRegisterViewModel: GifticonRegisterViewModel = hiltViewModel(),
+    onNavigateToGifticonDetail: (Int) -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -116,14 +116,13 @@ fun GifticonRegisterScreen(
     }
 
     LaunchedEffect(Unit) {
-        gifticonRegisterViewModel.isCompleted.collect { isCompleted ->
-            if (isCompleted) {
-                showBuddyConSnackBar(
-                    message = context.getString(R.string.gifticon_register_success),
-                    scope = coroutineScope,
-                    snackbarHostState = snackbarHostState
-                )
-            }
+        gifticonRegisterViewModel.gifticonId.collect { gifticonId ->
+            showBuddyConSnackBar(
+                message = context.getString(R.string.gifticon_register_success),
+                scope = coroutineScope,
+                snackbarHostState = snackbarHostState
+            )
+            onNavigateToGifticonDetail(gifticonId)
         }
     }
 
@@ -208,7 +207,7 @@ fun GifticonRegisterScreen(
                         ) {
                             showErrorPopup = true
                         } else {
-                            if (uiState.category != GifticonCategory.ETC) {
+                            if (uiState.category != GifticonStore.ETC) {
                                 gifticonRegisterViewModel.registerNewGifticon(
                                     imagePath = imageUri?.toString() ?: ""
                                 )
@@ -319,7 +318,7 @@ private fun GifticonRegisterContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_usage),
             placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = if (uiState.category == GifticonCategory.ETC) "" else uiState.category.value,
+            value = if (uiState.category == GifticonStore.ETC) "" else uiState.category.value,
             action = { isShowCategoryModal = true }
         )
         NoEssentialInputText(
@@ -329,43 +328,5 @@ private fun GifticonRegisterContent(
             value = uiState.memo,
             onValueChange = { gifticonRegisterViewModel.setMemo(it) }
         )
-    }
-}
-
-@Composable
-private fun FullGifticonImage(
-    imageUri: Uri?,
-    isExpanded: Boolean = false,
-    onExpandChanged: (Boolean) -> Unit = {}
-) {
-    if (isExpanded) {
-        Dialog(
-            onDismissRequest = { onExpandChanged(false) },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(vertical = 27.dp, horizontal = Paddings.xlarge)
-                    .fillMaxSize()
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_white_close),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .size(24.dp)
-                        .clickable { onExpandChanged(false) },
-                    tint = Color.Unspecified
-                )
-                AsyncImage(
-                    model = imageUri,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(top = Paddings.medium)
-                        .fillMaxSize(),
-                    contentScale = ContentScale.FillBounds
-                )
-            }
-        }
     }
 }

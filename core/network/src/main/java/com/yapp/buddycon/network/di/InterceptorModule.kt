@@ -5,7 +5,9 @@ import com.yapp.buddycon.domain.repository.TokenRepository
 import com.yapp.buddycon.network.BuildConfig
 import com.yapp.buddycon.network.di.qualifiers.BuddyConInterceptorQualifier
 import com.yapp.buddycon.network.di.qualifiers.HttpLoggingInterceptorQualifier
+import com.yapp.buddycon.network.di.qualifiers.KakaoInterceptorQualifier
 import com.yapp.buddycon.network.interceptor.BuddyConInterceptor
+import com.yapp.buddycon.network.interceptor.KakaoInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,4 +35,9 @@ object InterceptorModule {
         tokenRepository: TokenRepository
     ): Interceptor =
         BuddyConInterceptor(authRepository, tokenRepository)
+
+    @KakaoInterceptorQualifier
+    @Provides
+    @Singleton
+    fun provideKakaoInterceptor(): Interceptor = KakaoInterceptor()
 }
