@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.gifticon.GifticonScreeen
 import com.yapp.buddycon.gifticon.detail.GifticonDetailScreen
+import com.yapp.buddycon.gifticon.nearestuse.NearestUseScreen
 import com.yapp.buddycon.gifticon.register.GifticonRegisterScreen
 
 private const val GIFTICON_GRAPH = "gifticon_graph"
@@ -67,6 +68,20 @@ fun NavGraphBuilder.gifticonGraph(
             GifticonDetailScreen(
                 gifticonId = gifticonId,
                 fromRegister = fromRegister,
+                onBack = { navHostController.popBackStack() },
+                onNavigateToNearestUse = { id ->
+                    navHostController.navigate("${GifticonDestination.NearestUse.route}/$id")
+                }
+            )
+        }
+
+        composable(
+            route = GifticonDestination.NearestUse.routeWithArg,
+            arguments = GifticonDestination.NearestUse.arguments
+        ) { entry ->
+            val gifticonId = entry.arguments?.getInt(GifticonDestination.NearestUse.gifticonIdArg)
+            NearestUseScreen(
+                gifticonId = gifticonId,
                 onBack = { navHostController.popBackStack() }
             )
         }

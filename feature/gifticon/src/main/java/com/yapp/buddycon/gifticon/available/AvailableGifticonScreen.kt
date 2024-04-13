@@ -182,7 +182,7 @@ private fun AvailabeGifticonContent(
     HandleDataResult(
         dataResultStateFlow = availableGifticonViewModel.availableGifticonDataResult,
         onSuccess = {
-            with (availableGifticonViewModel) {
+            with(availableGifticonViewModel) {
                 updateCurrentAvailabeGifticons(it.data)
                 updateAvailableGifticonScreenUiState(AvailableGifticonScreenUiState.None)
                 initAvailabeGifticonDataResult()

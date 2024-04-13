@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -86,7 +85,8 @@ import java.text.SimpleDateFormat
 fun GifticonDetailScreen(
     gifticonId: Int?,
     fromRegister: Boolean?,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onNavigateToNearestUse: (id: Int) -> Unit
 ) {
     checkNotNull(gifticonId)
     checkNotNull(fromRegister)
@@ -128,7 +128,10 @@ fun GifticonDetailScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
-            gifticonId = gifticonId
+            gifticonId = gifticonId,
+            onNavigateToNearestUse = {
+                onNavigateToNearestUse(gifticonId)
+            }
         )
     }
 }
@@ -138,7 +141,8 @@ fun GifticonDetailScreen(
 private fun GifticonDetailContent(
     modifier: Modifier = Modifier,
     gifticonDetailViewModel: GifticonDetailViewModel = hiltViewModel(),
-    gifticonId: Int
+    gifticonId: Int,
+    onNavigateToNearestUse: () -> Unit
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -148,7 +152,6 @@ private fun GifticonDetailContent(
     val searchPlaceModels by gifticonDetailViewModel.searchPlacesModel.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        Log.e("MOATest", "gifticonDetailViewModel hashcode : ${gifticonDetailViewModel.hashCode()}")
         gifticonDetailViewModel.requestGifticonDetail(gifticonId)
     }
 
@@ -230,12 +233,16 @@ private fun GifticonDetailContent(
         )
         GifticonMap(
             location = currentLocation,
-            searchPlaceModels = searchPlaceModels
-        ) {
-            getCurrentLocation(context) {
-                currentLocation = it
+            searchPlaceModels = searchPlaceModels,
+            onGranted = {
+                getCurrentLocation(context) {
+                    currentLocation = it
+                }
+            },
+            onExpandMapClicked = {
+                onNavigateToNearestUse()
             }
-        }
+        )
     }
 }
 
@@ -269,7 +276,8 @@ private fun GifticonDetailInfoRow(
 private fun GifticonMap(
     location: Location?,
     searchPlaceModels: List<SearchPlaceModel> = listOf(),
-    onGranted: () -> Unit = {}
+    onGranted: () -> Unit = {},
+    onExpandMapClicked: () -> Unit = {}
 ) {
     val context = LocalContext.current
     // 위치 권한 체크
@@ -398,7 +406,8 @@ private fun GifticonMap(
                     .align(Alignment.BottomEnd)
                     .padding(bottom = 12.dp, end = 12.dp)
                     .background(Pink50, RoundedCornerShape((18.5).dp))
-                    .padding(horizontal = 22.dp, vertical = 10.dp),
+                    .padding(horizontal = 22.dp, vertical = 10.dp)
+                    .clickable { onExpandMapClicked() },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
