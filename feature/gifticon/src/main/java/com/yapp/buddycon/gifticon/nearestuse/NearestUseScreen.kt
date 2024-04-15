@@ -14,7 +14,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,9 +36,9 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.theme.Paddings
-import com.yapp.buddycon.gifticon.detail.GifticonDetailViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
+import com.yapp.buddycon.gifticon.available.LoadingStateScreen
+import com.yapp.buddycon.gifticon.available.base.HandleDataResult
 import timber.log.Timber
 
 @Composable
@@ -77,16 +76,17 @@ fun NearestUseScreen(
 
 @Composable
 private fun NearestUseContent(
-    gifticonDetailViewModel: GifticonDetailViewModel = hiltViewModel(),
+    nearestUseViewModel: NearestUseViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     gifticonId: Int
 ) {
     val context = LocalContext.current
-    var currentLocation by remember { mutableStateOf<Location?>(null) }
-    val gifticonDetailModel by gifticonDetailViewModel.gifticonDetailModel.collectAsStateWithLifecycle()
-    val searchPlaceModels by gifticonDetailViewModel.searchPlacesModel.collectAsStateWithLifecycle()
 
-    val scope = rememberCoroutineScope()
+    var currentLocation by remember { mutableStateOf<Location?>(null) }
+    val gifticonDetailModel by nearestUseViewModel.gifticonDetailModel.collectAsStateWithLifecycle()
+
+    val nearestUseScreenUiState by nearestUseViewModel.nearestUseScreenUiState.collectAsStateWithLifecycle()
+    val uiStateFromSearchPlacesDataResult by nearestUseViewModel.uiStateFromSearchPlacesDataResult.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         getCurrentLocation(context) {
@@ -95,12 +95,12 @@ private fun NearestUseContent(
     }
 
     LaunchedEffect(Unit) {
-        gifticonDetailViewModel.requestGifticonDetail(gifticonId)
+        nearestUseViewModel.requestGifticonDetail(gifticonId)
     }
 
     LaunchedEffect(currentLocation) {
         currentLocation?.let { location ->
-            gifticonDetailViewModel.searchPlacesByKeyword(
+            nearestUseViewModel.searchPlacesByKeywordWithDataResult(
                 query = gifticonDetailModel.gifticonStore.value,
                 x = location.longitude.toString(),
                 y = location.latitude.toString()
@@ -108,6 +108,38 @@ private fun NearestUseContent(
         }
     }
 
+    HandleDataResult(
+        dataResultStateFlow = nearestUseViewModel.searchPlacesDataResult,
+        onSuccess = {
+            nearestUseViewModel.updateUiStateFromSearchPlacesDataResult(UiStateFromSearchPlacesDataResult.LoadMap(it.data))
+        },
+        onFailure = {
+            nearestUseViewModel.updateNearestScreenUiState(NearestUseScreenUiState.Failure)
+        },
+        onLoading = {
+            nearestUseViewModel.updateNearestScreenUiState(NearestUseScreenUiState.Loading)
+        }
+    )
+
+    if (nearestUseScreenUiState is NearestUseScreenUiState.Loading) {
+        LoadingStateScreen()
+    }
+
+    if (uiStateFromSearchPlacesDataResult is UiStateFromSearchPlacesDataResult.LoadMap) {
+        NearestUseMap(
+            currentLocation = currentLocation,
+            searchPlacesModel = (uiStateFromSearchPlacesDataResult as UiStateFromSearchPlacesDataResult.LoadMap).searchPlacesModel,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+private fun NearestUseMap(
+    currentLocation: Location?,
+    searchPlacesModel: List<SearchPlaceModel> = listOf(),
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -128,49 +160,46 @@ private fun NearestUseContent(
                     },
                     object : KakaoMapReadyCallback() {
                         override fun onMapReady(kakaoMap: KakaoMap) {
-                            scope.launch {
-                                currentLocation?.let { location ->
-                                    val maxZoomLevel = 21 // 카카오 맵 api 문서에 명시, 6:가장 축소된 상태 & 21:가장 확대된 상태
-                                    val minZoomLevel = 6
-                                    var zoomLevelWhereAllMarkerVisible: Int? = null
+                            currentLocation?.let { location ->
+                                val maxZoomLevel = 21 // 카카오 맵 api 문서에 명시, 6:가장 축소된 상태 & 21:가장 확대된 상태
+                                val minZoomLevel = 6
+                                var zoomLevelWhereAllMarkerVisible: Int? = null
 
-                                    val latlngList = mutableListOf(LatLng.from(location.latitude, location.longitude))
-                                    searchPlaceModels.forEach { seachPlaceModel ->
-                                        latlngList.add(LatLng.from(seachPlaceModel.y.toDouble(), seachPlaceModel.x.toDouble()))
+                                val latlngList = mutableListOf(LatLng.from(location.latitude, location.longitude))
+                                searchPlacesModel.forEach { seachPlaceModel ->
+                                    latlngList.add(LatLng.from(seachPlaceModel.y.toDouble(), seachPlaceModel.x.toDouble()))
+                                }
+
+                                /** 모든 좌표가 보이는 zoom level */
+                                for (zoomLevel in maxZoomLevel downTo minZoomLevel) {
+                                    if (kakaoMap.canShowMapPoints(zoomLevel, *(latlngList.toTypedArray()))) {
+                                        zoomLevelWhereAllMarkerVisible = zoomLevel
+                                        break
                                     }
+                                }
 
-                                    /** 모든 좌표가 보이는 zoom level */
-                                    for (zoomLevel in maxZoomLevel downTo minZoomLevel) {
-                                        if (kakaoMap.canShowMapPoints(zoomLevel, *(latlngList.toTypedArray()))) {
-                                            zoomLevelWhereAllMarkerVisible = zoomLevel
-                                            break
-                                        }
-                                    }
+                                zoomLevelWhereAllMarkerVisible?.let { zoomLevel ->
+                                    /** 중심 좌표 구하기 */
+                                    val latAverage = latlngList.map { it.latitude }.average()
+                                    val lonAverage = latlngList.map { it.longitude }.average()
 
-                                    zoomLevelWhereAllMarkerVisible?.let { zoomLevel ->
-                                        /** 중심 좌표 구하기 */
-                                        val latAverage = latlngList.map { it.latitude }.average()
-                                        val lonAverage = latlngList.map { it.longitude }.average()
+                                    /** 위에서 구한 zoom level, 중심 좌표로 지도 카메라 이동 */
+                                    kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(LatLng.from(latAverage, lonAverage), zoomLevel))
 
-                                        /** 위에서 구한 zoom level, 중심 좌표로 지도 카메라 이동 */
-                                        kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(LatLng.from(latAverage, lonAverage), zoomLevel))
-                                        delay(10L)
+                                    /** 내 위치, 장소 리스트 마커 그리기 */
+                                    kakaoMap.labelManager?.let { manager ->
+                                        getLocationLabel(
+                                            labelManager = manager,
+                                            latitude = location.latitude,
+                                            longitude = location.longitude
+                                        )
 
-                                        /** 내 위치, 장소 리스트 마커 그리기 */
-                                        kakaoMap.labelManager?.let { manager ->
+                                        searchPlacesModel.forEach { seachPlaceModel ->
                                             getLocationLabel(
                                                 labelManager = manager,
-                                                latitude = location.latitude,
-                                                longitude = location.longitude
+                                                latitude = seachPlaceModel.y.toDouble(),
+                                                longitude = seachPlaceModel.x.toDouble()
                                             )
-
-                                            searchPlaceModels.forEach { seachPlaceModel ->
-                                                getLocationLabel(
-                                                    labelManager = manager,
-                                                    latitude = seachPlaceModel.y.toDouble(),
-                                                    longitude = seachPlaceModel.x.toDouble()
-                                                )
-                                            }
                                         }
                                     }
                                 }
