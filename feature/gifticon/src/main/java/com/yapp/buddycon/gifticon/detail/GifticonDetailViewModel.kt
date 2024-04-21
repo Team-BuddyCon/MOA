@@ -18,6 +18,7 @@ class GifticonDetailViewModel @Inject constructor(
     private val gifticonRepository: GifticonRepository,
     private val kakaoRepository: KakaoRepository
 ) : ViewModel() {
+
     private val _gifticonDetailModel = MutableStateFlow<GifticonDetailModel>(GifticonDetailModel())
     val gifticonDetailModel = _gifticonDetailModel.asStateFlow()
 

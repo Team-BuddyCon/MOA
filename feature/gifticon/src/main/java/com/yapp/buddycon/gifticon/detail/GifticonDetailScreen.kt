@@ -78,6 +78,7 @@ import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink50
 import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import timber.log.Timber
 import java.text.SimpleDateFormat
 
@@ -93,6 +94,8 @@ fun GifticonDetailScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // 스낵바 2번 호출되는 현상 방지
     var showedSnackbar by remember { mutableStateOf(false) }
 
     if (fromRegister && showedSnackbar.not()) {
@@ -228,7 +231,8 @@ private fun GifticonDetailContent(
         )
         GifticonMap(
             location = currentLocation,
-            searchPlaceModels = searchPlaceModels
+            searchPlaceModels = searchPlaceModels,
+            store = gifticonDetailModel.gifticonStore
         ) {
             getCurrentLocation(context) {
                 currentLocation = it
@@ -267,6 +271,7 @@ private fun GifticonDetailInfoRow(
 private fun GifticonMap(
     location: Location?,
     searchPlaceModels: List<SearchPlaceModel> = listOf(),
+    store: GifticonStore,
     onGranted: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -338,17 +343,12 @@ private fun GifticonMap(
                         override fun onMapReady(kakaoMap: KakaoMap) {
                             location?.let { location ->
                                 kakaoMap.labelManager?.let { manager ->
-                                    getLocationLabel(
-                                        labelManager = manager,
-                                        latitude = location.latitude,
-                                        longitude = location.longitude
-                                    )
-
                                     searchPlaceModels.forEach { seachPlaceModel ->
                                         getLocationLabel(
                                             labelManager = manager,
                                             latitude = seachPlaceModel.y.toDouble(),
-                                            longitude = seachPlaceModel.x.toDouble()
+                                            longitude = seachPlaceModel.x.toDouble(),
+                                            store = store
                                         )
                                     }
                                 }
@@ -466,13 +466,34 @@ private fun getCurrentLocation(
 private fun getLocationLabel(
     labelManager: LabelManager,
     latitude: Double,
-    longitude: Double
+    longitude: Double,
+    store: GifticonStore
 ) {
+    // TODO 별도 함수로 분리
+    val drawbleRes = when (store) {
+        GifticonStore.STARBUCKS,
+        GifticonStore.TWOSOME_PLACE,
+        GifticonStore.ANGELINUS,
+        GifticonStore.MEGA_COFFEE,
+        GifticonStore.COFFEE_BEAN,
+        GifticonStore.GONG_CHA,
+        GifticonStore.BASKIN_ROBBINS -> {
+            R.drawable.ic_coffee
+        }
+
+        GifticonStore.MACDONALD -> {
+            R.drawable.ic_fastfood
+        }
+
+        else -> {
+            R.drawable.ic_store
+        }
+    }
     labelManager.layer
         ?.addLabel(
             LabelOptions.from(LatLng.from(latitude, longitude))
                 .setStyles(
-                    labelManager.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.ic_location)))
+                    labelManager.addLabelStyles(LabelStyles.from(LabelStyle.from(drawbleRes)))
                 )
         )
 }
