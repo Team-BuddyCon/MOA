@@ -140,8 +140,8 @@ private fun GifticonStore.logo(): Int = when (this) {
     GifticonStore.MEGA_COFFEE -> R.drawable.ic_mega_coffee
     GifticonStore.COFFEE_BEAN -> R.drawable.ic_coffee_bean
     GifticonStore.GONG_CHA -> R.drawable.ic_gongcha
-    GifticonStore.BASKINROBBINS -> R.drawable.ic_baskinrobbins
-    GifticonStore.MCDONALD -> R.drawable.ic_mcdonald
+    GifticonStore.BASKIN_ROBBINS -> R.drawable.ic_baskinrobbins
+    GifticonStore.MACDONALD -> R.drawable.ic_mcdonald
     GifticonStore.GS25 -> R.drawable.ic_gs25
     GifticonStore.CU -> R.drawable.ic_cu
     GifticonStore.ETC -> R.drawable.ic_etc
