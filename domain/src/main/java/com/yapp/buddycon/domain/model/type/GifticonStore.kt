@@ -12,7 +12,8 @@ enum class GifticonStore(val value: String) {
     MCDONALD("맥도날드"),
     GS25("GS25"),
     CU("CU"),
-    ETC("기타")
+    ETC("기타"),
+    NONE("")
 }
 
 fun convertStringValueToGifticonStore(stringValue: String) =

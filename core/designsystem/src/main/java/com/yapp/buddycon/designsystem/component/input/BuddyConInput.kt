@@ -66,7 +66,6 @@ internal fun BuddyConInput(
             BasicTextField(
                 value = when (buddyConInputs) {
                     is BuddyConInputs.EssentialText -> if (value.length > 16) value.substring(0, 16) else value
-                    is BuddyConInputs.NoEssentialText -> if (value.length > 50) value.substring(0, 50) else value
                     else -> value
                 },
                 onValueChange = onValueChange,
