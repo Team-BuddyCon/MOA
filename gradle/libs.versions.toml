@@ -25,6 +25,7 @@ timber = "5.0.1"
 ## 3rd library
 coil-compose = "2.4.0"
 barcode-scanning = "17.2.0"
+bottomsheeet-dialog = "1.2.0"
 
 ## retrofit2
 retrofit2 = "2.9.0"
@@ -94,6 +95,7 @@ accompanist-webview = { group = "com.google.accompanist", name = "accompanist-we
 ## 3rd library
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-compose" }
 barcode-scanning = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "barcode-scanning" }
+bottomsheet-dialog = { group = "com.holix.android", name = "bottomsheetdialog-compose", version.ref = "bottomsheeet-dialog" }
 
 ## retrofit2
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2" }

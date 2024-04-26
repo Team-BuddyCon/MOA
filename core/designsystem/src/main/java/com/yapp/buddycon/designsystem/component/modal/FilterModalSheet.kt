@@ -1,9 +1,11 @@
 package com.yapp.buddycon.designsystem.component.modal
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -26,17 +27,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey30
+import com.yapp.buddycon.designsystem.theme.Grey40
 import com.yapp.buddycon.designsystem.theme.Grey50
 import com.yapp.buddycon.designsystem.theme.Pink100
+import com.yapp.buddycon.designsystem.theme.White
 import com.yapp.buddycon.domain.model.type.SortType
 
 private val FilterModalSheetHeight = 228.dp
 private val FilterModelSheetRadius = 24.dp
 private val FilterModalItemHorizontalPadding = 16.dp
 private val FilterModalItemIconSize = 18.dp
+private val FilterModalItemHeight = 64.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,24 +52,32 @@ fun FilterModalSheet(
     onChangeSortType: (SortType) -> Unit = {},
     onDismiss: () -> Unit
 ) {
-    ModalBottomSheet(
+    BottomSheetDialog(
         onDismissRequest = onDismiss,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(FilterModalSheetHeight),
-        sheetState = sheetState,
-        shape = RoundedCornerShape(
-            topStart = FilterModelSheetRadius,
-            topEnd = FilterModelSheetRadius
-        ),
-        containerColor = BuddyConTheme.colors.modalColor
+        properties = BottomSheetDialogProperties()
     ) {
-        Column(Modifier.fillMaxSize()) {
+        Column(
+            Modifier.fillMaxWidth()
+                .background(White, RoundedCornerShape(topStart = FilterModelSheetRadius, topEnd = FilterModelSheetRadius))
+                .height(FilterModalSheetHeight)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(36.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Spacer(
+                    modifier = Modifier
+                        .size(32.dp, 4.dp)
+                        .background(Grey40, RoundedCornerShape(100.dp))
+                )
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .weight(1f)
                     .fillMaxWidth()
+                    .height(FilterModalItemHeight)
                     .clickable { onChangeSortType(SortType.EXPIRATION_DATE) }
                     .padding(horizontal = FilterModalItemHorizontalPadding)
             ) {
@@ -91,8 +105,8 @@ fun FilterModalSheet(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .weight(1f)
                     .fillMaxWidth()
+                    .height(FilterModalItemHeight)
                     .clickable { onChangeSortType(SortType.REGISTRATION) }
                     .padding(horizontal = FilterModalItemHorizontalPadding)
             ) {
@@ -120,8 +134,8 @@ fun FilterModalSheet(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .weight(1f)
                     .fillMaxWidth()
+                    .height(FilterModalItemHeight)
                     .clickable { onChangeSortType(SortType.NAME) }
                     .padding(horizontal = FilterModalItemHorizontalPadding)
             ) {
