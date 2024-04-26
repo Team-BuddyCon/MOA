@@ -2,7 +2,6 @@ package com.yapp.buddycon.gifticon.detail
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -53,16 +52,11 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.google.android.gms.location.LocationServices
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
-import com.kakao.vectormap.label.LabelManager
-import com.kakao.vectormap.label.LabelOptions
-import com.kakao.vectormap.label.LabelStyle
-import com.kakao.vectormap.label.LabelStyles
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBackAndEdit
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
@@ -79,6 +73,9 @@ import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink50
 import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.domain.model.type.GifticonStore
+import com.yapp.buddycon.utility.checkLocationPermission
+import com.yapp.buddycon.utility.getCurrentLocation
+import com.yapp.buddycon.utility.getLocationLabel
 import timber.log.Timber
 import java.text.SimpleDateFormat
 
@@ -438,62 +435,4 @@ private fun RequestLocationPermission(
             permissionsLauncher.launch(permissions)
         }
     }
-}
-
-private fun checkLocationPermission(
-    context: Context
-): Boolean {
-    val permissions = arrayOf(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
-    return permissions.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
-}
-
-// 내 위치 정보
-@SuppressLint("MissingPermission")
-private fun getCurrentLocation(
-    context: Context,
-    onSuccess: (Location) -> Unit
-) {
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    fusedLocationClient.lastLocation.addOnSuccessListener {
-        onSuccess(it)
-    }
-}
-
-// 지도 위 마커 추가
-private fun getLocationLabel(
-    labelManager: LabelManager,
-    latitude: Double,
-    longitude: Double,
-    store: GifticonStore
-) {
-    // TODO 별도 함수로 분리
-    val drawbleRes = when (store) {
-        GifticonStore.STARBUCKS,
-        GifticonStore.TWOSOME_PLACE,
-        GifticonStore.ANGELINUS,
-        GifticonStore.MEGA_COFFEE,
-        GifticonStore.COFFEE_BEAN,
-        GifticonStore.GONG_CHA,
-        GifticonStore.BASKIN_ROBBINS -> {
-            R.drawable.ic_coffee
-        }
-
-        GifticonStore.MACDONALD -> {
-            R.drawable.ic_fastfood
-        }
-
-        else -> {
-            R.drawable.ic_store
-        }
-    }
-    labelManager.layer
-        ?.addLabel(
-            LabelOptions.from(LatLng.from(latitude, longitude))
-                .setStyles(
-                    labelManager.addLabelStyles(LabelStyles.from(LabelStyle.from(drawbleRes)))
-                )
-        )
 }

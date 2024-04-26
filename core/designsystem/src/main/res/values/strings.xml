@@ -74,7 +74,7 @@
     <string name="gifticon_register_complete_snackbar">기프티콘이 성공적으로 등록됐어요.</string>
 
     <string name="map">지도</string>
-    <string name="map_location_permission">위치 정보를 허용했어요!</string>
+    <string name="map_location_permission">위치 정보를 불러왔어요!</string>
 
     <!--    Error Popup-->
     <string name="kakao_login_error_title">카카오톡으로 시작할 수 없어요</string>
