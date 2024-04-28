@@ -12,7 +12,7 @@ data class AvailableGifticon(
     data class AvailableGifticonInfo(
         val gifticonId: Int = -1,
         val imageUrl: String = "",
-        val category: GifticonStore = GifticonStore.ETC,
+        val category: GifticonStore = GifticonStore.OTHERS,
         val storeCategory: GifticonStoreCategory = GifticonStoreCategory.OTHERS,
         val name: String = "",
         val expireDate: String = "",

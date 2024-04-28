@@ -158,7 +158,7 @@ private fun GifticonStore.logo(): Int = when (this) {
     GifticonStore.MACDONALD -> R.drawable.ic_mcdonald
     GifticonStore.GS25 -> R.drawable.ic_gs25
     GifticonStore.CU -> R.drawable.ic_cu
-    GifticonStore.ETC -> R.drawable.ic_etc
+    GifticonStore.OTHERS -> R.drawable.ic_etc
     else -> throw IllegalStateException()
 }
 

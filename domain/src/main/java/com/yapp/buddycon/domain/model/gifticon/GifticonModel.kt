@@ -7,7 +7,7 @@ private const val DATE_FORMAT = "yyyy.MM.dd"
 
 data class GifticonModel(
     val imageUrl: String = "",
-    val category: GifticonStore = GifticonStore.ETC,
+    val category: GifticonStore = GifticonStore.OTHERS,
     val name: String = "",
     val expirationTime: Long = 0L
 ) {

@@ -302,7 +302,7 @@ private fun GifticonRegisterContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_usage),
             placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = if (gifticonRegisterUiState.category == GifticonStore.ETC) "" else gifticonRegisterUiState.category.value,
+            value = if (gifticonRegisterUiState.category == GifticonStore.OTHERS) "" else gifticonRegisterUiState.category.value,
             action = { isShowCategoryModal = true }
         )
         NoEssentialInputText(

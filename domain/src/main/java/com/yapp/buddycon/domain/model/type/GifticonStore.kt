@@ -1,19 +1,19 @@
 package com.yapp.buddycon.domain.model.type
 
-enum class GifticonStore(val value: String) {
-    TOTAL("전체"),
-    STARBUCKS("스타벅스"),
-    TWOSOME_PLACE("투썸플레이스"),
-    ANGELINUS("엔젤리너스"),
-    MEGA_COFFEE("메가커피"),
-    COFFEE_BEAN("커피빈"),
-    GONG_CHA("공차"),
-    BASKIN_ROBBINS("배스킨라빈스"),
-    MACDONALD("맥도날드"),
-    GS25("GS25"),
-    CU("CU"),
-    ETC("기타"),
-    NONE("")
+enum class GifticonStore(val value: String, val code: String?) {
+    TOTAL("전체", null),
+    STARBUCKS("스타벅스", "STARBUCKS"),
+    TWOSOME_PLACE("투썸플레이스", "TWOSOME_PLACE"),
+    ANGELINUS("엔젤리너스", "ANGELINUS"),
+    MEGA_COFFEE("메가커피", "MEGA_COFFEE"),
+    COFFEE_BEAN("커피빈", "COFFEE_BEAN"),
+    GONG_CHA("공차", "GONG_CHA"),
+    BASKIN_ROBBINS("배스킨라빈스", "BASKIN_ROBBINS"),
+    MACDONALD("맥도날드", "MACDONALD"),
+    GS25("GS25", "GS25"),
+    CU("CU", "CU"),
+    OTHERS("기타", "OTHERS'"),
+    NONE("", "")
 }
 
 fun convertStringValueToGifticonStore(stringValue: String) =
@@ -28,5 +28,5 @@ fun convertStringValueToGifticonStore(stringValue: String) =
         GifticonStore.MACDONALD.name -> GifticonStore.MACDONALD
         GifticonStore.GS25.name -> GifticonStore.GS25
         GifticonStore.CU.name -> GifticonStore.CU
-        else -> GifticonStore.ETC
+        else -> GifticonStore.OTHERS
     }

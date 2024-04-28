@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -81,6 +82,7 @@ fun MapScreen(
     val configuration = LocalConfiguration.current
     val mapHeightDp = configuration.screenHeightDp.toFloat() - MapBarSize
     val mapUiState by mapViewModel.uiState.collectAsStateWithLifecycle()
+    val items = mapViewModel.gifticonItems.collectAsLazyPagingItems()
 
     RequestLocationPermission(
         onGranted = {
