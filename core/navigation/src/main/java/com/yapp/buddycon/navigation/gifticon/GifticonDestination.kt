@@ -10,6 +10,7 @@ private const val GIFTICON = "gifticon"
 private const val GIFTICON_REGISTER = "gifticon_register"
 private const val GIFTICON_DETAIL = "gifticon_detail"
 private const val NEAREST_USE = "nearest_use"
+private const val GIFTICON_EDIT = "gifticon_edit"
 
 sealed class GifticonDestination : BuddyConDestination {
 
@@ -41,6 +42,17 @@ sealed class GifticonDestination : BuddyConDestination {
 
     object NearestUse : GifticonDestination() {
         override val route = NEAREST_USE
+        const val gifticonIdArg = "gifticonId"
+        val routeWithArg = "$route/{$gifticonIdArg}"
+        val arguments = listOf(
+            navArgument(gifticonIdArg) {
+                type = NavType.IntType
+            }
+        )
+    }
+
+    object Edit : GifticonDestination() {
+        override val route = GIFTICON_EDIT
         const val gifticonIdArg = "gifticonId"
         val routeWithArg = "$route/{$gifticonIdArg}"
         val arguments = listOf(

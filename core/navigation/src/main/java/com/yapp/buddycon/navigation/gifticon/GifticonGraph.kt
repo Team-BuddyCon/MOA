@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.gifticon.GifticonScreeen
 import com.yapp.buddycon.gifticon.detail.GifticonDetailScreen
+import com.yapp.buddycon.gifticon.detail.GifticonDetailViewModel
+import com.yapp.buddycon.gifticon.edit.GifticonEditScreen
 import com.yapp.buddycon.gifticon.nearestuse.NearestUseScreen
 import com.yapp.buddycon.gifticon.register.GifticonRegisterScreen
 
@@ -71,6 +73,9 @@ fun NavGraphBuilder.gifticonGraph(
                 onBack = { navHostController.popBackStack() },
                 onNavigateToNearestUse = { id ->
                     navHostController.navigate("${GifticonDestination.NearestUse.route}/$id")
+                },
+                onNavigateToGifticonEdit = { id ->
+                    navHostController.navigate("${GifticonDestination.Edit.route}/$id")
                 }
             )
         }
@@ -83,6 +88,21 @@ fun NavGraphBuilder.gifticonGraph(
             NearestUseScreen(
                 gifticonId = gifticonId,
                 onBack = { navHostController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = GifticonDestination.Edit.routeWithArg,
+            arguments = GifticonDestination.Edit.arguments
+        ) { entry ->
+            val gifticonId = entry.arguments?.getInt(GifticonDestination.Edit.gifticonIdArg)
+            val parentEntry = remember(entry) {
+                navHostController.getBackStackEntry(GifticonDestination.Detail.routeWithArg)
+            }
+
+            GifticonEditScreen(
+                gifticonDetailViewModel = hiltViewModel(parentEntry),
+                gifticonId = gifticonId
             )
         }
     }

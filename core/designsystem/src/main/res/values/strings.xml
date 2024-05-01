@@ -73,6 +73,8 @@
     <string name="gifticon_map_enlargement">지도 확대하기</string>
     <string name="gifticon_register_complete_snackbar">기프티콘이 성공적으로 등록됐어요.</string>
     <string name="nearst_use_check_complete">확인했어요</string>
+    <string name="gifticon_delete">삭제</string>
+    <string name="gifticon_edit_complete">완료</string>
 
     <string name="map">지도</string>
     <string name="map_location_permission">위치 정보를 허용했어요!</string>

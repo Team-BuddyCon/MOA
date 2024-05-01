@@ -86,7 +86,8 @@ fun GifticonDetailScreen(
     gifticonId: Int?,
     fromRegister: Boolean?,
     onBack: () -> Unit,
-    onNavigateToNearestUse: (id: Int) -> Unit
+    onNavigateToNearestUse: (id: Int) -> Unit,
+    onNavigateToGifticonEdit: (id: Int) -> Unit
 ) {
     checkNotNull(gifticonId)
     checkNotNull(fromRegister)
@@ -109,7 +110,8 @@ fun GifticonDetailScreen(
         topBar = {
             TopAppBarWithBackAndEdit(
                 title = stringResource(R.string.gifticon),
-                onBack = onBack
+                onBack = onBack,
+                onEdit = { onNavigateToGifticonEdit(gifticonId) }
             )
         },
         floatingActionButton = {
