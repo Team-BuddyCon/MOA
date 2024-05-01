@@ -41,6 +41,7 @@ import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.component.button.GifticonDeleteButton
 import com.yapp.buddycon.designsystem.component.custom.FullGifticonImage
+import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectUsage
 import com.yapp.buddycon.designsystem.component.input.EssentialInputText
@@ -51,6 +52,7 @@ import com.yapp.buddycon.designsystem.component.utils.SpacerVertical
 import com.yapp.buddycon.designsystem.theme.Black
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.domain.model.type.GifticonStore
+import com.yapp.buddycon.gifticon.available.base.HandleDataResult
 import com.yapp.buddycon.gifticon.detail.GifticonDetailViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -59,6 +61,8 @@ import java.util.Locale
 fun GifticonEditScreen(
     gifticonDetailViewModel: GifticonDetailViewModel,
     gifticonId: Int?,
+    onBack: () -> Unit,
+    gifticonEditViewModel: GifticonEditViewModel = hiltViewModel()
 ) {
     checkNotNull(gifticonId)
 
@@ -70,6 +74,7 @@ fun GifticonEditScreen(
         topBar = {
             TopAppBarWithBack(
                 title = stringResource(R.string.gifticon),
+                onBack = onBack
             )
         },
         floatingActionButton = {
@@ -79,6 +84,7 @@ fun GifticonEditScreen(
                     .fillMaxWidth(),
                 text = stringResource(R.string.gifticon_edit_complete)
             ) {
+                gifticonEditViewModel.editGifticonDetail(gifticonId = gifticonId)
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -87,7 +93,9 @@ fun GifticonEditScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
-            gifticonDetailViewModel = gifticonDetailViewModel
+            gifticonDetailViewModel = gifticonDetailViewModel,
+            gifticonEditViewModel = gifticonEditViewModel,
+            onEditSuccessResult = onBack
         )
     }
 }
@@ -97,9 +105,9 @@ fun GifticonEditScreen(
 private fun GifticonEditDetailContent(
     modifier: Modifier = Modifier,
     gifticonDetailViewModel: GifticonDetailViewModel,
-    gifticonEditViewModel: GifticonEditViewModel = hiltViewModel()
+    gifticonEditViewModel: GifticonEditViewModel,
+    onEditSuccessResult: () -> Unit
 ) {
-    val context = LocalContext.current
     val scrollState = rememberScrollState()
     var isImageExpanded by remember { mutableStateOf(false) }
 
@@ -108,6 +116,7 @@ private fun GifticonEditDetailContent(
 
     var isShowCalendarModal by remember { mutableStateOf(false) }
     var isShowCategoryModal by remember { mutableStateOf(false) }
+    var isShowSuccessDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         gifticonEditViewModel.initEditValueState(
@@ -117,6 +126,13 @@ private fun GifticonEditDetailContent(
             memo = gifticonDetailModel.memo
         )
     }
+    
+    HandleDataResult(
+        dataResultStateFlow = gifticonEditViewModel.editGifticonDetailDataResult,
+        onSuccess = { isShowSuccessDialog = true },
+        onFailure = {},
+        onLoading = {}
+    )
 
     if (isShowCalendarModal) {
         CalendarModalSheet(
@@ -129,6 +145,15 @@ private fun GifticonEditDetailContent(
         CategoryModalSheet(
             onSelectCategory = { gifticonEditViewModel.setNewCategory(it) },
             onDismiss = { isShowCategoryModal = false }
+        )
+    }
+    
+    if (isShowSuccessDialog) {
+        ConfirmDialog(
+            dialogTitle = stringResource(id = R.string.gifticon_edit_success_message),
+            onClick = {
+                onEditSuccessResult()
+            }
         )
     }
 
@@ -194,7 +219,7 @@ private fun GifticonEditDetailContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_usage),
             placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = if (gifticonDetailModel.gifticonStore == GifticonStore.ETC) "" else gifticonDetailModel.gifticonStore.value,
+            value = if (editValueState.newGifticonStore == GifticonStore.ETC) "" else editValueState.newGifticonStore.value,
             action = { isShowCategoryModal = true }
         )
 
@@ -202,7 +227,7 @@ private fun GifticonEditDetailContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_memo),
             placeholder = stringResource(R.string.gifticon_memo_placeholder),
-            value = gifticonDetailModel.memo,
+            value = editValueState.newMemo,
             onValueChange = { gifticonEditViewModel.setNewMemo(it) }
         )
 

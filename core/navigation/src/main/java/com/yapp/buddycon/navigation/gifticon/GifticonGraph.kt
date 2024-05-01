@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.gifticon.GifticonScreeen
 import com.yapp.buddycon.gifticon.detail.GifticonDetailScreen
-import com.yapp.buddycon.gifticon.detail.GifticonDetailViewModel
 import com.yapp.buddycon.gifticon.edit.GifticonEditScreen
 import com.yapp.buddycon.gifticon.nearestuse.NearestUseScreen
 import com.yapp.buddycon.gifticon.register.GifticonRegisterScreen
@@ -102,7 +101,8 @@ fun NavGraphBuilder.gifticonGraph(
 
             GifticonEditScreen(
                 gifticonDetailViewModel = hiltViewModel(parentEntry),
-                gifticonId = gifticonId
+                gifticonId = gifticonId,
+                onBack = { navHostController.popBackStack() }
             )
         }
     }

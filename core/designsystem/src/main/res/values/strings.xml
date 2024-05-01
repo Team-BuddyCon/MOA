@@ -75,6 +75,7 @@
     <string name="nearst_use_check_complete">확인했어요</string>
     <string name="gifticon_delete">삭제</string>
     <string name="gifticon_edit_complete">완료</string>
+    <string name="gifticon_edit_success_message">기프티콘 수정이 완료되었습니다</string>
 
     <string name="map">지도</string>
     <string name="map_location_permission">위치 정보를 허용했어요!</string>

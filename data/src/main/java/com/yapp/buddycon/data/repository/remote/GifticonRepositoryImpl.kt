@@ -7,10 +7,13 @@ import com.yapp.buddycon.domain.model.gifticon.GifticonDetailModel
 import com.yapp.buddycon.domain.repository.GifticonRepository
 import com.yapp.buddycon.network.service.gifticon.GiftiConService
 import com.yapp.buddycon.network.service.gifticon.request.CreateGifticonRequest
+import com.yapp.buddycon.network.service.gifticon.request.EditGifticonRequest
 import com.yapp.buddycon.utility.getAbsolutePath
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -58,5 +61,34 @@ class GifticonRepositoryImpl @Inject constructor(
                 .body
                 .toModel()
         )
+    }
+
+    override fun editGifticonDetail(
+        gifticonId: Int,
+        name: String,
+        expireDate: String,
+        gifticonStore: String,
+        memo: String
+    ) = flow {
+        emit(
+            giftiConService.editGifticonDetail(
+                gifticonId = gifticonId,
+                editGifticonRequest = EditGifticonRequest(
+                    name = name,
+                    expireDate = expireDate,
+                    store = gifticonStore,
+                    memo = memo
+                )
+            )
+        )
+    }.catch {
+            error ->
+        throw Throwable("[editGifticonDetail] catch error!", error)
+    }.map { response ->
+        if (response.isSuccessful) {
+            (response.body() ?: throw NullPointerException("null response")).mapToUnit()
+        } else {
+            throw Throwable("error.. msg : ${response.message()}")
+        }
     }
 }
