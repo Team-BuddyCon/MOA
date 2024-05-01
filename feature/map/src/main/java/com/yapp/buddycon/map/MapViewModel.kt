@@ -54,13 +54,15 @@ class MapViewModel @Inject constructor(
                 BottomSheetValue.Collapsed -> BottomSheetValue.Collapsed.sheetPeekHeightDp
                 BottomSheetValue.PartiallyExpanded -> BottomSheetValue.PartiallyExpanded.sheetPeekHeightDp
                 BottomSheetValue.Expanded -> BottomSheetValue.Expanded.sheetPeekHeightDp
-            }
+            },
+            offset = 0f
         )
     }
 
     fun changeBottomSheetOffset(offsetY: Float) {
         _uiState.value = _uiState.value.copy(
-            heightDp = _uiState.value.heightDp - offsetY
+            heightDp = _uiState.value.heightDp - offsetY,
+            offset = _uiState.value.offset - offsetY
         )
     }
 }

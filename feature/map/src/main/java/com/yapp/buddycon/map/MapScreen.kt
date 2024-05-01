@@ -25,6 +25,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,6 +70,11 @@ import java.util.Calendar
 // TopAppBarHeight(52) + BottomNavigationBarHeight(72) + MapCategoryTabHeight(60)
 private const val MapBarSize = 184f
 
+@Stable
+data class MapLocation(
+    val location: Location? = null
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
@@ -77,7 +83,7 @@ fun MapScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    var currentLocation by remember { mutableStateOf<Location?>(null) }
+    var currentLocation by remember { mutableStateOf(MapLocation()) }
 
     val configuration = LocalConfiguration.current
     val mapHeightDp = configuration.screenHeightDp.toFloat() - MapBarSize
@@ -123,12 +129,13 @@ fun MapScreen(
                 .fillMaxSize()
                 .background(BuddyConTheme.colors.background),
             snackbarHostState = snackbarHostState,
-            location = currentLocation
-        ) {
-            getCurrentLocation(context) {
-                currentLocation = it
+            mapLocation = currentLocation,
+            onGranted = {
+                getCurrentLocation(context = context) {
+                    currentLocation = currentLocation.copy(location = it)
+                }
             }
-        }
+        )
     }
 }
 
@@ -159,17 +166,23 @@ private fun MapBottomSheet(
                 detectVerticalDragGestures(
                     onDragEnd = {
                         mapViewModel.onSheetValueChange(
-                            sheetValue = when (mapUiState.heightDp) {
-                                in BottomSheetValue.PartiallyExpanded.sheetPeekHeightDp..(BottomSheetValue.Expanded.sheetPeekHeightDp / 2f - 1) -> {
-                                    BottomSheetValue.PartiallyExpanded
+                            sheetValue = if (mapUiState.offset > 0f) {
+                                when (mapUiState.sheetValue) {
+                                    BottomSheetValue.Collapsed -> BottomSheetValue.PartiallyExpanded
+                                    BottomSheetValue.PartiallyExpanded -> BottomSheetValue.Expanded
+                                    BottomSheetValue.Expanded -> BottomSheetValue.Expanded
                                 }
-
-                                in (BottomSheetValue.Expanded.sheetPeekHeightDp / 2f)..mapHeightDp -> BottomSheetValue.Expanded
-                                else -> BottomSheetValue.Collapsed
+                            } else {
+                                when (mapUiState.sheetValue) {
+                                    BottomSheetValue.Collapsed -> BottomSheetValue.Collapsed
+                                    BottomSheetValue.PartiallyExpanded -> BottomSheetValue.Collapsed
+                                    BottomSheetValue.Expanded -> BottomSheetValue.PartiallyExpanded
+                                }
                             }
                         )
                     },
                     onVerticalDrag = { change, dragAmount ->
+                        Timber.d("onVerticalDrag $dragAmount")
                         if (mapUiState.heightDp - (dragAmount / density) in 0f..mapHeightDp) {
                             mapViewModel.changeBottomSheetOffset(dragAmount / density)
                         }
@@ -208,9 +221,10 @@ private fun MapContent(
     modifier: Modifier = Modifier,
     mapViewModel: MapViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState,
-    location: Location?,
+    mapLocation: MapLocation,
     onGranted: () -> Unit = {}
 ) {
+    Timber.d("MapContent ${mapLocation.location}")
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -225,15 +239,17 @@ private fun MapContent(
 
     val uiState by mapViewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(location) {
-        location?.let { location ->
-            // TODO location 기반 API 요청
-        }
-    }
+//    LaunchedEffect(currentLocation) {
+//        currentLocation?.let { currentLocation ->
+//            // TODO location 기반 API 요청
+//        }
+//    }
 
     // 권한 있을 경우 -> 현재 위치 요청
-    if (isGrantedPermission) {
-        onGranted()
+    LaunchedEffect(Unit) {
+        if (isGrantedPermission) {
+            onGranted()
+        }
     }
 
     if (showPermissonDialog) {
@@ -292,22 +308,22 @@ private fun MapContent(
                         },
                         object : KakaoMapReadyCallback() {
                             override fun onMapReady(kakaoMap: KakaoMap) {
-//                                location?.let { location ->
-//                                    kakaoMap.labelManager?.let { manager ->
-//                                        searchPlaceModels.forEach { seachPlaceModel ->
-//                                            getLocationLabel(
-//                                                labelManager = manager,
-//                                                latitude = seachPlaceModel.y.toDouble(),
-//                                                longitude = seachPlaceModel.x.toDouble(),
-//                                                store = store
-//                                            )
-//                                        }
-//                                    }
-//                                }
+                                //                                location?.let { location ->
+                                //                                    kakaoMap.labelManager?.let { manager ->
+                                //                                        searchPlaceModels.forEach { seachPlaceModel ->
+                                //                                            getLocationLabel(
+                                //                                                labelManager = manager,
+                                //                                                latitude = seachPlaceModel.y.toDouble(),
+                                //                                                longitude = seachPlaceModel.x.toDouble(),
+                                //                                                store = store
+                                //                                            )
+                                //                                        }
+                                //                                    }
+                                //                                }
                             }
 
                             override fun getPosition(): LatLng {
-                                location?.let { location ->
+                                mapLocation.location?.let { location ->
                                     Timber.d("currentLocation is not null")
                                     return LatLng.from(location.latitude, location.longitude)
                                 } ?: kotlin.run {
@@ -357,6 +373,13 @@ private fun MapContent(
             }
         }
     }
+}
+
+@Composable
+private fun AndroidMap(
+    modifier: Modifier = Modifier,
+    location: Location?
+) {
 }
 
 @Composable
