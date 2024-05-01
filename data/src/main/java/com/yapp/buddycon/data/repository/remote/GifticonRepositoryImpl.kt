@@ -86,4 +86,12 @@ class GifticonRepositoryImpl @Inject constructor(
             }
         ).flow
     }
+
+    override fun getGifticonCount(used: Boolean): Flow<Int> = flow {
+        emit(
+            giftiConService.getGifticonCount(used)
+                .body
+                .count
+        )
+    }
 }

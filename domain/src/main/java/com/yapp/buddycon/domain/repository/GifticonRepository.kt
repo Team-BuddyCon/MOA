@@ -24,6 +24,10 @@ interface GifticonRepository {
     fun fetchAvailableGifticon(
         gifticonStoreCategory: GifticonStoreCategory? = null,
         gifticonStore: GifticonStore? = null,
-        gifticonSortType: SortType? = null
+        gifticonSortType: SortType? = null,
     ): Flow<PagingData<AvailableGifticon.AvailableGifticonInfo>>
+
+    fun getGifticonCount(
+        used: Boolean
+    ): Flow<Int>
 }

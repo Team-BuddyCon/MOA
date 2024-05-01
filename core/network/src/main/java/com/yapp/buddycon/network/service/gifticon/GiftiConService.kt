@@ -2,6 +2,7 @@ package com.yapp.buddycon.network.service.gifticon
 
 import com.yapp.buddycon.network.service.gifticon.response.AvailableGifticonResponse
 import com.yapp.buddycon.network.service.gifticon.response.CreateGifticonResponse
+import com.yapp.buddycon.network.service.gifticon.response.GifticonCountResponse
 import com.yapp.buddycon.network.service.gifticon.response.GifticonDetailResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -34,4 +35,9 @@ interface GiftiConService {
     suspend fun getGifticonDetail(
         @Path("gifticonId") gifticonId: Int
     ): GifticonDetailResponse
+
+    @GET("api/v1/gifticons/count")
+    suspend fun getGifticonCount(
+        @Query("used") used: Boolean
+    ): GifticonCountResponse
 }

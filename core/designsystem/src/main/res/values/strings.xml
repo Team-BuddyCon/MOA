@@ -18,8 +18,8 @@
     <string name="modal_sheet_place_distance_format">"%.1f km</string>
     <string name="modal_sheet_category_title">사용처</string>
     <string name="modal_sheet_calendar_title">유효기간</string>
-    <string name="location_permission_dialog_title">위치 허용이 필요해요</string>
-    <string name="location_permission_dialog_content">위치 정보를 동의하기 전까지\n지도 기능을 사용할 수 없어요.</string>
+    <string name="location_permission_dialog_title">위치 정보 이용에 동의해 주세요</string>
+    <string name="location_permission_dialog_content">위치 정보 이용을 허용해야\n지도 기능을 사용할 수 있어요.</string>
     <string name="location_permission_later">다음에 하기</string>
     <string name="location_permission_granted">허용하기</string>
 
@@ -75,7 +75,6 @@
 
     <string name="map">지도</string>
     <string name="map_location_permission">위치 정보를 불러왔어요!</string>
-    <string name="map_location_not_granted_permission">설정 > o o o 에서 위치 허용을 해주세요</string>
 
     <!--    Error Popup-->
     <string name="kakao_login_error_title">카카오톡으로 시작할 수 없어요</string>

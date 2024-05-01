@@ -15,54 +15,69 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
+enum class BottomSheetValue(val sheetPeekHeightDp: Float) {
+    Collapsed(36f),
+    PartiallyExpanded(111f),
+    Expanded(540f)
+}
+
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val gifticonRepository: GifticonRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MapUiState())
-    val uiState = _uiState.asStateFlow()
+    private var _store = MutableStateFlow(GifticonStore.TOTAL)
+    val store = _store.asStateFlow()
 
-    private val _gifticonItems = MutableStateFlow<PagingData<AvailableGifticon.AvailableGifticonInfo>>(PagingData.empty())
-    val gifticonItems = _gifticonItems.asStateFlow()
+    private var _sheetValue = MutableStateFlow(BottomSheetValue.Collapsed)
+    val sheetValue = _sheetValue.asStateFlow()
 
-    private val _gifticonStore = MutableStateFlow(GifticonStore.TOTAL)
-    val gifticonStore = _gifticonStore.asStateFlow()
+    private var _heightDp = MutableStateFlow(BottomSheetValue.Collapsed.sheetPeekHeightDp)
+    val heightDp = _heightDp.asStateFlow()
+
+    private var _offset = MutableStateFlow(0f)
+    val offset = _offset.asStateFlow()
+
+    private val _gifticonPagingItems = MutableStateFlow<PagingData<AvailableGifticon.AvailableGifticonInfo>>(PagingData.empty())
+    val gifticonPagingItems = _gifticonPagingItems.asStateFlow()
+
+    private val _totalCount = MutableStateFlow(0)
+    val totalCount = _totalCount.asStateFlow()
 
     init {
         fetchAvailableGifticon()
+        getGifticonCount()
     }
 
     private fun fetchAvailableGifticon() {
         gifticonRepository.fetchAvailableGifticon(
-            gifticonStore = gifticonStore.value,
+            gifticonStore = store.value,
             gifticonSortType = SortType.EXPIRATION_DATE
         ).cachedIn(viewModelScope)
             .onEach {
-                _gifticonItems.value = it
+                _gifticonPagingItems.value = it
             }.launchIn(viewModelScope)
     }
 
-    fun onCategoryChange(category: GifticonStore) {
-        _uiState.value = _uiState.value.copy(category = category)
+    private fun getGifticonCount() {
+        gifticonRepository.getGifticonCount(used = false)
+            .onEach {
+                _totalCount.value = it
+            }.launchIn(viewModelScope)
     }
 
-    fun onSheetValueChange(sheetValue: BottomSheetValue) {
-        _uiState.value = _uiState.value.copy(
-            sheetValue = sheetValue,
-            heightDp = when (sheetValue) {
-                BottomSheetValue.Collapsed -> BottomSheetValue.Collapsed.sheetPeekHeightDp
-                BottomSheetValue.PartiallyExpanded -> BottomSheetValue.PartiallyExpanded.sheetPeekHeightDp
-                BottomSheetValue.Expanded -> BottomSheetValue.Expanded.sheetPeekHeightDp
-            },
-            offset = 0f
-        )
+    fun selectGifticonStore(store: GifticonStore) {
+        _store.value = store
     }
 
-    fun changeBottomSheetOffset(offsetY: Float) {
-        _uiState.value = _uiState.value.copy(
-            heightDp = _uiState.value.heightDp - offsetY,
-            offset = _uiState.value.offset - offsetY
-        )
+    fun changeBottomSheetValue(sheetValue: BottomSheetValue) {
+        _sheetValue.value = sheetValue
+        _heightDp.value = sheetValue.sheetPeekHeightDp
+        _offset.value = 0f
+    }
+
+    fun setOffset(offset: Float) {
+        _heightDp.value -= offset
+        _offset.value = -offset
     }
 }

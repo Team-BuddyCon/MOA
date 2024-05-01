@@ -37,6 +37,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,7 +62,7 @@ import com.yapp.buddycon.designsystem.theme.Black
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
-import com.yapp.buddycon.domain.model.gifticon.GifticonModel
+import com.yapp.buddycon.designsystem.theme.Pink100
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.utility.RequestLocationPermission
 import com.yapp.buddycon.utility.checkLocationPermission
@@ -87,8 +90,7 @@ fun MapScreen(
 
     val configuration = LocalConfiguration.current
     val mapHeightDp = configuration.screenHeightDp.toFloat() - MapBarSize
-    val mapUiState by mapViewModel.uiState.collectAsStateWithLifecycle()
-    val items = mapViewModel.gifticonItems.collectAsLazyPagingItems()
+    val heightDp by mapViewModel.heightDp.collectAsStateWithLifecycle()
 
     RequestLocationPermission(
         onGranted = {
@@ -106,7 +108,7 @@ fun MapScreen(
                 mapHeightDp = mapHeightDp
             )
         },
-        sheetPeekHeight = mapUiState.heightDp.dp,
+        sheetPeekHeight = heightDp.dp,
         sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         sheetContainerColor = BuddyConTheme.colors.background,
         sheetShadowElevation = 33.dp,
@@ -147,7 +149,11 @@ private fun MapBottomSheet(
 ) {
     val context = LocalContext.current
     val density = context.resources.displayMetrics.density
-    val mapUiState by mapViewModel.uiState.collectAsStateWithLifecycle()
+    val heightDp by mapViewModel.heightDp.collectAsStateWithLifecycle()
+    val sheetValue by mapViewModel.sheetValue.collectAsStateWithLifecycle()
+    val offset by mapViewModel.offset.collectAsStateWithLifecycle()
+    val totalCount by mapViewModel.totalCount.collectAsStateWithLifecycle()
+    val gifticonInfos = mapViewModel.gifticonPagingItems.collectAsLazyPagingItems()
 
     // 삭제 예정
     val today = Calendar.getInstance().apply {
@@ -165,50 +171,33 @@ private fun MapBottomSheet(
             .pointerInput(Unit) {
                 detectVerticalDragGestures(
                     onDragEnd = {
-                        mapViewModel.onSheetValueChange(
-                            sheetValue = if (mapUiState.offset > 0f) {
-                                when (mapUiState.sheetValue) {
-                                    BottomSheetValue.Collapsed -> BottomSheetValue.PartiallyExpanded
-                                    BottomSheetValue.PartiallyExpanded -> BottomSheetValue.Expanded
-                                    BottomSheetValue.Expanded -> BottomSheetValue.Expanded
-                                }
-                            } else {
-                                when (mapUiState.sheetValue) {
-                                    BottomSheetValue.Collapsed -> BottomSheetValue.Collapsed
-                                    BottomSheetValue.PartiallyExpanded -> BottomSheetValue.Collapsed
-                                    BottomSheetValue.Expanded -> BottomSheetValue.PartiallyExpanded
-                                }
-                            }
+                        mapViewModel.changeBottomSheetValue(
+                            transitionBottomSheet(
+                                current = sheetValue,
+                                offset = offset
+                            )
                         )
                     },
-                    onVerticalDrag = { change, dragAmount ->
-                        Timber.d("onVerticalDrag $dragAmount")
-                        if (mapUiState.heightDp - (dragAmount / density) in 0f..mapHeightDp) {
-                            mapViewModel.changeBottomSheetOffset(dragAmount / density)
+                    onVerticalDrag = { _, dragAmount ->
+                        if (heightDp - (dragAmount / density) in 0f..mapHeightDp) {
+                            mapViewModel.setOffset(dragAmount / density)
                         }
                     }
                 )
             }
     ) {
-        when (mapUiState.sheetValue) {
+        when (sheetValue) {
             BottomSheetValue.Expanded -> {
                 GifticonInfoListModalSheet(
-                    countOfUsableGifticon = 4,
+                    countOfUsableGifticon = totalCount,
                     countOfImminetGifticon = 1,
-                    gifticonInfos = List(5) {
-                        GifticonModel(
-                            imageUrl = "https://github.com/Team-BuddyCon/ANDROID_V2/assets/34837583/5ab80674-4ffb-4c91-ab10-3743d8c87e58",
-                            category = GifticonStore.STARBUCKS,
-                            name = "빙그레)바나나맛우유240",
-                            expirationTime = (today + 1000 * 60 * 60 * 24L * (-1..366).random())
-                        )
-                    }
+                    gifticonInfos = gifticonInfos
                 )
             }
 
             else -> {
                 GifticonInfoModalSheetContent(
-                    countOfUsableGifticon = 12,
+                    countOfUsableGifticon = totalCount,
                     countOfImminetGifticon = 1
                 )
             }
@@ -237,7 +226,7 @@ private fun MapContent(
     // 위치 권한 요청
     var requestPermissionEvent by remember { mutableStateOf(false) }
 
-    val uiState by mapViewModel.uiState.collectAsStateWithLifecycle()
+    val store by mapViewModel.store.collectAsStateWithLifecycle()
 
 //    LaunchedEffect(currentLocation) {
 //        currentLocation?.let { currentLocation ->
@@ -285,8 +274,8 @@ private fun MapContent(
 
     Column(modifier) {
         MapCategoryTab(
-            category = uiState.category,
-            onCategoryChange = { mapViewModel.onCategoryChange(it) }
+            category = store,
+            onCategoryChange = { mapViewModel.selectGifticonStore(it) }
         )
         Box(
             modifier = Modifier.fillMaxSize()
@@ -324,10 +313,8 @@ private fun MapContent(
 
                             override fun getPosition(): LatLng {
                                 mapLocation.location?.let { location ->
-                                    Timber.d("currentLocation is not null")
                                     return LatLng.from(location.latitude, location.longitude)
                                 } ?: kotlin.run {
-                                    Timber.d("currentLocation is null")
                                     return super.getPosition()
                                 }
                             }
@@ -363,7 +350,47 @@ private fun MapContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = stringResource(R.string.map_location_not_granted_permission),
+                            text = buildAnnotatedString {
+                                withStyle(style = SpanStyle(Pink100)) {
+                                    append("위치 정보 이용")
+                                }
+                                append("에 동의해야 사용할 수 있어요.")
+                            },
+                            style = BuddyConTheme.typography.body04.copy(
+                                color = Grey70
+                            )
+                        )
+                    }
+                }
+            } else {
+                Card(
+                    modifier = Modifier
+                        .padding(top = Paddings.xlarge)
+                        .align(Alignment.TopCenter)
+                        .height(45.dp)
+                        .clickable { showPermissonDialog = true },
+                    shape = RoundedCornerShape((22.5).dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = BuddyConTheme.colors.background
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 4.dp
+                    )
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(horizontal = (17.5).dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = buildAnnotatedString {
+                                append("상단 탭을 눌러 ")
+                                withStyle(style = SpanStyle(Pink100)) {
+                                    append("주변에 있는 매장")
+                                }
+                                append("을 확인하세요.")
+                            },
                             style = BuddyConTheme.typography.body04.copy(
                                 color = Grey70
                             )
@@ -373,13 +400,6 @@ private fun MapContent(
             }
         }
     }
-}
-
-@Composable
-private fun AndroidMap(
-    modifier: Modifier = Modifier,
-    location: Location?
-) {
 }
 
 @Composable
@@ -401,6 +421,22 @@ private fun MapCategoryTab(
                 isSelected = it == category,
                 onClick = { onCategoryChange(it) }
             )
+        }
+    }
+}
+
+private fun transitionBottomSheet(current: BottomSheetValue, offset: Float): BottomSheetValue {
+    return if (offset > 0f) {
+        when (current) {
+            BottomSheetValue.Collapsed -> BottomSheetValue.PartiallyExpanded
+            BottomSheetValue.PartiallyExpanded -> BottomSheetValue.Expanded
+            BottomSheetValue.Expanded -> BottomSheetValue.Expanded
+        }
+    } else {
+        when (current) {
+            BottomSheetValue.Collapsed -> BottomSheetValue.Collapsed
+            BottomSheetValue.PartiallyExpanded -> BottomSheetValue.Collapsed
+            BottomSheetValue.Expanded -> BottomSheetValue.PartiallyExpanded
         }
     }
 }
