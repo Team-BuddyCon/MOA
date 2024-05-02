@@ -4,16 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.map
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.domain.repository.GifticonRepository
+import com.yapp.buddycon.domain.repository.KakaoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 enum class BottomSheetValue(val sheetPeekHeightDp: Float) {
@@ -24,7 +25,8 @@ enum class BottomSheetValue(val sheetPeekHeightDp: Float) {
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val gifticonRepository: GifticonRepository
+    private val gifticonRepository: GifticonRepository,
+    private val kakaoRepository: KakaoRepository
 ) : ViewModel() {
 
     private var _store = MutableStateFlow(GifticonStore.TOTAL)
@@ -48,6 +50,13 @@ class MapViewModel @Inject constructor(
     private val _totalCount = MutableStateFlow(0)
     val totalCount = _totalCount.asStateFlow()
 
+    private val _mapSearchPlace = MutableStateFlow(MapSearchPlace())
+    val mapSearchPlace = _mapSearchPlace.asStateFlow()
+
+    // 전체일 경우에 가지고 있는 기프티콘 종류의 매장만 검색
+    private val _gifticonExistStore = MutableStateFlow<List<GifticonStore>>(listOf())
+    val gifticonExistStore = _gifticonExistStore.asStateFlow()
+
     init {
         fetchAvailableGifticon()
         getGifticonCount()
@@ -70,8 +79,31 @@ class MapViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
+    fun searchPlacesByKeyword(
+        stores: List<GifticonStore>,
+        x: String,
+        y: String
+    ) {
+        if (stores.isEmpty()) return
+        stores.map { store ->
+            kakaoRepository.searchPlacesByKeyword(
+                query = store.value,
+                x = x,
+                y = y,
+                radius = 2000
+            )
+        }.reduce { acc, flow ->
+            acc.zip(flow) { searchPlaceModels, searchPlaceModel ->
+                searchPlaceModels + searchPlaceModel
+            }
+        }.onEach {
+            _mapSearchPlace.value = _mapSearchPlace.value.copy(searchPlaceModels = it)
+        }.launchIn(viewModelScope)
+    }
+
     fun selectGifticonStore(store: GifticonStore) {
         _store.value = store
+        fetchAvailableGifticon()
     }
 
     fun changeBottomSheetValue(sheetValue: BottomSheetValue) {
@@ -85,7 +117,11 @@ class MapViewModel @Inject constructor(
         _offset.value = -offset
     }
 
-    fun setDeadLineCount(count: Int) {
-        _deadLineCount.value = count
+    fun setGifticonItemsInfo(
+        deadLineCount: Int,
+        gifticonStores: List<GifticonStore>
+    ) {
+        _deadLineCount.value = deadLineCount
+        _gifticonExistStore.value = gifticonStores
     }
 }

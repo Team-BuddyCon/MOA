@@ -10,6 +10,7 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.yapp.buddycon.designsystem.R
+import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.domain.model.type.GifticonStore
 
 // 내 위치 정보
@@ -27,12 +28,9 @@ fun getCurrentLocation(
 // 지도 위 마커 추가
 fun getLocationLabel(
     labelManager: LabelManager,
-    latitude: Double,
-    longitude: Double,
-    store: GifticonStore
+    searchPlaceModels: List<SearchPlaceModel>
 ) {
-    // TODO 별도 함수로 분리
-    val drawbleRes = when (store) {
+    fun GifticonStore?.getDrawableRes() = when (this) {
         GifticonStore.STARBUCKS,
         GifticonStore.TWOSOME_PLACE,
         GifticonStore.ANGELINUS,
@@ -51,11 +49,20 @@ fun getLocationLabel(
             R.drawable.ic_store
         }
     }
+
     labelManager.layer
-        ?.addLabel(
-            LabelOptions.from(LatLng.from(latitude, longitude))
-                .setStyles(
-                    labelManager.addLabelStyles(LabelStyles.from(LabelStyle.from(drawbleRes)))
-                )
+        ?.addLabels(
+            searchPlaceModels.map { model ->
+                LabelOptions.from(LatLng.from(model.y.toDouble(), model.x.toDouble()))
+                    .setStyles(
+                        labelManager.addLabelStyles(
+                            LabelStyles.from(
+                                LabelStyle.from(
+                                    GifticonStore.values().find { it.value == model.store }.getDrawableRes()
+                                )
+                            )
+                        )
+                    )
+            }
         )
 }

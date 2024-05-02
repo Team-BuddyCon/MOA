@@ -334,16 +334,13 @@ private fun GifticonMap(
                     },
                     object : KakaoMapReadyCallback() {
                         override fun onMapReady(kakaoMap: KakaoMap) {
+                            // 지도 노출과 동시에 라벨 표시
                             location?.let { location ->
                                 kakaoMap.labelManager?.let { manager ->
-                                    searchPlaceModels.forEach { seachPlaceModel ->
-                                        getLocationLabel(
-                                            labelManager = manager,
-                                            latitude = seachPlaceModel.y.toDouble(),
-                                            longitude = seachPlaceModel.x.toDouble(),
-                                            store = store
-                                        )
-                                    }
+                                    getLocationLabel(
+                                        labelManager = manager,
+                                        searchPlaceModels = searchPlaceModels
+                                    )
                                 }
                             }
                         }

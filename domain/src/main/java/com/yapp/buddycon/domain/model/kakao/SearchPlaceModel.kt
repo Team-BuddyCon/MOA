@@ -12,5 +12,6 @@ data class SearchPlaceModel(
     val place_url: String,
     val road_address_name: String,
     val x: String,
-    val y: String
+    val y: String,
+    val store: String
 )

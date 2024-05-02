@@ -18,7 +18,7 @@ class KakaoRepositoryImpl @Inject constructor(
                 y = y,
                 radius = radius
             ).places
-                .map { it.toModel() }
+                .map { it.toModel(store = query) }
         )
     }
 }

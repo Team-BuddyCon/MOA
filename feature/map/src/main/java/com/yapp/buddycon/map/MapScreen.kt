@@ -63,13 +63,14 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink100
+import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.utility.RequestLocationPermission
 import com.yapp.buddycon.utility.checkLocationPermission
 import com.yapp.buddycon.utility.getCurrentLocation
+import com.yapp.buddycon.utility.getLocationLabel
 import com.yapp.buddycon.utility.isDeadLine
 import timber.log.Timber
-import java.util.Calendar
 
 // TopAppBarHeight(52) + BottomNavigationBarHeight(72) + MapCategoryTabHeight(60)
 private const val MapBarSize = 184f
@@ -77,6 +78,11 @@ private const val MapBarSize = 184f
 @Stable
 data class MapLocation(
     val location: Location? = null
+)
+
+@Stable
+data class MapSearchPlace(
+    val searchPlaceModels: List<SearchPlaceModel> = listOf()
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,6 +98,32 @@ fun MapScreen(
     val configuration = LocalConfiguration.current
     val mapHeightDp = configuration.screenHeightDp.toFloat() - MapBarSize
     val heightDp by mapViewModel.heightDp.collectAsStateWithLifecycle()
+    val store by mapViewModel.store.collectAsStateWithLifecycle()
+    val mapSearchPlace by mapViewModel.mapSearchPlace.collectAsStateWithLifecycle()
+    val gifticonExistStore by mapViewModel.gifticonExistStore.collectAsStateWithLifecycle()
+
+    // 위치 기반 지도 검색
+    LaunchedEffect(currentLocation, store, gifticonExistStore) {
+        currentLocation.location?.let { location ->
+            when (store) {
+                GifticonStore.TOTAL -> {
+                    mapViewModel.searchPlacesByKeyword(
+                        stores = gifticonExistStore,
+                        x = location.longitude.toString(),
+                        y = location.latitude.toString()
+                    )
+                }
+
+                else -> {
+                    mapViewModel.searchPlacesByKeyword(
+                        stores = listOf(store),
+                        x = location.longitude.toString(),
+                        y = location.latitude.toString()
+                    )
+                }
+            }
+        }
+    }
 
     RequestLocationPermission(
         onGranted = {
@@ -133,6 +165,7 @@ fun MapScreen(
                 .background(BuddyConTheme.colors.background),
             snackbarHostState = snackbarHostState,
             mapLocation = currentLocation,
+            mapSearchPlace = mapSearchPlace,
             onGranted = {
                 getCurrentLocation(context = context) {
                     currentLocation = currentLocation.copy(location = it)
@@ -158,20 +191,16 @@ private fun MapBottomSheet(
     val deadLineCount by mapViewModel.deadLineCount.collectAsStateWithLifecycle()
 
     LaunchedEffect(gifticonInfos.itemCount) {
-        mapViewModel.setDeadLineCount(
-            count = (0 until gifticonInfos.itemCount)
+        mapViewModel.setGifticonItemsInfo(
+            deadLineCount = (0 until gifticonInfos.itemCount)
                 .mapNotNull { gifticonInfos[it] }
-                .count { it.expireDate.isDeadLine() }
+                .count { it.expireDate.isDeadLine() },
+            gifticonStores = (0 until gifticonInfos.itemCount)
+                .mapNotNull { gifticonInfos[it]?.category }
+                .toSet()
+                .toList()
         )
     }
-
-    // 삭제 예정
-    val today = Calendar.getInstance().apply {
-        set(Calendar.HOUR_OF_DAY, 0)
-        set(Calendar.MINUTE, 0)
-        set(Calendar.SECOND, 0)
-        set(Calendar.MILLISECOND, 0)
-    }.time.time
 
     Box(
         modifier = modifier
@@ -221,9 +250,9 @@ private fun MapContent(
     mapViewModel: MapViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState,
     mapLocation: MapLocation,
+    mapSearchPlace: MapSearchPlace,
     onGranted: () -> Unit = {}
 ) {
-    Timber.d("MapContent ${mapLocation.location}")
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -237,17 +266,24 @@ private fun MapContent(
     var requestPermissionEvent by remember { mutableStateOf(false) }
 
     val store by mapViewModel.store.collectAsStateWithLifecycle()
-
-//    LaunchedEffect(currentLocation) {
-//        currentLocation?.let { currentLocation ->
-//            // TODO location 기반 API 요청
-//        }
-//    }
+    var map by remember { mutableStateOf<KakaoMap?>(null) }
 
     // 권한 있을 경우 -> 현재 위치 요청
     LaunchedEffect(Unit) {
         if (isGrantedPermission) {
             onGranted()
+        }
+    }
+
+    LaunchedEffect(mapSearchPlace) {
+        Timber.d("mapSearchPlace ${mapSearchPlace.searchPlaceModels.size}")
+        // 지도가 노출되고 나서 라벨 표시, 라벨과 함께 표시하게되면 mapReady 오랜 시간 소요
+        map?.labelManager?.clearAll()
+        map?.labelManager?.let { manager ->
+            getLocationLabel(
+                labelManager = manager,
+                searchPlaceModels = mapSearchPlace.searchPlaceModels
+            )
         }
     }
 
@@ -307,18 +343,7 @@ private fun MapContent(
                         },
                         object : KakaoMapReadyCallback() {
                             override fun onMapReady(kakaoMap: KakaoMap) {
-                                //                                location?.let { location ->
-                                //                                    kakaoMap.labelManager?.let { manager ->
-                                //                                        searchPlaceModels.forEach { seachPlaceModel ->
-                                //                                            getLocationLabel(
-                                //                                                labelManager = manager,
-                                //                                                latitude = seachPlaceModel.y.toDouble(),
-                                //                                                longitude = seachPlaceModel.x.toDouble(),
-                                //                                                store = store
-                                //                                            )
-                                //                                        }
-                                //                                    }
-                                //                                }
+                                map = kakaoMap
                             }
 
                             override fun getPosition(): LatLng {
