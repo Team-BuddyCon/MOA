@@ -10,7 +10,7 @@ import com.yapp.buddycon.network.service.gifticon.GiftiConService
 import javax.inject.Inject
 
 private const val PAGING_START_KEY = 0
-const val PAGING_SIZE = 20
+const val PAGING_SIZE = 50
 
 class GifticonPagingSource @Inject constructor(
     val giftiConService: GiftiConService,

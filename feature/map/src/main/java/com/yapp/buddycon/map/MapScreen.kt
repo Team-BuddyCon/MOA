@@ -67,6 +67,7 @@ import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.utility.RequestLocationPermission
 import com.yapp.buddycon.utility.checkLocationPermission
 import com.yapp.buddycon.utility.getCurrentLocation
+import com.yapp.buddycon.utility.isDeadLine
 import timber.log.Timber
 import java.util.Calendar
 
@@ -154,6 +155,15 @@ private fun MapBottomSheet(
     val offset by mapViewModel.offset.collectAsStateWithLifecycle()
     val totalCount by mapViewModel.totalCount.collectAsStateWithLifecycle()
     val gifticonInfos = mapViewModel.gifticonPagingItems.collectAsLazyPagingItems()
+    val deadLineCount by mapViewModel.deadLineCount.collectAsStateWithLifecycle()
+
+    LaunchedEffect(gifticonInfos.itemCount) {
+        mapViewModel.setDeadLineCount(
+            count = (0 until gifticonInfos.itemCount)
+                .mapNotNull { gifticonInfos[it] }
+                .count { it.expireDate.isDeadLine() }
+        )
+    }
 
     // 삭제 예정
     val today = Calendar.getInstance().apply {
@@ -190,7 +200,7 @@ private fun MapBottomSheet(
             BottomSheetValue.Expanded -> {
                 GifticonInfoListModalSheet(
                     countOfUsableGifticon = totalCount,
-                    countOfImminetGifticon = 1,
+                    countOfImminetGifticon = deadLineCount,
                     gifticonInfos = gifticonInfos
                 )
             }
@@ -198,7 +208,7 @@ private fun MapBottomSheet(
             else -> {
                 GifticonInfoModalSheetContent(
                     countOfUsableGifticon = totalCount,
-                    countOfImminetGifticon = 1
+                    countOfImminetGifticon = deadLineCount
                 )
             }
         }
@@ -367,8 +377,7 @@ private fun MapContent(
                     modifier = Modifier
                         .padding(top = Paddings.xlarge)
                         .align(Alignment.TopCenter)
-                        .height(45.dp)
-                        .clickable { showPermissonDialog = true },
+                        .height(45.dp),
                     shape = RoundedCornerShape((22.5).dp),
                     colors = CardDefaults.cardColors(
                         containerColor = BuddyConTheme.colors.background

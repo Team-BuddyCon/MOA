@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.domain.model.type.SortType
@@ -40,6 +41,9 @@ class MapViewModel @Inject constructor(
 
     private val _gifticonPagingItems = MutableStateFlow<PagingData<AvailableGifticon.AvailableGifticonInfo>>(PagingData.empty())
     val gifticonPagingItems = _gifticonPagingItems.asStateFlow()
+
+    private val _deadLineCount = MutableStateFlow(0)
+    val deadLineCount = _deadLineCount.asStateFlow()
 
     private val _totalCount = MutableStateFlow(0)
     val totalCount = _totalCount.asStateFlow()
@@ -79,5 +83,9 @@ class MapViewModel @Inject constructor(
     fun setOffset(offset: Float) {
         _heightDp.value -= offset
         _offset.value = -offset
+    }
+
+    fun setDeadLineCount(count: Int) {
+        _deadLineCount.value = count
     }
 }
