@@ -86,48 +86,6 @@ fun CalendarModalSheet(
             DatePicker(state = dateState)
         }
     }
-
-//    ModalBottomSheet(
-//        onDismissRequest = onDismiss,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(CalendarModalSheetHeight),
-//        shape = RoundedCornerShape(
-//            topStart = CalendarModalSheetRadius,
-//            topEnd = CalendarModalSheetRadius
-//        ),
-//        containerColor = BuddyConTheme.colors.modalColor,
-//        dragHandle = {
-//            Box(
-//                modifier = Modifier
-//                    .padding(top = CalendarModalSheetDragHandleTopPadding)
-//                    .padding(horizontal = Paddings.xlarge)
-//                    .fillMaxWidth()
-//                    .height(CalendarModalSheetDragHandleHeight),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Text(
-//                    text = stringResource(R.string.modal_sheet_calendar_title),
-//                    style = BuddyConTheme.typography.subTitle
-//                )
-//                Icon(
-//                    painter = painterResource(R.drawable.ic_close),
-//                    contentDescription = CalendarModalSheetDragHandleCloseIconDescription,
-//                    modifier = Modifier
-//                        .align(Alignment.CenterEnd)
-//                        .fillMaxHeight()
-//                        .aspectRatio(1f)
-//                        .clickable {
-//                            dateState.selectedDateMillis?.let(onSelectDate)
-//                            onDismiss()
-//                        },
-//                    tint = Color.Unspecified
-//                )
-//            }
-//        }
-//    ) {
-//        DatePicker(state = dateState)
-//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

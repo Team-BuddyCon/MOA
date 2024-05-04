@@ -7,4 +7,4 @@ data class GifticonModel(
     val category: GifticonStore = GifticonStore.OTHERS,
     val name: String = "",
     val expirationTime: Long = 0L
-) 
+)

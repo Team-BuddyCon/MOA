@@ -50,12 +50,14 @@ import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
+import com.kakao.vectormap.label.Label
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.button.CategoryButton
 import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.modal.GifticonInfoListModalSheet
 import com.yapp.buddycon.designsystem.component.modal.GifticonInfoModalSheetContent
+import com.yapp.buddycon.designsystem.component.modal.PlaceModalSheet
 import com.yapp.buddycon.designsystem.component.snackbar.BuddyConSnackbar
 import com.yapp.buddycon.designsystem.component.snackbar.showBuddyConSnackBar
 import com.yapp.buddycon.designsystem.theme.Black
@@ -68,8 +70,9 @@ import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.utility.RequestLocationPermission
 import com.yapp.buddycon.utility.checkLocationPermission
 import com.yapp.buddycon.utility.getCurrentLocation
-import com.yapp.buddycon.utility.getLocationLabel
+import com.yapp.buddycon.utility.getLocationLabels
 import com.yapp.buddycon.utility.isDeadLine
+import com.yapp.buddycon.utility.scaleToLabel
 import timber.log.Timber
 
 // TopAppBarHeight(52) + BottomNavigationBarHeight(72) + MapCategoryTabHeight(60)
@@ -244,6 +247,7 @@ private fun MapBottomSheet(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MapContent(
     modifier: Modifier = Modifier,
@@ -256,7 +260,7 @@ private fun MapContent(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    // 위치 권한 
+    // 위치 권한
     var isGrantedPermission by remember { mutableStateOf(checkLocationPermission(context)) }
 
     // 위치 권한 유도 팝업
@@ -266,7 +270,9 @@ private fun MapContent(
     var requestPermissionEvent by remember { mutableStateOf(false) }
 
     val store by mapViewModel.store.collectAsStateWithLifecycle()
+    val placeLabels by mapViewModel.placeLabels.collectAsStateWithLifecycle()
     var map by remember { mutableStateOf<KakaoMap?>(null) }
+    var clickedLabel by remember { mutableStateOf<Label?>(null) }
 
     // 권한 있을 경우 -> 현재 위치 요청
     LaunchedEffect(Unit) {
@@ -276,13 +282,33 @@ private fun MapContent(
     }
 
     LaunchedEffect(mapSearchPlace) {
-        Timber.d("mapSearchPlace ${mapSearchPlace.searchPlaceModels.size}")
         // 지도가 노출되고 나서 라벨 표시, 라벨과 함께 표시하게되면 mapReady 오랜 시간 소요
         map?.labelManager?.clearAll()
         map?.labelManager?.let { manager ->
-            getLocationLabel(
-                labelManager = manager,
-                searchPlaceModels = mapSearchPlace.searchPlaceModels
+            mapViewModel.setPlaceLabels(
+                getLocationLabels(
+                    labelManager = manager,
+                    searchPlaceModels = mapSearchPlace.searchPlaceModels
+                )
+            )
+        }
+        map?.setOnLabelClickListener { kakaoMap, layer, label ->
+            clickedLabel = label
+            scaleToLabel(label, 1.5f)
+        }
+    }
+
+    if (clickedLabel != null) {
+        placeLabels.entries.find { it.value == clickedLabel }?.key?.let { model ->
+            PlaceModalSheet(
+                location = model.place_name,
+                distance = (model.distance / 1000.0),
+                onDismiss = {
+                    clickedLabel?.let { label ->
+                        scaleToLabel(label, 1f)
+                    }
+                    clickedLabel = null
+                }
             )
         }
     }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.location.Location
 import com.google.android.gms.location.LocationServices
 import com.kakao.vectormap.LatLng
+import com.kakao.vectormap.label.Label
 import com.kakao.vectormap.label.LabelManager
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
@@ -25,44 +26,72 @@ fun getCurrentLocation(
     }
 }
 
-// 지도 위 마커 추가
-fun getLocationLabel(
+// 지도 위 마커 추가 및 반환
+fun getLocationLabels(
     labelManager: LabelManager,
     searchPlaceModels: List<SearchPlaceModel>
-) {
-    fun GifticonStore?.getDrawableRes() = when (this) {
-        GifticonStore.STARBUCKS,
-        GifticonStore.TWOSOME_PLACE,
-        GifticonStore.ANGELINUS,
-        GifticonStore.MEGA_COFFEE,
-        GifticonStore.COFFEE_BEAN,
-        GifticonStore.GONG_CHA,
-        GifticonStore.BASKIN_ROBBINS -> {
-            R.drawable.ic_coffee
-        }
-
-        GifticonStore.MACDONALD -> {
-            R.drawable.ic_fastfood
-        }
-
-        else -> {
-            R.drawable.ic_store
-        }
-    }
-
-    labelManager.layer
-        ?.addLabels(
-            searchPlaceModels.map { model ->
-                LabelOptions.from(LatLng.from(model.y.toDouble(), model.x.toDouble()))
-                    .setStyles(
-                        labelManager.addLabelStyles(
-                            LabelStyles.from(
-                                LabelStyle.from(
-                                    GifticonStore.values().find { it.value == model.store }.getDrawableRes()
-                                )
+): Map<SearchPlaceModel, Label?> {
+    return searchPlaceModels.map { model ->
+        model to labelManager.layer?.addLabel(
+            LabelOptions.from(LatLng.from(model.y.toDouble(), model.x.toDouble()))
+                .setStyles(
+                    labelManager.addLabelStyles(
+                        LabelStyles.from(
+                            LabelStyle.from(
+                                GifticonStore.values().find { it.value == model.store }.getDrawableRes()
                             )
                         )
                     )
-            }
-        )
+                )
+        ).apply {
+            this?.isClickable = true
+        }
+    }.toMap()
+}
+
+fun scaleToLabel(
+    label: Label,
+    scale: Float
+) {
+    label.scaleTo(scale, scale)
+}
+
+fun GifticonStore?.getDrawableRes() = when (this) {
+    GifticonStore.STARBUCKS,
+    GifticonStore.TWOSOME_PLACE,
+    GifticonStore.ANGELINUS,
+    GifticonStore.MEGA_COFFEE,
+    GifticonStore.COFFEE_BEAN,
+    GifticonStore.GONG_CHA,
+    GifticonStore.BASKIN_ROBBINS -> {
+        R.drawable.ic_coffee
+    }
+
+    GifticonStore.MACDONALD -> {
+        R.drawable.ic_fastfood
+    }
+
+    else -> {
+        R.drawable.ic_store
+    }
+}
+
+fun GifticonStore?.getExpandedDrawableRes() = when (this) {
+    GifticonStore.STARBUCKS,
+    GifticonStore.TWOSOME_PLACE,
+    GifticonStore.ANGELINUS,
+    GifticonStore.MEGA_COFFEE,
+    GifticonStore.COFFEE_BEAN,
+    GifticonStore.GONG_CHA,
+    GifticonStore.BASKIN_ROBBINS -> {
+        R.drawable.ic_location
+    }
+
+    GifticonStore.MACDONALD -> {
+        R.drawable.ic_location
+    }
+
+    else -> {
+        R.drawable.ic_location
+    }
 }

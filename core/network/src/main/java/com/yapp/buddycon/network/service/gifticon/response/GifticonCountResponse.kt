@@ -8,4 +8,4 @@ data class GifticonCountResponse(
 
 data class GifticonCountResponseBody(
     val count: Int
-) 
+)

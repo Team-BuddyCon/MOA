@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.kakao.vectormap.label.Label
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
+import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.domain.repository.GifticonRepository
@@ -56,6 +58,9 @@ class MapViewModel @Inject constructor(
     // 전체일 경우에 가지고 있는 기프티콘 종류의 매장만 검색
     private val _gifticonExistStore = MutableStateFlow<List<GifticonStore>>(listOf())
     val gifticonExistStore = _gifticonExistStore.asStateFlow()
+
+    private val _placeLabels = MutableStateFlow<Map<SearchPlaceModel, Label?>>(mapOf())
+    val placeLabels = _placeLabels.asStateFlow()
 
     init {
         fetchAvailableGifticon()
@@ -123,5 +128,9 @@ class MapViewModel @Inject constructor(
     ) {
         _deadLineCount.value = deadLineCount
         _gifticonExistStore.value = gifticonStores
+    }
+
+    fun setPlaceLabels(placeLabels: Map<SearchPlaceModel, Label?>) {
+        _placeLabels.value = placeLabels
     }
 }

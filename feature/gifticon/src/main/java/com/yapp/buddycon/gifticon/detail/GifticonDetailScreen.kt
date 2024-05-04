@@ -71,7 +71,7 @@ import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.utility.RequestLocationPermission
 import com.yapp.buddycon.utility.checkLocationPermission
 import com.yapp.buddycon.utility.getCurrentLocation
-import com.yapp.buddycon.utility.getLocationLabel
+import com.yapp.buddycon.utility.getLocationLabels
 import timber.log.Timber
 import java.text.SimpleDateFormat
 
@@ -337,7 +337,7 @@ private fun GifticonMap(
                             // 지도 노출과 동시에 라벨 표시
                             location?.let { location ->
                                 kakaoMap.labelManager?.let { manager ->
-                                    getLocationLabel(
+                                    getLocationLabels(
                                         labelManager = manager,
                                         searchPlaceModels = searchPlaceModels
                                     )

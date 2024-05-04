@@ -40,10 +40,10 @@ private val PlaceModalSheetButtonRadius = 12.dp
 fun PlaceModalSheet(
     sheetState: SheetState = rememberModalBottomSheetState(),
     location: String,
-    distance: Float,
+    distance: Double,
     onSearchLocation: (String) -> Unit = {},
     onCopyAddress: (String) -> Unit = {},
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit = {}
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -147,7 +147,7 @@ private fun PlaceModalSheetPreview() {
         if (isShowModal) {
             PlaceModalSheet(
                 location = "스타벅스 상봉점",
-                distance = 0.1f,
+                distance = 0.1,
                 onDismiss = { isShowModal = false }
             )
         }
