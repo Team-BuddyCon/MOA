@@ -15,4 +15,12 @@ interface GifticonRepository {
     fun requestGifticonDetail(
         gifticonId: Int
     ): Flow<GifticonDetailModel>
+
+    fun editGifticonDetail(
+        gifticonId: Int,
+        name: String,
+        expireDate: String,
+        gifticonStore: String,
+        memo: String
+    ): Flow<Unit>
 }

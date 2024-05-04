@@ -125,6 +125,13 @@ internal fun BaseAppBar(buddyConAppBars: BuddyConAppBars) {
                                 } else {
                                     Color.Transparent
                                 }
+                            ),
+                            modifier = Modifier.then(
+                                if (buddyConAppBars is BuddyConAppBars.WithBackAndEdit) {
+                                    Modifier.clickable {
+                                        buddyConAppBars.onEdit?.invoke()
+                                    }
+                                } else { Modifier }
                             )
                         )
                     }

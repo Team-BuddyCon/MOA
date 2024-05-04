@@ -42,6 +42,11 @@ class AvailableGifticonViewModel @Inject constructor(
 
     private var availableGifticonPageState = AvailableGifticonPageState()
 
+    init {
+        Log.e("MOATest", "[AvailableGifticonViewModel] - init !!!")
+        getAvailableGifiticon()
+    }
+
     fun getAvailableGifiticon() {
         if (availableGifticonPageState.isCurrentTabLastPage.not() && _availabeGifticonDataResult.value != DataResult.Loading) {
             viewModelScope.launch {
@@ -109,6 +114,14 @@ class AvailableGifticonViewModel @Inject constructor(
 
     fun updateAvailableGifticonScreenUiState(newAvailableGifticonScreenUiState: AvailableGifticonScreenUiState) {
         _availableGifticonScreenUiState.value = newAvailableGifticonScreenUiState
+    }
+
+    fun initPagingState() { // paging 상태 초기화
+        availableGifticonPageState = AvailableGifticonPageState()
+    }
+
+    fun initAvailabeGifticonDataResult() {
+        _availabeGifticonDataResult.value = DataResult.None
     }
 }
 
