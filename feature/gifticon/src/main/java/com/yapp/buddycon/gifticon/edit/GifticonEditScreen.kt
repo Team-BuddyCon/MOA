@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -54,8 +53,6 @@ import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.gifticon.available.base.HandleDataResult
 import com.yapp.buddycon.gifticon.detail.GifticonDetailViewModel
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Composable
 fun GifticonEditScreen(
@@ -87,7 +84,7 @@ fun GifticonEditScreen(
                 gifticonEditViewModel.editGifticonDetail(gifticonId = gifticonId)
             }
         },
-        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButtonPosition = FabPosition.Center
     ) { paddingValues ->
         GifticonEditDetailContent(
             modifier = Modifier
@@ -126,12 +123,12 @@ private fun GifticonEditDetailContent(
             memo = gifticonDetailModel.memo
         )
     }
-    
+
     HandleDataResult(
         dataResultStateFlow = gifticonEditViewModel.editGifticonDetailDataResult,
         onSuccess = { isShowSuccessDialog = true },
-        onFailure = {},
-        onLoading = {}
+        onFailure = { },
+        onLoading = { }
     )
 
     if (isShowCalendarModal) {
@@ -147,7 +144,7 @@ private fun GifticonEditDetailContent(
             onDismiss = { isShowCategoryModal = false }
         )
     }
-    
+
     if (isShowSuccessDialog) {
         ConfirmDialog(
             dialogTitle = stringResource(id = R.string.gifticon_edit_success_message),

@@ -44,7 +44,7 @@ class GifticonEditViewModel @Inject constructor(
     fun setNewExpirationDate(expireDate: Long) {
         _editValueState.value = _editValueState.value.copy(
             newExpireDate = if (expireDate == 0L) {
-                    ""
+                ""
             } else {
                 SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(Date(expireDate))
             }

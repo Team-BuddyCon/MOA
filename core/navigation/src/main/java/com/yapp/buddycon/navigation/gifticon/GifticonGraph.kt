@@ -84,7 +84,12 @@ fun NavGraphBuilder.gifticonGraph(
             arguments = GifticonDestination.NearestUse.arguments
         ) { entry ->
             val gifticonId = entry.arguments?.getInt(GifticonDestination.NearestUse.gifticonIdArg)
+            val parentEntry = remember(entry) {
+                navHostController.getBackStackEntry(GifticonDestination.Detail.routeWithArg)
+            }
+
             NearestUseScreen(
+                gifticonDetailViewModel = hiltViewModel(parentEntry),
                 gifticonId = gifticonId,
                 onBack = { navHostController.popBackStack() }
             )

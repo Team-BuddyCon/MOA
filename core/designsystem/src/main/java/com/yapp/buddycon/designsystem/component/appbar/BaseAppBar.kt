@@ -131,7 +131,7 @@ internal fun BaseAppBar(buddyConAppBars: BuddyConAppBars) {
                                     Modifier.clickable {
                                         buddyConAppBars.onEdit?.invoke()
                                     }
-                                } else Modifier
+                                } else { Modifier }
                             )
                         )
                     }

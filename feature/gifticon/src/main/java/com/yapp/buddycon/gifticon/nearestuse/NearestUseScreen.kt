@@ -39,10 +39,12 @@ import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.gifticon.available.LoadingStateScreen
 import com.yapp.buddycon.gifticon.available.base.HandleDataResult
+import com.yapp.buddycon.gifticon.detail.GifticonDetailViewModel
 import timber.log.Timber
 
 @Composable
 fun NearestUseScreen(
+    gifticonDetailViewModel: GifticonDetailViewModel,
     gifticonId: Int?,
     onBack: () -> Unit
 ) {
@@ -66,6 +68,7 @@ fun NearestUseScreen(
         floatingActionButtonPosition = FabPosition.Center
     ) { paddingValues ->
         NearestUseContent(
+            gifticonDetailViewModel = gifticonDetailViewModel,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
@@ -77,13 +80,14 @@ fun NearestUseScreen(
 @Composable
 private fun NearestUseContent(
     nearestUseViewModel: NearestUseViewModel = hiltViewModel(),
+    gifticonDetailViewModel: GifticonDetailViewModel,
     modifier: Modifier = Modifier,
     gifticonId: Int
 ) {
     val context = LocalContext.current
 
     var currentLocation by remember { mutableStateOf<Location?>(null) }
-    val gifticonDetailModel by nearestUseViewModel.gifticonDetailModel.collectAsStateWithLifecycle()
+    val gifticonDetailModel by gifticonDetailViewModel.gifticonDetailModel.collectAsStateWithLifecycle()
 
     val nearestUseScreenUiState by nearestUseViewModel.nearestUseScreenUiState.collectAsStateWithLifecycle()
     val uiStateFromSearchPlacesDataResult by nearestUseViewModel.uiStateFromSearchPlacesDataResult.collectAsStateWithLifecycle()
@@ -92,10 +96,6 @@ private fun NearestUseContent(
         getCurrentLocation(context) {
             currentLocation = it
         }
-    }
-
-    LaunchedEffect(Unit) {
-        nearestUseViewModel.requestGifticonDetail(gifticonId)
     }
 
     LaunchedEffect(currentLocation) {
@@ -183,8 +183,14 @@ private fun NearestUseMap(
                                     val latAverage = latlngList.map { it.latitude }.average()
                                     val lonAverage = latlngList.map { it.longitude }.average()
 
+                                    val adjustedZoomLevel = if (zoomLevel >= 16) {
+                                        14
+                                    } else {
+                                        if (zoomLevel == minZoomLevel) zoomLevel else zoomLevel - 1
+                                    }
+
                                     /** 위에서 구한 zoom level, 중심 좌표로 지도 카메라 이동 */
-                                    kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(LatLng.from(latAverage, lonAverage), zoomLevel))
+                                    kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(LatLng.from(latAverage, lonAverage), adjustedZoomLevel))
 
                                     /** 내 위치, 장소 리스트 마커 그리기 */
                                     kakaoMap.labelManager?.let { manager ->
