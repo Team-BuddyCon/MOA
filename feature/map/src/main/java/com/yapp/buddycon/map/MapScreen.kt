@@ -301,8 +301,7 @@ private fun MapContent(
     if (clickedLabel != null) {
         placeLabels.entries.find { it.value == clickedLabel }?.key?.let { model ->
             PlaceModalSheet(
-                location = model.place_name,
-                distance = (model.distance / 1000.0),
+                searchPlaceModel = model,
                 onDismiss = {
                     clickedLabel?.let { label ->
                         scaleToLabel(label, 1f)

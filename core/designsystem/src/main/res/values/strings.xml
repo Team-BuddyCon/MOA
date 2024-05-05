@@ -22,6 +22,9 @@
     <string name="location_permission_dialog_content">위치 정보 이용을 허용해야\n지도 기능을 사용할 수 있어요.</string>
     <string name="location_permission_later">다음에 하기</string>
     <string name="location_permission_granted">허용하기</string>
+    <string name="naver_map">네이버 지도</string>
+    <string name="kakao_map">카카오맵</string>
+    <string name="google_map">구글 지도</string>
 
     <string name="startup_onboarding_gifticon_title">기프티콘을 한곳에서 관리해요</string>
     <string name="startup_onboarding_gifticon_description">흩어져 있는 기프티콘을 한곳에서 확인하고\n만료 전 알림으로 유효기간을 관리해요</string>
