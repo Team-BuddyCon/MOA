@@ -67,6 +67,7 @@ import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink50
 import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.utility.RequestLocationPermission
 import com.yapp.buddycon.utility.checkLocationPermission
 import com.yapp.buddycon.utility.getCurrentLocation
@@ -152,13 +153,15 @@ private fun GifticonDetailContent(
         gifticonDetailViewModel.requestGifticonDetail(gifticonId)
     }
 
-    LaunchedEffect(currentLocation) {
+    LaunchedEffect(currentLocation, gifticonDetailModel.gifticonStore) {
         currentLocation?.let { location ->
-            gifticonDetailViewModel.searchPlacesByKeyword(
-                query = gifticonDetailModel.gifticonStore.value,
-                x = location.longitude.toString(),
-                y = location.latitude.toString()
-            )
+            if (gifticonDetailModel.gifticonStore != GifticonStore.OTHERS) {
+                gifticonDetailViewModel.searchPlacesByKeyword(
+                    query = gifticonDetailModel.gifticonStore.value,
+                    x = location.longitude.toString(),
+                    y = location.latitude.toString()
+                )
+            }
         }
     }
 
@@ -231,6 +234,7 @@ private fun GifticonDetailContent(
         GifticonMap(
             location = currentLocation,
             searchPlaceModels = searchPlaceModels,
+            gifticonStore = gifticonDetailModel.gifticonStore,
             onGranted = {
                 getCurrentLocation(context) {
                     currentLocation = it
@@ -273,6 +277,7 @@ private fun GifticonDetailInfoRow(
 private fun GifticonMap(
     location: Location?,
     searchPlaceModels: List<SearchPlaceModel> = listOf(),
+    gifticonStore: GifticonStore = GifticonStore.OTHERS,
     onGranted: () -> Unit = {},
     onExpandMapClicked: () -> Unit = {}
 ) {
@@ -287,6 +292,7 @@ private fun GifticonMap(
 
     // 위치 권한 요청
     var requestPermissionEvent by remember { mutableStateOf(false) }
+    var map by remember { mutableStateOf<KakaoMap?>(null) }
 
     if (isGrantedPermission) {
         onGranted()
@@ -318,6 +324,15 @@ private fun GifticonMap(
         )
     }
 
+    LaunchedEffect(searchPlaceModels) {
+        map?.labelManager?.let { manager ->
+            getLocationLabels(
+                labelManager = manager,
+                searchPlaceModels = searchPlaceModels
+            )
+        }
+    }
+
     Box(
         modifier = Modifier
             .padding(top = Paddings.xlarge, bottom = 89.dp)
@@ -343,15 +358,7 @@ private fun GifticonMap(
                     },
                     object : KakaoMapReadyCallback() {
                         override fun onMapReady(kakaoMap: KakaoMap) {
-                            // 지도 노출과 동시에 라벨 표시
-                            location?.let { location ->
-                                kakaoMap.labelManager?.let { manager ->
-                                    getLocationLabels(
-                                        labelManager = manager,
-                                        searchPlaceModels = searchPlaceModels
-                                    )
-                                }
-                            }
+                            map = kakaoMap
                         }
 
                         override fun getPosition(): LatLng {
@@ -390,21 +397,47 @@ private fun GifticonMap(
                 )
             }
         } else {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 12.dp, end = 12.dp)
-                    .background(Pink50, RoundedCornerShape((18.5).dp))
-                    .padding(horizontal = 22.dp, vertical = 10.dp)
-                    .clickable { onExpandMapClicked() },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.gifticon_map_enlargement),
-                    style = BuddyConTheme.typography.body04.copy(
-                        color = BuddyConTheme.colors.primary
-                    )
+            if (gifticonStore == GifticonStore.OTHERS) {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Black.copy(0.4f))
                 )
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .background(BuddyConTheme.colors.background, RoundedCornerShape((22.5).dp))
+                        .padding(horizontal = 20.dp, vertical = 14.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = buildAnnotatedString {
+                            append("해당 기프티콘 브랜드는 ")
+                            withStyle(style = SpanStyle(Color.Red)) {
+                                append("지도 기능")
+                            }
+                            append("이 제한되어 있어요.")
+                        },
+                        style = BuddyConTheme.typography.body04.copy(color = Grey70)
+                    )
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 12.dp, end = 12.dp)
+                        .background(Pink50, RoundedCornerShape((18.5).dp))
+                        .padding(horizontal = 22.dp, vertical = 10.dp)
+                        .clickable { onExpandMapClicked() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.gifticon_map_enlargement),
+                        style = BuddyConTheme.typography.body04.copy(
+                            color = BuddyConTheme.colors.primary
+                        )
+                    )
+                }
             }
         }
     }

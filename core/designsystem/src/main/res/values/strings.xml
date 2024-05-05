@@ -26,6 +26,9 @@
     <string name="kakao_map">카카오맵</string>
     <string name="google_map">구글 지도</string>
     <string name="copy_complete">클립보드에 복사되었어요.</string>
+    <string name="others">기타</string>
+    <string name="previous">이전으로</string>
+    <string name="write_complete">작성완료</string>
 
     <string name="startup_onboarding_gifticon_title">기프티콘을 한곳에서 관리해요</string>
     <string name="startup_onboarding_gifticon_description">흩어져 있는 기프티콘을 한곳에서 확인하고\n만료 전 알림으로 유효기간을 관리해요</string>
@@ -80,6 +83,9 @@
     <string name="gifticon_delete">삭제</string>
     <string name="gifticon_edit_complete">완료</string>
     <string name="gifticon_edit_success_message">기프티콘 수정이 완료되었습니다</string>
+    <string name="gifticon_others_register_title">기프티콘 사용처를 입력해주세요</string>
+    <string name="gifticon_others_register_placeholder">예) 롯데리아</string>
+    <string name="gifticon_others_register_guide_message">앞으로 더 많은 브랜드를 지원하기 위해서 노력할게요.</string>
 
     <string name="map">지도</string>
     <string name="map_location_permission">위치 정보를 불러왔어요!</string>
