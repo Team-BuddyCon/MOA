@@ -52,7 +52,7 @@ fun CategoryButton(
 private fun CategoryButtonPreview() {
     BuddyConTheme {
         CategoryButton(
-            gifticonCategory = GifticonStore.ETC,
+            gifticonCategory = GifticonStore.OTHERS,
             isSelected = true
         )
     }

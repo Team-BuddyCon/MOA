@@ -1,6 +1,8 @@
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
+    alias libs.plugins.hilt.android
+    alias libs.plugins.kotlin.kapt
 }
 
 def Properties properties = new Properties()
@@ -44,6 +46,11 @@ dependencies {
     implementation project(":core:utility")
     implementation project(":domain")
 
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+
+    implementation libs.androidx.paging.compose
+    implementation libs.androidx.paging.runtime
     implementation libs.kakao.map
     implementation libs.timber
     implementation libs.androidx.core.ktx

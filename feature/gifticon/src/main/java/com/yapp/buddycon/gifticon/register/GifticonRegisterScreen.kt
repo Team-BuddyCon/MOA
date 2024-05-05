@@ -1,5 +1,6 @@
 package com.yapp.buddycon.gifticon.register
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -50,7 +51,6 @@ import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
 import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectUsage
-import com.yapp.buddycon.designsystem.component.input.EssentialInputText
 import com.yapp.buddycon.designsystem.component.input.NoEssentialInputText
 import com.yapp.buddycon.designsystem.component.modal.CalendarModalSheet
 import com.yapp.buddycon.designsystem.component.modal.CategoryModalSheet
@@ -78,42 +78,13 @@ fun GifticonRegisterScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
     var showedSnackbar by remember { mutableStateOf(false) }
-    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        try {
-            val image = uri?.let { InputImage.fromFilePath(context, it) }
-            val scanner = BarcodeScanning.getClient()
-            image?.let { image ->
-                scanner.process(image)
-                    .addOnSuccessListener { barcodes ->
-                        if (barcodes.isNotEmpty()) {
-                            imageUri = uri
-                        } else {
-                            Timber.d("There is not barcode in image")
-                            gifticonViewModel.showGifticonRegisterError(true)
-                            onBack()
-                        }
-                    }.addOnFailureListener {
-                        Timber.e("barcode scanner detection error: ${it.message}")
-                        gifticonViewModel.showGifticonRegisterError(true)
-                        onBack()
-                    }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    val uiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
     var showErrorPopup by remember { mutableStateOf(false) }
-    var stopRegisterPopup by remember { mutableStateOf(false) }
+    var showStopRegisterPopup by remember { mutableStateOf(false) }
 
-    LaunchedEffect(imageUri) {
-        if (imageUri == null) {
-            galleryLauncher.launch("image/*")
-        }
-    }
+    val gifticonRegisterUiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         gifticonRegisterViewModel.gifticonId.collect { gifticonId ->
@@ -138,17 +109,19 @@ fun GifticonRegisterScreen(
     if (showErrorPopup) {
         ConfirmDialog(
             dialogTitle = stringResource(
-                if (uiState.name.length > 16) {
+                if (gifticonRegisterUiState.name.length > 16) {
                     R.string.gifticon_register_max_length_name
-                } else if (uiState.name.isEmpty()) {
+                } else if (gifticonRegisterUiState.name.isEmpty()) {
                     R.string.gifticon_register_empty_name
-                } else if (uiState.expireDate == 0L) {
+                } else if (gifticonRegisterUiState.expireDate == 0L) {
                     R.string.gifticon_register_empty_expire_date
+                } else if (gifticonRegisterUiState.category == GifticonStore.NONE) {
+                    R.string.gifticon_register_empty_store_category
                 } else {
                     R.string.gifticon_register_max_length_memo
                 }
             ),
-            dialogContent = if (uiState.name.length > 16) {
+            dialogContent = if (gifticonRegisterUiState.name.length > 16) {
                 stringResource(R.string.gifticon_register_max_length_name_description)
             } else {
                 null
@@ -158,75 +131,86 @@ fun GifticonRegisterScreen(
         )
     }
 
-    if (stopRegisterPopup) {
+    if (showStopRegisterPopup) {
         DefaultDialog(
             dialogTitle = stringResource(R.string.gifticon_register_stop),
             dismissText = stringResource(R.string.gifticon_register_stop_dismiss),
             confirmText = stringResource(R.string.gifticon_register_stop_confirm),
-            onDismissRequest = { stopRegisterPopup = false },
+            onDismissRequest = { showStopRegisterPopup = false },
             onConfirm = {
-                stopRegisterPopup = false
+                showStopRegisterPopup = false
                 onBack()
             }
         )
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBarWithBack(
-                title = stringResource(R.string.gifticon_register),
-                onBack = onBack
-            )
-        },
-        bottomBar = {
-            Row(
-                modifier = Modifier
-                    .background(BuddyConTheme.colors.background)
-                    .padding(bottom = Paddings.xlarge)
-                    .padding(horizontal = Paddings.xlarge)
-            ) {
-                BuddyConButton(
-                    text = stringResource(R.string.gifticon_cancel),
-                    modifier = Modifier.weight(1f),
-                    containerColor = Grey30,
-                    contentColor = Grey70,
-                    onClick = { stopRegisterPopup = true }
+    if (imageUri == null) {
+        SelectGifticonImageScreen(
+            context = context,
+            onSuccess = {
+                imageUri = it
+            },
+            onError = {
+                gifticonViewModel.showGifticonRegisterError(true)
+                onBack()
+            }
+        )
+    } else {
+        Scaffold(
+            topBar = {
+                TopAppBarWithBack(
+                    title = stringResource(R.string.gifticon_register),
+                    onBack = onBack
                 )
-                BuddyConButton(
-                    text = stringResource(R.string.gifticon_save),
+            },
+            bottomBar = {
+                Row(
                     modifier = Modifier
-                        .padding(start = Paddings.xlarge)
-                        .weight(1f),
-                    containerColor = BuddyConTheme.colors.primary,
-                    contentColor = BuddyConTheme.colors.onPrimary,
-                    onClick = {
-                        if (uiState.name.isEmpty() ||
-                            uiState.name.length > 16 ||
-                            uiState.expireDate == 0L ||
-                            uiState.memo.length > 50
-                        ) {
-                            showErrorPopup = true
-                        } else {
-                            if (uiState.category != GifticonStore.ETC) {
+                        .background(BuddyConTheme.colors.background)
+                        .padding(bottom = Paddings.xlarge)
+                        .padding(horizontal = Paddings.xlarge)
+                ) {
+                    BuddyConButton(
+                        text = stringResource(R.string.gifticon_cancel),
+                        modifier = Modifier.weight(1f),
+                        containerColor = Grey30,
+                        contentColor = Grey70,
+                        onClick = { showStopRegisterPopup = true }
+                    )
+                    BuddyConButton(
+                        text = stringResource(R.string.gifticon_save),
+                        modifier = Modifier
+                            .padding(start = Paddings.xlarge)
+                            .weight(1f),
+                        containerColor = BuddyConTheme.colors.primary,
+                        contentColor = BuddyConTheme.colors.onPrimary,
+                        onClick = {
+                            if (gifticonRegisterUiState.name.isEmpty() ||
+                                gifticonRegisterUiState.name.length > 16 ||
+                                gifticonRegisterUiState.expireDate == 0L ||
+                                gifticonRegisterUiState.category == GifticonStore.NONE ||
+                                gifticonRegisterUiState.memo.length > 50
+                            ) {
+                                showErrorPopup = true
+                            } else {
                                 gifticonRegisterViewModel.registerNewGifticon(
                                     imagePath = imageUri?.toString() ?: ""
                                 )
                             }
                         }
-                    }
-                )
-            }
-        },
-        snackbarHost = { BuddyConSnackbar(snackbarHostState = snackbarHostState) }
-    ) { paddingValues ->
-        GifticonRegisterContent(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .background(BuddyConTheme.colors.background),
-            imageUri = imageUri,
-            uiState = uiState
-        )
+                    )
+                }
+            },
+            snackbarHost = { BuddyConSnackbar(snackbarHostState = snackbarHostState) }
+        ) { paddingValues ->
+            GifticonRegisterContent(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .background(BuddyConTheme.colors.background),
+                imageUri = imageUri
+            )
+        }
     }
 }
 
@@ -235,10 +219,10 @@ fun GifticonRegisterScreen(
 private fun GifticonRegisterContent(
     modifier: Modifier = Modifier,
     gifticonRegisterViewModel: GifticonRegisterViewModel = hiltViewModel(),
-    imageUri: Uri? = null,
-    uiState: GifticonRegisterUiState
+    imageUri: Uri? = null
 ) {
     val scrollState = rememberScrollState()
+    val gifticonRegisterUiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
     var isImageExpanded by remember { mutableStateOf(false) }
     var isShowCalendarModal by remember { mutableStateOf(false) }
     var isShowCategoryModal by remember { mutableStateOf(false) }
@@ -294,23 +278,23 @@ private fun GifticonRegisterContent(
                 )
             }
         }
-        EssentialInputText(
+        NoEssentialInputText(
             modifier = Modifier
                 .padding(top = 20.dp)
                 .fillMaxSize(),
             title = stringResource(R.string.gifticon_name),
             placeholder = stringResource(R.string.gifticon_name_placeholder),
-            value = uiState.name,
+            value = gifticonRegisterUiState.name,
             onValueChange = { gifticonRegisterViewModel.setName(it) }
         )
         EssentialInputSelectDate(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_expiration_date),
             placeholder = stringResource(R.string.gifticon_expiration_date_placeholder),
-            value = if (uiState.expireDate == 0L) {
+            value = if (gifticonRegisterUiState.expireDate == 0L) {
                 ""
             } else {
-                SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(uiState.expireDate)
+                SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(gifticonRegisterUiState.expireDate)
             },
             action = { isShowCalendarModal = true }
         )
@@ -318,15 +302,49 @@ private fun GifticonRegisterContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_usage),
             placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = if (uiState.category == GifticonStore.ETC) "" else uiState.category.value,
+            value = if (gifticonRegisterUiState.category == GifticonStore.OTHERS) "" else gifticonRegisterUiState.category.value,
             action = { isShowCategoryModal = true }
         )
         NoEssentialInputText(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_memo),
             placeholder = stringResource(R.string.gifticon_memo_placeholder),
-            value = uiState.memo,
+            value = gifticonRegisterUiState.memo,
             onValueChange = { gifticonRegisterViewModel.setMemo(it) }
         )
+    }
+}
+
+@Composable
+private fun SelectGifticonImageScreen(
+    context: Context,
+    onSuccess: (Uri) -> Unit = {},
+    onError: () -> Unit = {}
+) {
+    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        try {
+            val image = uri?.let { InputImage.fromFilePath(context, it) }
+            val scanner = BarcodeScanning.getClient()
+            image?.let { image ->
+                scanner.process(image)
+                    .addOnSuccessListener { barcodes ->
+                        if (barcodes.isNotEmpty()) {
+                            onSuccess(uri)
+                        } else {
+                            Timber.d("There is not barcode in image")
+                            onError()
+                        }
+                    }.addOnFailureListener {
+                        Timber.e("barcode scanner detection error: ${it.message}")
+                        onError()
+                    }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        galleryLauncher.launch("image/*")
     }
 }

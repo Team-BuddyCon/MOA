@@ -216,7 +216,7 @@ private fun GifticonEditDetailContent(
             modifier = Modifier.fillMaxWidth(),
             title = stringResource(R.string.gifticon_usage),
             placeholder = stringResource(R.string.gifticon_usage_placeholder),
-            value = if (editValueState.newGifticonStore == GifticonStore.ETC) "" else editValueState.newGifticonStore.value,
+            value = if (editValueState.newGifticonStore == GifticonStore.OTHERS) "" else editValueState.newGifticonStore.value,
             action = { isShowCategoryModal = true }
         )
 

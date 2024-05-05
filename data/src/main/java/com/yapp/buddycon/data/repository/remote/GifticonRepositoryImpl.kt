@@ -2,8 +2,17 @@ package com.yapp.buddycon.data.repository.remote
 
 import android.content.Context
 import android.net.Uri
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.google.gson.Gson
+import com.yapp.buddycon.data.source.GifticonPagingSource
+import com.yapp.buddycon.data.source.PAGING_SIZE
+import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
 import com.yapp.buddycon.domain.model.gifticon.GifticonDetailModel
+import com.yapp.buddycon.domain.model.type.GifticonStore
+import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
+import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.domain.repository.GifticonRepository
 import com.yapp.buddycon.network.service.gifticon.GiftiConService
 import com.yapp.buddycon.network.service.gifticon.request.CreateGifticonRequest
@@ -63,6 +72,32 @@ class GifticonRepositoryImpl @Inject constructor(
         )
     }
 
+    override fun fetchAvailableGifticon(
+        gifticonStoreCategory: GifticonStoreCategory?,
+        gifticonStore: GifticonStore?,
+        gifticonSortType: SortType?
+    ): Flow<PagingData<AvailableGifticon.AvailableGifticonInfo>> {
+        return Pager(
+            config = PagingConfig(pageSize = PAGING_SIZE),
+            pagingSourceFactory = {
+                GifticonPagingSource(
+                    giftiConService = giftiConService,
+                    gifticonStoreCategory = gifticonStoreCategory,
+                    gifticonStore = gifticonStore,
+                    gifticonSortType = gifticonSortType
+                )
+            }
+        ).flow
+    }
+
+    override fun getGifticonCount(used: Boolean): Flow<Int> = flow {
+        emit(
+            giftiConService.getGifticonCount(used)
+                .body
+                .count
+        )
+    }
+
     override fun editGifticonDetail(
         gifticonId: Int,
         name: String,
@@ -81,8 +116,7 @@ class GifticonRepositoryImpl @Inject constructor(
                 )
             )
         )
-    }.catch {
-            error ->
+    }.catch { error ->
         throw Throwable("[editGifticonDetail] catch error!", error)
     }.map { response ->
         if (response.isSuccessful) {

@@ -86,6 +86,6 @@ class GifticonEditViewModel @Inject constructor(
 data class GifticonEditUiState(
     val newName: String = "",
     val newExpireDate: String = "",
-    val newGifticonStore: GifticonStore = GifticonStore.ETC,
+    val newGifticonStore: GifticonStore = GifticonStore.OTHERS,
     val newMemo: String = ""
 )

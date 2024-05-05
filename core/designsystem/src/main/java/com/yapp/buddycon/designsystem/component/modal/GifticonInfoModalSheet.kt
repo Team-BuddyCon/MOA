@@ -25,7 +25,7 @@ import com.yapp.buddycon.designsystem.theme.Grey40
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink100
 
-private val GifticonInfoModalSheetHeight = 167.dp
+private val GifticonInfoModalSheetHeight = 111.dp
 private val GifticonInfoModalSheetRadius = 24.dp
 private val GifticonInfoModalHorizontalPadding = 15.dp
 private val GifticonInfoModalItemIconSize = 64.dp
@@ -67,14 +67,16 @@ fun GifticonInfoModalSheetContent(
                         text = "${countOfUsableGifticon}개",
                         style = BuddyConTheme.typography.title01
                     )
-                    Text(
-                        text = String.format(
-                            stringResource(R.string.modal_sheet_imminet_gifticon),
-                            countOfImminetGifticon
-                        ),
-                        modifier = Modifier.padding(start = Paddings.medium, bottom = Paddings.small),
-                        style = BuddyConTheme.typography.body04.copy(color = Pink100)
-                    )
+                    if (countOfUsableGifticon > 0) {
+                        Text(
+                            text = String.format(
+                                stringResource(R.string.modal_sheet_imminet_gifticon),
+                                countOfImminetGifticon
+                            ),
+                            modifier = Modifier.padding(start = Paddings.medium, bottom = Paddings.small),
+                            style = BuddyConTheme.typography.body04.copy(color = Pink100)
+                        )
+                    }
                 }
             }
             Icon(

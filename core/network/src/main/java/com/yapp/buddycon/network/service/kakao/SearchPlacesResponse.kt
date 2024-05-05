@@ -13,7 +13,7 @@ data class SearchPlaceResponse(
     val category_group_code: String,
     val category_group_name: String,
     val category_name: String,
-    val distance: String,
+    val distance: Int,
     val id: String,
     val phone: String,
     val place_name: String,
@@ -22,7 +22,7 @@ data class SearchPlaceResponse(
     val x: String,
     val y: String
 ) {
-    fun toModel() = SearchPlaceModel(
+    fun toModel(store: String) = SearchPlaceModel(
         address_name = address_name,
         category_group_code = category_group_code,
         category_group_name = category_group_name,
@@ -34,6 +34,7 @@ data class SearchPlaceResponse(
         place_url = place_url,
         road_address_name = road_address_name,
         x = x,
-        y = y
+        y = y,
+        store = store
     )
 }

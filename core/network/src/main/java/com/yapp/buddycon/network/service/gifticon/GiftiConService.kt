@@ -4,6 +4,7 @@ import com.yapp.buddycon.network.service.gifticon.request.EditGifticonRequest
 import com.yapp.buddycon.network.service.gifticon.response.AvailableGifticonResponse
 import com.yapp.buddycon.network.service.gifticon.response.CreateGifticonResponse
 import com.yapp.buddycon.network.service.gifticon.response.EditGifticonResponse
+import com.yapp.buddycon.network.service.gifticon.response.GifticonCountResponse
 import com.yapp.buddycon.network.service.gifticon.response.GifticonDetailResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -23,6 +24,7 @@ interface GiftiConService {
     suspend fun requestAvailableGiftiCons(
         @Query("pageNumber") pageNumber: Int, // page
         @Query("gifticonStoreCategory") gifticonStoreCategory: String?, // 기프티콘 가게 카테고리
+        @Query("gifticonStore") gifticonStore: String? = null,
         @Query("gifticonSortType") gifticonSortType: String?, // 기프티콘 필터링,
         @Query("rowCount") rowCount: Int = 10 // page 당 요청 데이터 개수
     ): Response<AvailableGifticonResponse>
@@ -40,6 +42,11 @@ interface GiftiConService {
     suspend fun getGifticonDetail(
         @Path("gifticonId") gifticonId: Int
     ): GifticonDetailResponse
+
+    @GET("api/v1/gifticons/count")
+    suspend fun getGifticonCount(
+        @Query("used") used: Boolean
+    ): GifticonCountResponse
 
     /** 기프티콘 상세 정보 수정 */
     @PUT("api/v1/gifticons/{gifticon-id}")

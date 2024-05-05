@@ -1,17 +1,19 @@
 package com.yapp.buddycon.designsystem.component.modal
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -28,9 +30,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
+import com.yapp.buddycon.designsystem.theme.White
 
 private val CalendarModalSheetHeight = 550.dp
 private val CalendarModalSheetRadius = 24.dp
@@ -46,17 +50,13 @@ fun CalendarModalSheet(
     onDismiss: () -> Unit
 ) {
     val dateState = rememberDatePickerState()
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(CalendarModalSheetHeight),
-        shape = RoundedCornerShape(
-            topStart = CalendarModalSheetRadius,
-            topEnd = CalendarModalSheetRadius
-        ),
-        containerColor = BuddyConTheme.colors.modalColor,
-        dragHandle = {
+    BottomSheetDialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .background(White, RoundedCornerShape(topStart = CalendarModalSheetRadius, topEnd = CalendarModalSheetRadius))
+                .padding(bottom = CalendarModalSheetDragHandleTopPadding)
+                .wrapContentHeight()
+        ) {
             Box(
                 modifier = Modifier
                     .padding(top = CalendarModalSheetDragHandleTopPadding)
@@ -83,9 +83,8 @@ fun CalendarModalSheet(
                     tint = Color.Unspecified
                 )
             }
+            DatePicker(state = dateState)
         }
-    ) {
-        DatePicker(state = dateState)
     }
 }
 

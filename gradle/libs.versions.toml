@@ -15,6 +15,8 @@ androidx-navigation-compose = "2.5.3"
 androidx-datastore-preference = "1.0.0"
 androidx-hilt-navigation-compose = "1.0.0"
 androidx-splashscreen = "1.0.0"
+androidxPaging = "3.1.1"
+androidxPagingCompose = "1.0.0-alpha18"
 
 ## hilt
 hilt = "2.44"
@@ -25,6 +27,7 @@ timber = "5.0.1"
 ## 3rd library
 coil-compose = "2.4.0"
 barcode-scanning = "17.2.0"
+bottomsheeet-dialog = "1.2.0"
 
 ## retrofit2
 retrofit2 = "2.9.0"
@@ -77,6 +80,9 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidx-datastore-preference" }
 androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-splashscreen" }
+androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidxPaging" }
+androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "androidxPaging" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidxPagingCompose" }
 
 ## hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -94,6 +100,7 @@ accompanist-webview = { group = "com.google.accompanist", name = "accompanist-we
 ## 3rd library
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-compose" }
 barcode-scanning = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "barcode-scanning" }
+bottomsheet-dialog = { group = "com.holix.android", name = "bottomsheetdialog-compose", version.ref = "bottomsheeet-dialog" }
 
 ## retrofit2
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2" }

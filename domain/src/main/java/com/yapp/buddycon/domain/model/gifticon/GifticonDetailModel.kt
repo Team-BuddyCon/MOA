@@ -9,6 +9,6 @@ data class GifticonDetailModel(
     val name: String = "",
     val memo: String = "",
     val expireDate: String = "",
-    val gifticonStore: GifticonStore = GifticonStore.ETC,
+    val gifticonStore: GifticonStore = GifticonStore.OTHERS,
     val gifticonStoreCategory: GifticonStoreCategory = GifticonStoreCategory.OTHERS
 )

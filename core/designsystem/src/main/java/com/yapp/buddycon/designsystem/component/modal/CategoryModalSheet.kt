@@ -1,23 +1,25 @@
 package com.yapp.buddycon.designsystem.component.modal
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -35,17 +37,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Paddings
+import com.yapp.buddycon.designsystem.theme.White
 import com.yapp.buddycon.domain.model.type.GifticonStore
 
 private val CategoryModalSheetHeight = 498.dp
 private val CategoryModalSheetRadius = 24.dp
 private val CategoryModalSheetDragHandleHeight = 24.dp
 private val CategoryModalSheetDragHandleTopPadding = 17.dp
-private val CategoryModalSheetItemTopPadding = 25.dp
-private val CategoryModalSheetItemBottomPadding = 35.dp
+private val CategoryModalSheetItemTopPadding = 30.dp
+private val CategoryModalSheetItemBottomPadding = 37.dp
 private val CategoryModalSheetItemImageSize = 68.dp
 private val CateogryModalSheetCloseDescription = "Close"
 
@@ -56,17 +60,12 @@ fun CategoryModalSheet(
     onSelectCategory: (GifticonStore) -> Unit = {},
     onDismiss: () -> Unit
 ) {
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(CategoryModalSheetHeight),
-        shape = RoundedCornerShape(
-            topStart = CategoryModalSheetRadius,
-            topEnd = CategoryModalSheetRadius
-        ),
-        containerColor = BuddyConTheme.colors.modalColor,
-        dragHandle = {
+    BottomSheetDialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .background(White, RoundedCornerShape(topStart = CategoryModalSheetRadius, topEnd = CategoryModalSheetRadius))
+                .wrapContentHeight()
+        ) {
             Box(
                 modifier = Modifier
                     .padding(top = CategoryModalSheetDragHandleTopPadding)
@@ -90,47 +89,62 @@ fun CategoryModalSheet(
                     tint = Color.Unspecified
                 )
             }
-        }
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Paddings.xlarge)
-                .padding(
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(
+                    start = Paddings.xlarge,
+                    end = Paddings.xlarge,
                     top = CategoryModalSheetItemTopPadding,
                     bottom = CategoryModalSheetItemBottomPadding
                 ),
-            verticalArrangement = Arrangement.spacedBy(Paddings.xextra),
-            horizontalArrangement = Arrangement.spacedBy(Paddings.xlarge)
-        ) {
-            items(GifticonStore.values().copyOfRange(1, GifticonStore.values().size - 1)) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onSelectCategory(it)
-                            onDismiss()
-                        },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = it.logo()),
-                        contentDescription = it.value,
-                        modifier = Modifier.size(CategoryModalSheetItemImageSize),
-                        contentScale = ContentScale.FillBounds
-                    )
-                    Text(
-                        text = it.value,
-                        style = BuddyConTheme.typography.body03.copy(
-                            fontSize = 13.sp,
-                            lineHeight = (18.2).sp
+                verticalArrangement = Arrangement.spacedBy(Paddings.xextra),
+                horizontalArrangement = Arrangement.spacedBy(Paddings.xlarge)
+            ) {
+                items(GifticonStore.values().copyOfRange(1, GifticonStore.values().size - 1)) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onSelectCategory(it)
+                                onDismiss()
+                            },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = it.logo()),
+                            contentDescription = it.value,
+                            modifier = Modifier.size(CategoryModalSheetItemImageSize),
+                            contentScale = ContentScale.FillBounds
                         )
-                    )
+                        Text(
+                            text = it.value,
+                            style = BuddyConTheme.typography.body03.copy(
+                                fontSize = 13.sp,
+                                lineHeight = (18.2).sp
+                            )
+                        )
+                    }
                 }
             }
         }
     }
+//    ModalBottomSheet(
+//        onDismissRequest = onDismiss,
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(CategoryModalSheetHeight),
+//        shape = RoundedCornerShape(
+//            topStart = CategoryModalSheetRadius,
+//            topEnd = CategoryModalSheetRadius
+//        ),
+//        containerColor = BuddyConTheme.colors.modalColor,
+//        dragHandle = {
+//
+//        }
+//    ) {
+//
+//    }
 }
 
 private fun GifticonStore.logo(): Int = when (this) {
@@ -140,11 +154,11 @@ private fun GifticonStore.logo(): Int = when (this) {
     GifticonStore.MEGA_COFFEE -> R.drawable.ic_mega_coffee
     GifticonStore.COFFEE_BEAN -> R.drawable.ic_coffee_bean
     GifticonStore.GONG_CHA -> R.drawable.ic_gongcha
-    GifticonStore.BASKINROBBINS -> R.drawable.ic_baskinrobbins
-    GifticonStore.MCDONALD -> R.drawable.ic_mcdonald
+    GifticonStore.BASKIN_ROBBINS -> R.drawable.ic_baskinrobbins
+    GifticonStore.MACDONALD -> R.drawable.ic_mcdonald
     GifticonStore.GS25 -> R.drawable.ic_gs25
     GifticonStore.CU -> R.drawable.ic_cu
-    GifticonStore.ETC -> R.drawable.ic_etc
+    GifticonStore.OTHERS -> R.drawable.ic_etc
     else -> throw IllegalStateException()
 }
 

@@ -1,12 +1,7 @@
 package com.yapp.buddycon.gifticon.detail
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -49,20 +44,14 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.google.android.gms.location.LocationServices
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
-import com.kakao.vectormap.label.LabelManager
-import com.kakao.vectormap.label.LabelOptions
-import com.kakao.vectormap.label.LabelStyle
-import com.kakao.vectormap.label.LabelStyles
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBackAndEdit
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
@@ -78,6 +67,10 @@ import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink50
 import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
+import com.yapp.buddycon.utility.RequestLocationPermission
+import com.yapp.buddycon.utility.checkLocationPermission
+import com.yapp.buddycon.utility.getCurrentLocation
+import com.yapp.buddycon.utility.getLocationLabels
 import timber.log.Timber
 import java.text.SimpleDateFormat
 
@@ -95,6 +88,8 @@ fun GifticonDetailScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // 스낵바 2번 호출되는 현상 방지
     var showedSnackbar by remember { mutableStateOf(false) }
 
     if (fromRegister && showedSnackbar.not()) {
@@ -348,21 +343,13 @@ private fun GifticonMap(
                     },
                     object : KakaoMapReadyCallback() {
                         override fun onMapReady(kakaoMap: KakaoMap) {
+                            // 지도 노출과 동시에 라벨 표시
                             location?.let { location ->
                                 kakaoMap.labelManager?.let { manager ->
-                                    getLocationLabel(
+                                    getLocationLabels(
                                         labelManager = manager,
-                                        latitude = location.latitude,
-                                        longitude = location.longitude
+                                        searchPlaceModels = searchPlaceModels
                                     )
-
-                                    searchPlaceModels.forEach { seachPlaceModel ->
-                                        getLocationLabel(
-                                            labelManager = manager,
-                                            latitude = seachPlaceModel.y.toDouble(),
-                                            longitude = seachPlaceModel.x.toDouble()
-                                        )
-                                    }
                                 }
                             }
                         }
@@ -421,71 +408,4 @@ private fun GifticonMap(
             }
         }
     }
-}
-
-@Composable
-private fun RequestLocationPermission(
-    onGranted: () -> Unit = {},
-    onDeny: () -> Unit = {}
-) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    val permissions = arrayOf(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
-
-    val permissionsLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val isGranted = permissions.values.all { it }
-        if (isGranted) {
-            onGranted()
-        } else {
-            onDeny()
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        if (permissions.any { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_DENIED }) {
-            permissionsLauncher.launch(permissions)
-        }
-    }
-}
-
-private fun checkLocationPermission(
-    context: Context
-): Boolean {
-    val permissions = arrayOf(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
-    return permissions.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
-}
-
-// 내 위치 정보
-@SuppressLint("MissingPermission")
-private fun getCurrentLocation(
-    context: Context,
-    onSuccess: (Location) -> Unit
-) {
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    fusedLocationClient.lastLocation.addOnSuccessListener {
-        onSuccess(it)
-    }
-}
-
-// 지도 위 마커 추가
-private fun getLocationLabel(
-    labelManager: LabelManager,
-    latitude: Double,
-    longitude: Double
-) {
-    labelManager.layer
-        ?.addLabel(
-            LabelOptions.from(LatLng.from(latitude, longitude))
-                .setStyles(
-                    labelManager.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.ic_location)))
-                )
-        )
 }
