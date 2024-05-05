@@ -67,7 +67,6 @@ import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink50
 import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
-import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.utility.RequestLocationPermission
 import com.yapp.buddycon.utility.checkLocationPermission
 import com.yapp.buddycon.utility.getCurrentLocation
