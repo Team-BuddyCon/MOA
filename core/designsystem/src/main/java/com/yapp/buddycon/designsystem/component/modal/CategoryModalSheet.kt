@@ -129,25 +129,9 @@ fun CategoryModalSheet(
             }
         }
     }
-//    ModalBottomSheet(
-//        onDismissRequest = onDismiss,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(CategoryModalSheetHeight),
-//        shape = RoundedCornerShape(
-//            topStart = CategoryModalSheetRadius,
-//            topEnd = CategoryModalSheetRadius
-//        ),
-//        containerColor = BuddyConTheme.colors.modalColor,
-//        dragHandle = {
-//
-//        }
-//    ) {
-//
-//    }
 }
 
-private fun GifticonStore.logo(): Int = when (this) {
+fun GifticonStore.logo(): Int = when (this) {
     GifticonStore.STARBUCKS -> R.drawable.ic_starbucks
     GifticonStore.TWOSOME_PLACE -> R.drawable.ic_twosome
     GifticonStore.ANGELINUS -> R.drawable.ic_angelinus
