@@ -191,6 +191,7 @@ private fun MapBottomSheet(
     val offset by mapViewModel.offset.collectAsStateWithLifecycle()
     val totalCount by mapViewModel.totalCount.collectAsStateWithLifecycle()
     val gifticonInfos = mapViewModel.gifticonPagingItems.collectAsLazyPagingItems()
+    val gifticonStore by mapViewModel.store.collectAsStateWithLifecycle()
     val deadLineCount by mapViewModel.deadLineCount.collectAsStateWithLifecycle()
 
     LaunchedEffect(gifticonInfos.itemCount) {
@@ -230,10 +231,12 @@ private fun MapBottomSheet(
     ) {
         when (sheetValue) {
             BottomSheetValue.Expanded -> {
+                // TODO totalCount API 반영 및 유효기간
                 GifticonInfoListModalSheet(
                     countOfUsableGifticon = totalCount,
                     countOfImminetGifticon = deadLineCount,
-                    gifticonInfos = gifticonInfos
+                    gifticonInfos = gifticonInfos,
+                    gifticonStore = gifticonStore
                 )
             }
 
@@ -301,8 +304,7 @@ private fun MapContent(
     if (clickedLabel != null) {
         placeLabels.entries.find { it.value == clickedLabel }?.key?.let { model ->
             PlaceModalSheet(
-                location = model.place_name,
-                distance = (model.distance / 1000.0),
+                searchPlaceModel = model,
                 onDismiss = {
                     clickedLabel?.let { label ->
                         scaleToLabel(label, 1f)

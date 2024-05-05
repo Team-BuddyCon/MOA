@@ -18,11 +18,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -36,6 +39,7 @@ import com.yapp.buddycon.designsystem.theme.Grey60
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink100
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -60,7 +64,8 @@ fun GifticonInfoListModalSheet(
     modifier: Modifier = Modifier,
     countOfUsableGifticon: Int,
     countOfImminetGifticon: Int,
-    gifticonInfos: LazyPagingItems<AvailableGifticon.AvailableGifticonInfo>
+    gifticonInfos: LazyPagingItems<AvailableGifticon.AvailableGifticonInfo>,
+    gifticonStore: GifticonStore
 ) {
     Column(
         modifier = modifier
@@ -74,24 +79,41 @@ fun GifticonInfoListModalSheet(
                 .size(32.dp, 4.dp)
                 .background(Grey40, RoundedCornerShape(100.dp))
         )
-        Text(
-            text = stringResource(R.string.modal_sheet_gifticon),
-            style = BuddyConTheme.typography.subTitle
-        )
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(
-                text = "${countOfUsableGifticon}개",
-                style = BuddyConTheme.typography.title01
-            )
-            Text(
-                text = String.format(
-                    stringResource(R.string.modal_sheet_imminet_gifticon),
-                    countOfImminetGifticon
-                ),
-                modifier = Modifier.padding(start = Paddings.medium, bottom = Paddings.small),
-                style = BuddyConTheme.typography.body04.copy(color = Pink100)
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.modal_sheet_gifticon),
+                    style = BuddyConTheme.typography.subTitle
+                )
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(
+                        text = "${countOfUsableGifticon}개",
+                        style = BuddyConTheme.typography.title01
+                    )
+                    Text(
+                        text = String.format(
+                            stringResource(R.string.modal_sheet_imminet_gifticon),
+                            countOfImminetGifticon
+                        ),
+                        modifier = Modifier.padding(start = Paddings.medium, bottom = Paddings.small),
+                        style = BuddyConTheme.typography.body04.copy(color = Pink100)
+                    )
+                }
+            }
+            if (gifticonStore !in arrayOf(GifticonStore.TOTAL, GifticonStore.OTHERS, GifticonStore.NONE)) {
+                Spacer(Modifier.weight(1f))
+                Icon(
+                    painter = painterResource(gifticonStore.logo()),
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp),
+                    tint = Color.Unspecified
+                )
+            }
         }
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxWidth(),
