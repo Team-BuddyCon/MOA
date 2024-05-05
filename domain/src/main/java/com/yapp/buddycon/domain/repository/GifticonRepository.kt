@@ -30,4 +30,12 @@ interface GifticonRepository {
     fun getGifticonCount(
         used: Boolean
     ): Flow<Int>
+
+    fun editGifticonDetail(
+        gifticonId: Int,
+        name: String,
+        expireDate: String,
+        gifticonStore: String,
+        memo: String
+    ): Flow<Unit>
 }

@@ -1,5 +1,6 @@
 package com.yapp.buddycon.gifticon.detail
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.buddycon.domain.model.gifticon.GifticonDetailModel
@@ -24,6 +25,10 @@ class GifticonDetailViewModel @Inject constructor(
 
     private val _searchPlacesModel = MutableStateFlow<List<SearchPlaceModel>>(listOf())
     val searchPlacesModel = _searchPlacesModel.asStateFlow()
+
+    init {
+        Log.d("MOATest", "[GifticonDetailViewModel], ${this.hashCode()}")
+    }
 
     fun requestGifticonDetail(gifticonId: Int) {
         gifticonRepository.requestGifticonDetail(gifticonId)

@@ -22,7 +22,9 @@ import com.yapp.buddycon.gifticon.available.AvailabeGifticonScreen
 @Composable
 fun GifticonScreeen(
     gifticonViewModel: GifticonViewModel = hiltViewModel(),
-    onNavigateToRegister: () -> Unit = {}
+    onNavigateToRegister: () -> Unit,
+    onNavigateToGifticonDetail: (Int) -> Unit,
+    afterGifticonRegistrationCompletes: Boolean?
 ) {
     val showErrorPopup by gifticonViewModel.showErrorPopup.collectAsStateWithLifecycle()
     if (showErrorPopup) {
@@ -45,16 +47,27 @@ fun GifticonScreeen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(BuddyConTheme.colors.background)
+                .background(BuddyConTheme.colors.background),
+            onNavigateToGifticonDetail = { gifticonId ->
+                onNavigateToGifticonDetail(gifticonId)
+            },
+            afterGifticonRegistrationCompletes = afterGifticonRegistrationCompletes
         )
     }
 }
 
 @Composable
 fun GifticonContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToGifticonDetail: (Int) -> Unit,
+    afterGifticonRegistrationCompletes: Boolean?
 ) {
     Column(modifier) {
-        AvailabeGifticonScreen()
+        AvailabeGifticonScreen(
+            onNavigateToGifticonDetail = { gifticonId ->
+                onNavigateToGifticonDetail(gifticonId)
+            },
+            afterGifticonRegistrationCompletes = afterGifticonRegistrationCompletes
+        )
     }
 }

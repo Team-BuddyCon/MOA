@@ -79,7 +79,9 @@ import java.text.SimpleDateFormat
 fun GifticonDetailScreen(
     gifticonId: Int?,
     fromRegister: Boolean?,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onNavigateToNearestUse: (id: Int) -> Unit,
+    onNavigateToGifticonEdit: (id: Int) -> Unit
 ) {
     checkNotNull(gifticonId)
     checkNotNull(fromRegister)
@@ -104,7 +106,8 @@ fun GifticonDetailScreen(
         topBar = {
             TopAppBarWithBackAndEdit(
                 title = stringResource(R.string.gifticon),
-                onBack = onBack
+                onBack = onBack,
+                onEdit = { onNavigateToGifticonEdit(gifticonId) }
             )
         },
         floatingActionButton = {
@@ -123,7 +126,10 @@ fun GifticonDetailScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
-            gifticonId = gifticonId
+            gifticonId = gifticonId,
+            onNavigateToNearestUse = {
+                onNavigateToNearestUse(gifticonId)
+            }
         )
     }
 }
@@ -133,7 +139,8 @@ fun GifticonDetailScreen(
 private fun GifticonDetailContent(
     modifier: Modifier = Modifier,
     gifticonDetailViewModel: GifticonDetailViewModel = hiltViewModel(),
-    gifticonId: Int
+    gifticonId: Int,
+    onNavigateToNearestUse: () -> Unit
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -225,12 +232,15 @@ private fun GifticonDetailContent(
         GifticonMap(
             location = currentLocation,
             searchPlaceModels = searchPlaceModels,
-            store = gifticonDetailModel.gifticonStore
-        ) {
-            getCurrentLocation(context) {
-                currentLocation = it
+            onGranted = {
+                getCurrentLocation(context) {
+                    currentLocation = it
+                }
+            },
+            onExpandMapClicked = {
+                onNavigateToNearestUse()
             }
-        }
+        )
     }
 }
 
@@ -264,8 +274,8 @@ private fun GifticonDetailInfoRow(
 private fun GifticonMap(
     location: Location?,
     searchPlaceModels: List<SearchPlaceModel> = listOf(),
-    store: GifticonStore,
-    onGranted: () -> Unit = {}
+    onGranted: () -> Unit = {},
+    onExpandMapClicked: () -> Unit = {}
 ) {
     val context = LocalContext.current
     // 위치 권한 체크
@@ -386,7 +396,8 @@ private fun GifticonMap(
                     .align(Alignment.BottomEnd)
                     .padding(bottom = 12.dp, end = 12.dp)
                     .background(Pink50, RoundedCornerShape((18.5).dp))
-                    .padding(horizontal = 22.dp, vertical = 10.dp),
+                    .padding(horizontal = 22.dp, vertical = 10.dp)
+                    .clickable { onExpandMapClicked() },
                 contentAlignment = Alignment.Center
             ) {
                 Text(

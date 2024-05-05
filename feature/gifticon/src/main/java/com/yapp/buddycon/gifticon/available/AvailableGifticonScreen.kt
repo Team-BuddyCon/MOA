@@ -3,6 +3,7 @@ package com.yapp.buddycon.gifticon.available
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,6 +68,7 @@ import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.appbar.getTopAppBarHeight
 import com.yapp.buddycon.designsystem.component.button.CategoryStoreButton
 import com.yapp.buddycon.designsystem.component.modal.FilterModalSheet
+import com.yapp.buddycon.designsystem.component.tag.DDayTag
 import com.yapp.buddycon.designsystem.component.tag.SortTag
 import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
 import com.yapp.buddycon.designsystem.theme.Black
@@ -81,6 +83,7 @@ import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.gifticon.available.base.HandleDataResult
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
 private val TabHeight = 60.dp
@@ -89,7 +92,9 @@ private val TAG = "MOATest"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AvailabeGifticonScreen(
-    availableGifticonViewModel: AvailableGifticonViewModel = hiltViewModel()
+    availableGifticonViewModel: AvailableGifticonViewModel = hiltViewModel(),
+    onNavigateToGifticonDetail: (Int) -> Unit,
+    afterGifticonRegistrationCompletes: Boolean?
 ) {
     Log.e(TAG, "[AvailabeGifticonScreen] : ${availableGifticonViewModel.hashCode()}")
 
@@ -101,7 +106,11 @@ fun AvailabeGifticonScreen(
     ) {
         AvailabeGifticonContent(
             availableGifticonViewModel = availableGifticonViewModel,
-            onFilterClicked = { isBottomSheetOpen = true }
+            onFilterClicked = { isBottomSheetOpen = true },
+            onGifticonItemClicked = { gifticonId ->
+                onNavigateToGifticonDetail(gifticonId)
+            },
+            afterGifticonRegistrationCompletes = afterGifticonRegistrationCompletes
         )
 
         if (isBottomSheetOpen) {
@@ -117,7 +126,9 @@ fun AvailabeGifticonScreen(
 @Composable
 private fun AvailabeGifticonContent(
     availableGifticonViewModel: AvailableGifticonViewModel,
-    onFilterClicked: () -> Unit
+    onFilterClicked: () -> Unit,
+    onGifticonItemClicked: (Int) -> Unit,
+    afterGifticonRegistrationCompletes: Boolean?
 ) {
     val topAppBarHeight = getTopAppBarHeight()
     val topAppBarHeightPx = with(LocalDensity.current) { topAppBarHeight.roundToPx().toFloat() }
@@ -143,7 +154,12 @@ private fun AvailabeGifticonContent(
     val lazyGridState = rememberLazyGridState()
 
     LaunchedEffect(Unit) {
-        availableGifticonViewModel.getAvailableGifiticon()
+        Log.e("MOAtest", "[AvailabeGifticonContent] - [LaunchedEffect(Unit)]")
+
+        if (afterGifticonRegistrationCompletes == true) {
+            availableGifticonViewModel.initPagingState()
+            availableGifticonViewModel.getAvailableGifiticon()
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -159,7 +175,6 @@ private fun AvailabeGifticonContent(
 
     LaunchedEffect(lazyGridState.canScrollForward) {
         if (lazyGridState.canScrollForward.not() && availableGifticonScreenUiState != AvailableGifticonScreenUiState.Loading) {
-            Log.e("AppTest", "[AvailabeGifticonContent] - getAvailableGifiticon")
             availableGifticonViewModel.getAvailableGifiticon()
         }
     }
@@ -167,8 +182,11 @@ private fun AvailabeGifticonContent(
     HandleDataResult(
         dataResultStateFlow = availableGifticonViewModel.availableGifticonDataResult,
         onSuccess = {
-            availableGifticonViewModel.updateCurrentAvailabeGifticons(it.data)
-            availableGifticonViewModel.updateAvailableGifticonScreenUiState(AvailableGifticonScreenUiState.None)
+            with(availableGifticonViewModel) {
+                updateCurrentAvailabeGifticons(it.data)
+                updateAvailableGifticonScreenUiState(AvailableGifticonScreenUiState.None)
+                initAvailabeGifticonDataResult()
+            }
         },
         onFailure = {
             // failure 처리 필요
@@ -188,7 +206,10 @@ private fun AvailabeGifticonContent(
             AvailableGifticons(
                 lazyGridState = lazyGridState,
                 topAppBarHeight = topAppBarHeight,
-                currentAvailableGifticons = currentAvailabeGifticons
+                currentAvailableGifticons = currentAvailabeGifticons,
+                onGifticonItemClicked = { gifticonId ->
+                    onGifticonItemClicked(gifticonId)
+                }
             )
         } else {
             NoAvailableGifticonContent(topAppBarHeight = topAppBarHeight)
@@ -215,6 +236,7 @@ private fun AvailableGifticons(
     lazyGridState: LazyGridState,
     topAppBarHeight: Dp,
     currentAvailableGifticons: List<AvailableGifticon.AvailableGifticonInfo>,
+    onGifticonItemClicked: (Int) -> Unit
 ) {
     Log.e("MOATest", "AvailableGifticons")
 
@@ -234,7 +256,10 @@ private fun AvailableGifticons(
             AvailableGifticonItem(
                 availablieGifticonInfo = availablieGifticonInfo,
                 topPadding = 16.dp,
-                bottomPadding = if (index == currentAvailableGifticons.lastIndex) 56.dp else 0.dp
+                bottomPadding = if (index == currentAvailableGifticons.lastIndex) 56.dp else 0.dp,
+                onGifticonItemClicked = { gifticonId ->
+                    onGifticonItemClicked(gifticonId)
+                }
             )
         }
     }
@@ -244,10 +269,15 @@ private fun AvailableGifticons(
 private fun AvailableGifticonItem(
     availablieGifticonInfo: AvailableGifticon.AvailableGifticonInfo,
     topPadding: Dp,
-    bottomPadding: Dp
+    bottomPadding: Dp,
+    onGifticonItemClicked: (Int) -> Unit
 ) {
     Column(
-        modifier = Modifier.padding(top = topPadding, bottom = bottomPadding)
+        modifier = Modifier
+            .padding(top = topPadding, bottom = bottomPadding)
+            .clickable {
+                onGifticonItemClicked(availablieGifticonInfo.gifticonId)
+            }
     ) {
         Box(
             modifier = Modifier
@@ -265,15 +295,17 @@ private fun AvailableGifticonItem(
                     contentScale = ContentScale.FillBounds
                 )
             }
-//  날짜 로직 추가 후 완성 예정
-//            DDayTag(
-//                modifier = Modifier
-//                    .padding(
-//                        top = Paddings.medium,
-//                        start = Paddings.medium
-//                    ),
-//                dateMillis = availablieGifticonInfo.
-//            )
+
+            if (availablieGifticonInfo.expireDate.isNotEmpty()) {
+                DDayTag(
+                    modifier = Modifier
+                        .padding(
+                            top = Paddings.medium,
+                            start = Paddings.medium
+                        ),
+                    dateMillis = SimpleDateFormat("yyyy-MM-dd").parse(availablieGifticonInfo.expireDate).time
+                )
+            }
         }
         Text(
             text = availablieGifticonInfo.category.value,
