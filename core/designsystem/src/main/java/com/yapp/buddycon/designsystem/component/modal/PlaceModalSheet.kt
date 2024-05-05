@@ -1,10 +1,13 @@
 package com.yapp.buddycon.designsystem.component.modal
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,9 +56,6 @@ private val PlaceModalSheetButtonRadius = 12.dp
 fun PlaceModalSheet(
     sheetState: SheetState = rememberModalBottomSheetState(),
     searchPlaceModel: SearchPlaceModel,
-    onCopyAddress: (String) -> Unit = {},
-    onKaKaoMapClick: () -> Unit = {},
-    onGoogleMpaClick: () -> Unit = {},
     onDismiss: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -240,7 +240,12 @@ fun PlaceModalSheet(
                         )
                     }
                     Button(
-                        onClick = { onCopyAddress(searchPlaceModel.place_name) },
+                        onClick = {
+                            copyInClipBoard(
+                                context = context,
+                                text = searchPlaceModel.address_name
+                            )
+                        },
                         modifier = Modifier
                             .padding(start = Paddings.medium)
                             .weight(1f)
@@ -260,6 +265,19 @@ fun PlaceModalSheet(
                 }
             }
         }
+    }
+}
+
+private fun copyInClipBoard(
+    context: Context,
+    text: String
+) {
+    val manager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("Address", text)
+    manager.setPrimaryClip(clip)
+
+    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+        Toast.makeText(context, context.getString(R.string.copy_complete), Toast.LENGTH_SHORT).show()
     }
 }
 
