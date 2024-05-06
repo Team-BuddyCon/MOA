@@ -13,7 +13,8 @@ fun ConfirmDialog(
     dialogTitle: String,
     dialogContent: String? = null,
     onClick: (() -> Unit)? = null,
-    onDismissRequest: () -> Unit = {}
+    onDismissRequest: () -> Unit = {},
+    buttonText: String = stringResource(id = R.string.confirm)
 ) {
     Dialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -24,7 +25,7 @@ fun ConfirmDialog(
             dialogContent = dialogContent,
             dialogButtons = listOf(
                 DialogButtons.Light(
-                    title = stringResource(id = R.string.confirm),
+                    title = buttonText,
                     action = onClick
                 )
             )

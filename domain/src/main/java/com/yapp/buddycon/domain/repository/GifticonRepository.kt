@@ -46,4 +46,6 @@ interface GifticonRepository {
         gifticonId: Int,
         used: Boolean
     ): Flow<Unit>
+
+    fun deleteGifticon(gifticonId: Int): Flow<Unit>
 }
