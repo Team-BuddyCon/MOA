@@ -6,7 +6,7 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.navigation.base.BottomDestination
 import com.yapp.buddycon.navigation.base.BuddyConDestination
 
-private const val GIFTICON = "gifticon"
+private const val GIFTICON = "기프티콘"
 private const val GIFTICON_REGISTER = "gifticon_register"
 private const val GIFTICON_DETAIL = "gifticon_detail"
 private const val NEAREST_USE = "nearest_use"
