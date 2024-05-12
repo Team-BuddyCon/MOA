@@ -4,7 +4,7 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.navigation.base.BottomDestination
 import com.yapp.buddycon.navigation.base.BuddyConDestination
 
-private const val MAP = "map"
+private const val MAP = "지도"
 
 sealed class MapDestination : BuddyConDestination {
 

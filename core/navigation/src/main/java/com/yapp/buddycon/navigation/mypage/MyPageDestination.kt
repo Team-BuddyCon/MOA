@@ -4,7 +4,7 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.navigation.base.BottomDestination
 import com.yapp.buddycon.navigation.base.BuddyConDestination
 
-private const val MYPAGE = "mypage"
+private const val MYPAGE = "마이페이지"
 
 sealed class MyPageDestination : BuddyConDestination {
 
