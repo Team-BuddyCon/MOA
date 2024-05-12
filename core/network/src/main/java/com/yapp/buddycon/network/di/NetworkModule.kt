@@ -22,7 +22,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BUDDYCON_BASE_URL = "http://43.202.14.1:8080/"
+    private const val BUDDYCON_BASE_URL = "http://3.37.254.182:8080/"
     private const val KAKAO_BASE_URL = "https://dapi.kakao.com/v2/"
 
     @LoginClient
