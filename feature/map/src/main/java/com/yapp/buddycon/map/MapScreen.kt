@@ -276,6 +276,7 @@ private fun MapContent(
     isGranted: Boolean,
     isShowToast: Boolean = false
 ) {
+    Timber.d("MapContent")
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val store by mapViewModel.store.collectAsStateWithLifecycle()
@@ -283,7 +284,8 @@ private fun MapContent(
     var map by remember { mutableStateOf<KakaoMap?>(null) }
     var clickedLabel by remember { mutableStateOf<Label?>(null) }
 
-    LaunchedEffect(mapSearchPlace) {
+    // map, mapSearchPlace가 변경 시에 label 다시 그리기
+    LaunchedEffect(map, mapSearchPlace) {
         // 지도가 노출되고 나서 라벨 표시, 라벨과 함께 표시하게되면 mapReady 오랜 시간 소요
         map?.labelManager?.clearAll()
         map?.labelManager?.let { manager ->
@@ -331,6 +333,7 @@ private fun MapContent(
                     it.start(
                         object : MapLifeCycleCallback() {
                             override fun onMapDestroy() {
+                                map = null
                             }
 
                             override fun onMapError(error: Exception?) {

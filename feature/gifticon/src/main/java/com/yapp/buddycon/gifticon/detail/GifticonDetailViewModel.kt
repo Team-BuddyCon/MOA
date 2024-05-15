@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.buddycon.domain.model.gifticon.GifticonDetailModel
-import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.domain.repository.GifticonRepository
 import com.yapp.buddycon.domain.repository.KakaoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +22,7 @@ class GifticonDetailViewModel @Inject constructor(
     private val _gifticonDetailModel = MutableStateFlow<GifticonDetailModel>(GifticonDetailModel())
     val gifticonDetailModel = _gifticonDetailModel.asStateFlow()
 
-    private val _searchPlacesModel = MutableStateFlow<List<SearchPlaceModel>>(listOf())
+    private val _searchPlacesModel = MutableStateFlow<MapSearchPlace>(MapSearchPlace())
     val searchPlacesModel = _searchPlacesModel.asStateFlow()
 
     init {
@@ -46,7 +45,10 @@ class GifticonDetailViewModel @Inject constructor(
             x = x,
             y = y,
             radius = 2000
-        ).onEach { _searchPlacesModel.value = it }
-            .launchIn(viewModelScope)
+        ).onEach {
+            _searchPlacesModel.value = _searchPlacesModel.value.copy(
+                searchPlaceModels = it
+            )
+        }.launchIn(viewModelScope)
     }
 }
