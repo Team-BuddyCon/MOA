@@ -10,6 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.amplitude.android.Amplitude
+import com.amplitude.android.Configuration
+import com.amplitude.android.DefaultTrackingOptions
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.navigation.BuddyConNavHost
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,21 +28,32 @@ object NoRippleTheme : RippleTheme {
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val amplitude by lazy {
+        Amplitude(
+            Configuration(
+                apiKey = BuildConfig.AMPLITUDE_API_KEY,
+                context = applicationContext,
+                defaultTracking = DefaultTrackingOptions.ALL
+            )
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         installSplashScreen()
         setContent {
-            BuddyConApp()
+            BuddyConApp(amplitude)
         }
     }
 }
 
 @Composable
-private fun BuddyConApp() {
+private fun BuddyConApp(amplitude: Amplitude) {
     BuddyConTheme() {
         CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-            BuddyConNavHost()
+            BuddyConNavHost(amplitude = amplitude)
         }
     }
 }

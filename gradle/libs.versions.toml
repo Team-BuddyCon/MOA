@@ -43,6 +43,9 @@ kakao-map = "2.6.0"
 ## naver-map
 naver-map-compose = "1.3.3"
 
+## amplitude
+amplitude = "1.16.7"
+
 ## gms
 play-services-maps = "18.0.0"
 play-services-location = "19.0.0"
@@ -116,6 +119,9 @@ kakao-map = { group = "com.kakao.maps.open", name = "android", version.ref = "ka
 
 ## naver-map
 naver-map-compose = { group = "io.github.fornewid", name = "naver-map-compose", version.ref = "naver-map-compose" }
+
+## amplitude
+amplitude = { group = "com.amplitude", name = "analytics-android", version.ref = "amplitude" }
 
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "play-services-maps" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "play-services-location" }

@@ -34,9 +34,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -65,13 +67,15 @@ private val CategoryModalSheetItemBottomPadding = 37.dp
 private val CategoryModalSheetItemImageSize = 68.dp
 private val CateogryModalSheetCloseDescription = "Close"
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CategoryModalSheet(
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     onSelectCategory: (GifticonStore) -> Unit = {},
+    onSubmitOthers: (String) -> Unit = {},
     onDismiss: () -> Unit
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     var clickedOthers by remember { mutableStateOf(false) }
     var store by remember { mutableStateOf("") }
     BottomSheetDialog(onDismissRequest = onDismiss) {
@@ -146,6 +150,7 @@ fun CategoryModalSheet(
                         textStyle = BuddyConTheme.typography.body01,
                         keyboardActions = KeyboardActions(
                             onDone = {
+                                keyboardController?.hide()
                             }
                         ),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -200,7 +205,7 @@ fun CategoryModalSheet(
                         }
                         Button(
                             onClick = {
-                                // TODO 작성 완료
+                                onSubmitOthers(store)
                                 onSelectCategory(GifticonStore.OTHERS)
                                 onDismiss()
                             },
