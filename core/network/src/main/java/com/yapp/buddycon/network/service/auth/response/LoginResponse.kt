@@ -11,11 +11,13 @@ data class LoginResponse(
 data class LoginResponseBody(
     val accessToken: String,
     val refreshToken: String,
-    val accessTokenExpiresIn: Long
+    val accessTokenExpiresIn: Long,
+    val isFirstLogin: Boolean
 ) {
     fun toModel() = LoginModel(
         accessToken = accessToken,
         refreshToken = refreshToken,
-        accessTokenExpiresIn = accessTokenExpiresIn
+        accessTokenExpiresIn = accessTokenExpiresIn,
+        isFirstLogin = isFirstLogin
     )
 }

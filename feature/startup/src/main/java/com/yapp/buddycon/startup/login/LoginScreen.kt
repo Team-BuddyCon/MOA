@@ -48,7 +48,8 @@ private val BuddyConLogoDescription = "BuddyConLogo"
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
-    onNavigateToSignUp: () -> Unit = {}
+    onNavigateToSignUp: () -> Unit = {},
+    onNavigateToGifticon: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -58,8 +59,12 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         loginViewModel.effect.collect { effect ->
             when (effect) {
-                LoginSideEffect.Success -> {
+                LoginSideEffect.FirstLogin -> {
                     onNavigateToSignUp()
+                }
+
+                LoginSideEffect.ReLogin -> {
+                    onNavigateToGifticon()
                 }
 
                 LoginSideEffect.KakaoLoginError -> {
