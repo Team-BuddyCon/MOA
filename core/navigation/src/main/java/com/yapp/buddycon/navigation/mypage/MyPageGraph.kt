@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.mypage.MyPageScreen
+import com.yapp.buddycon.mypage.usedgifticon.UsedGifticon
 
 private const val MYPAGE_GRAPH = "mypage_graph"
 
@@ -16,7 +17,19 @@ internal fun NavGraphBuilder.mypageGraph(
         route = MYPAGE_GRAPH
     ) {
         composable(MyPageDestination.MyPage.route) {
-            MyPageScreen()
+            MyPageScreen(
+                onNavigateToUsedGifticon = {
+                    navHostController.navigate(MyPageDestination.UsedGifticon.route)
+                }
+            )
+        }
+
+        composable(
+            route = MyPageDestination.UsedGifticon.route
+        ) {
+            UsedGifticon(
+                onBack = { navHostController.popBackStack() }
+            )
         }
     }
 }

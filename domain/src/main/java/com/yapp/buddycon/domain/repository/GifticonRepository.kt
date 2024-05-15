@@ -38,4 +38,9 @@ interface GifticonRepository {
         gifticonStore: String,
         memo: String
     ): Flow<Unit>
+
+    fun updateGifticonUsedState(
+        gifticonId: Int,
+        used: Boolean
+    ): Flow<Unit>
 }

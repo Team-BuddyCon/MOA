@@ -125,4 +125,24 @@ class GifticonRepositoryImpl @Inject constructor(
             throw Throwable("error.. msg : ${response.message()}")
         }
     }
+
+    override fun updateGifticonUsedState(
+        gifticonId: Int,
+        used: Boolean
+    ) = flow {
+        emit(
+            giftiConService.updateGifticonUsedState(
+                gifticonId = gifticonId,
+                used = used
+            )
+        )
+    }.catch { error ->
+        throw Throwable("[updateGifticonUsedState] catch error!", error)
+    }.map { response ->
+        if (response.isSuccessful) {
+            (response.body() ?: throw NullPointerException("null response")).mapToUnit()
+        } else {
+            throw Throwable("error.. msg : ${response.message()}")
+        }
+    }
 }

@@ -3,7 +3,7 @@ package com.yapp.buddycon.network.service.gifticon
 import com.yapp.buddycon.network.service.gifticon.request.EditGifticonRequest
 import com.yapp.buddycon.network.service.gifticon.response.AvailableGifticonResponse
 import com.yapp.buddycon.network.service.gifticon.response.CreateGifticonResponse
-import com.yapp.buddycon.network.service.gifticon.response.EditGifticonResponse
+import com.yapp.buddycon.network.service.gifticon.response.GifticonBasicResponse
 import com.yapp.buddycon.network.service.gifticon.response.GifticonCountResponse
 import com.yapp.buddycon.network.service.gifticon.response.GifticonDetailResponse
 import okhttp3.MultipartBody
@@ -12,6 +12,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -53,5 +54,11 @@ interface GiftiConService {
     suspend fun editGifticonDetail(
         @Path("gifticon-id") gifticonId: Int,
         @Body editGifticonRequest: EditGifticonRequest
-    ): Response<EditGifticonResponse>
+    ): Response<GifticonBasicResponse>
+
+    @PATCH("api/v1/gifticons/{gifticon-id}")
+    suspend fun updateGifticonUsedState(
+        @Path("gifticon-id") gifticonId: Int,
+        @Query("used") used: Boolean
+    ): Response<GifticonBasicResponse>
 }

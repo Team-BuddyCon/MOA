@@ -116,6 +116,7 @@ fun GifticonDetailScreen(
                     .fillMaxWidth(),
                 text = stringResource(R.string.gifticon_used_complete)
             ) {
+                // api 문의중
             }
         },
         floatingActionButtonPosition = FabPosition.Center,

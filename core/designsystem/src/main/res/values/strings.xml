@@ -92,6 +92,8 @@
     <string name="map">지도</string>
     <string name="map_location_permission">위치 정보를 불러왔어요!</string>
 
+    <string name="used_gifticon_screen_appbar_title">사용완료 기프티콘</string>
+
     <!--    Error Popup-->
     <string name="kakao_login_error_title">카카오톡으로 시작할 수 없어요</string>
     <string name="kakao_login_error_description">카카오톡 서버에 로그인 오류가 있어요\n다시 한 번 시도해 주세요</string>

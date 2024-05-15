@@ -3,6 +3,7 @@ package com.yapp.buddycon.mypage
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,6 +40,7 @@ const val TAG = "BuddyConTest"
 
 @Composable
 fun MyPageScreen(
+    onNavigateToUsedGifticon: () -> Unit,
     myPageViewModel: MyPageViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
@@ -59,7 +61,10 @@ fun MyPageScreen(
 
             SpacerVertical(height = 16.dp)
 
-            UsedGifticonInfo(usedGifticon = usedGifticonCount)
+            UsedGifticonInfo(
+                usedGifticon = usedGifticonCount,
+                onUsedGiftionClick = onNavigateToUsedGifticon
+            )
 
             SpacerVertical(height = 8.dp)
 
@@ -78,7 +83,10 @@ private fun UserName(userName: String) {
 }
 
 @Composable
-private fun UsedGifticonInfo(usedGifticon: Int) {
+private fun UsedGifticonInfo(
+    usedGifticon: Int,
+    onUsedGiftionClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -87,7 +95,8 @@ private fun UsedGifticonInfo(usedGifticon: Int) {
                 color = Grey90,
                 shape = RoundedCornerShape(20.dp)
             )
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable { onUsedGiftionClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
