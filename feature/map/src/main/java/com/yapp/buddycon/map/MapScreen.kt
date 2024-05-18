@@ -1,10 +1,5 @@
 package com.yapp.buddycon.map
 
-import android.content.Context
-import android.content.Intent
-import android.location.Location
-import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -30,7 +25,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,28 +63,24 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink100
-import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.utility.RequestLocationPermission
 import com.yapp.buddycon.utility.checkLocationPermission
+import com.yapp.buddycon.utility.copyInClipBoard
 import com.yapp.buddycon.utility.getCurrentLocation
 import com.yapp.buddycon.utility.getLocationLabels
 import com.yapp.buddycon.utility.isDeadLine
+import com.yapp.buddycon.utility.navigateToGoogleMap
+import com.yapp.buddycon.utility.navigateToKakaoMap
+import com.yapp.buddycon.utility.navigateToNaverMap
+import com.yapp.buddycon.utility.navigateToSetting
 import com.yapp.buddycon.utility.scaleToLabel
+import com.yapp.buddycon.utility.stability.MapLocation
+import com.yapp.buddycon.utility.stability.MapSearchPlace
 import timber.log.Timber
 
 // TopAppBarHeight(52) + BottomNavigationBarHeight(72) + MapCategoryTabHeight(60)
 private const val MapBarSize = 184f
-
-@Stable
-data class MapLocation(
-    val location: Location? = null
-)
-
-@Stable
-data class MapSearchPlace(
-    val searchPlaceModels: List<SearchPlaceModel> = listOf()
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,24 +90,31 @@ fun MapScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    var currentLocation by remember { mutableStateOf(MapLocation()) }
-    var isGrantedPermission by remember { mutableStateOf(checkLocationPermission(context)) }
+
+    // 현재 위치
+    var mapLocation: MapLocation by remember { mutableStateOf(MapLocation()) }
+
+    // 현재 위치 권한 여부
+    var isGranted: Boolean by remember { mutableStateOf(checkLocationPermission(context)) }
+
+    // 위치 권한 토스트 시에는 다른 스낵바 노출 안되게 하기 위한 변수
     var isShowToast by remember { mutableStateOf(false) }
 
     val configuration = LocalConfiguration.current
+
+    // 기기별 대응되는 최대 지도 사이즈 (전체 스크린 - (MapBarSize)
     val mapHeightDp = configuration.screenHeightDp.toFloat() - MapBarSize
-    val heightDp by mapViewModel.heightDp.collectAsStateWithLifecycle()
-    val store by mapViewModel.store.collectAsStateWithLifecycle()
+    val mapUiState by mapViewModel.mapUiState.collectAsStateWithLifecycle()
     val mapSearchPlace by mapViewModel.mapSearchPlace.collectAsStateWithLifecycle()
-    val gifticonExistStore by mapViewModel.gifticonExistStore.collectAsStateWithLifecycle()
+    val totalStores by mapViewModel.totalStores.collectAsStateWithLifecycle()
 
     // 위치 기반 지도 검색
-    LaunchedEffect(currentLocation, store, gifticonExistStore) {
-        currentLocation.location?.let { location ->
-            when (store) {
+    LaunchedEffect(mapLocation, mapUiState.store, totalStores) {
+        mapLocation.location?.let { location ->
+            when (mapUiState.store) {
                 GifticonStore.TOTAL -> {
                     mapViewModel.searchPlacesByKeyword(
-                        stores = gifticonExistStore,
+                        stores = totalStores,
                         x = location.longitude.toString(),
                         y = location.latitude.toString()
                     )
@@ -125,7 +122,7 @@ fun MapScreen(
 
                 else -> {
                     mapViewModel.searchPlacesByKeyword(
-                        stores = listOf(store),
+                        stores = listOf(mapUiState.store),
                         x = location.longitude.toString(),
                         y = location.latitude.toString()
                     )
@@ -135,10 +132,10 @@ fun MapScreen(
     }
 
     // 위치 권한 있을 경우 현재 위치 확인
-    LaunchedEffect(isGrantedPermission) {
-        if (isGrantedPermission) {
+    LaunchedEffect(isGranted) {
+        if (isGranted) {
             getCurrentLocation(context = context) {
-                currentLocation = currentLocation.copy(location = it)
+                mapLocation = mapLocation.copy(location = it)
             }
         }
     }
@@ -146,7 +143,7 @@ fun MapScreen(
     // 최초 시스템 위치 권한 요청
     RequestLocationPermission(
         onGranted = {
-            isGrantedPermission = checkLocationPermission(context)
+            isGranted = checkLocationPermission(context)
             isShowToast = true
             showBuddyConSnackBar(
                 message = context.getString(R.string.map_location_permission),
@@ -157,14 +154,14 @@ fun MapScreen(
             }
         }
     )
+
     BottomSheetScaffold(
         sheetContent = {
             MapBottomSheet(
-                mapViewModel = mapViewModel,
                 mapHeightDp = mapHeightDp
             )
         },
-        sheetPeekHeight = heightDp.dp,
+        sheetPeekHeight = mapUiState.heightDp.dp,
         sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         sheetContainerColor = BuddyConTheme.colors.background,
         sheetShadowElevation = 33.dp,
@@ -186,9 +183,10 @@ fun MapScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(BuddyConTheme.colors.background),
-            mapLocation = currentLocation,
+            mapUiState = mapUiState,
+            mapLocation = mapLocation,
             mapSearchPlace = mapSearchPlace,
-            isGranted = isGrantedPermission,
+            isGranted = isGranted,
             isShowToast = isShowToast
         )
     }
@@ -202,20 +200,15 @@ private fun MapBottomSheet(
 ) {
     val context = LocalContext.current
     val density = context.resources.displayMetrics.density
-    val heightDp by mapViewModel.heightDp.collectAsStateWithLifecycle()
-    val sheetValue by mapViewModel.sheetValue.collectAsStateWithLifecycle()
-    val offset by mapViewModel.offset.collectAsStateWithLifecycle()
-    val totalCount by mapViewModel.totalCount.collectAsStateWithLifecycle()
-    val gifticonInfos = mapViewModel.gifticonPagingItems.collectAsLazyPagingItems()
-    val gifticonStore by mapViewModel.store.collectAsStateWithLifecycle()
-    val deadLineCount by mapViewModel.deadLineCount.collectAsStateWithLifecycle()
+    val gifticonInfos = mapViewModel.gifticonInfos.collectAsLazyPagingItems()
+    val mapUiState by mapViewModel.mapUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(gifticonInfos.itemCount) {
         mapViewModel.setGifticonItemsInfo(
             deadLineCount = (0 until gifticonInfos.itemCount)
                 .mapNotNull { gifticonInfos[it] }
                 .count { it.expireDate.isDeadLine() },
-            gifticonStores = (0 until gifticonInfos.itemCount)
+            totalStores = (0 until gifticonInfos.itemCount)
                 .mapNotNull { gifticonInfos[it]?.category }
                 .toSet()
                 .toList()
@@ -224,42 +217,44 @@ private fun MapBottomSheet(
 
     Box(
         modifier = modifier
-            .heightIn(min = BottomSheetValue.Collapsed.sheetPeekHeightDp.dp, max = BottomSheetValue.Expanded.sheetPeekHeightDp.dp)
-            .fillMaxSize()
+            .heightIn(
+                min = BottomSheetValue.Collapsed.sheetPeekHeightDp.dp,
+                max = BottomSheetValue.Expanded.sheetPeekHeightDp.dp
+            ).fillMaxSize()
             .background(BuddyConTheme.colors.background)
             .pointerInput(Unit) {
                 detectVerticalDragGestures(
                     onDragEnd = {
                         mapViewModel.changeBottomSheetValue(
                             transitionBottomSheet(
-                                current = sheetValue,
-                                offset = offset
+                                current = mapUiState.sheetValue,
+                                offset = mapUiState.offset
                             )
                         )
                     },
                     onVerticalDrag = { _, dragAmount ->
-                        if (heightDp - (dragAmount / density) in 0f..mapHeightDp) {
+                        if (mapUiState.heightDp - (dragAmount / density) in 0f..mapHeightDp) {
                             mapViewModel.setOffset(dragAmount / density)
                         }
                     }
                 )
             }
     ) {
-        when (sheetValue) {
+        when (mapUiState.sheetValue) {
             BottomSheetValue.Expanded -> {
                 // TODO totalCount API 반영 및 유효기간
                 GifticonInfoListModalSheet(
-                    countOfUsableGifticon = totalCount,
-                    countOfImminetGifticon = deadLineCount,
+                    countOfUsableGifticon = mapUiState.totalCount,
+                    countOfImminetGifticon = mapUiState.deadLineCount,
                     gifticonInfos = gifticonInfos,
-                    gifticonStore = gifticonStore
+                    gifticonStore = mapUiState.store
                 )
             }
 
             else -> {
                 GifticonInfoModalSheetContent(
-                    countOfUsableGifticon = totalCount,
-                    countOfImminetGifticon = deadLineCount
+                    countOfUsableGifticon = mapUiState.totalCount,
+                    countOfImminetGifticon = mapUiState.deadLineCount,
                 )
             }
         }
@@ -271,20 +266,20 @@ private fun MapBottomSheet(
 private fun MapContent(
     modifier: Modifier = Modifier,
     mapViewModel: MapViewModel = hiltViewModel(),
+    mapUiState: MapUiState,
     mapLocation: MapLocation,
     mapSearchPlace: MapSearchPlace,
     isGranted: Boolean,
     isShowToast: Boolean = false
 ) {
-    Timber.d("MapContent")
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val store by mapViewModel.store.collectAsStateWithLifecycle()
     val placeLabels by mapViewModel.placeLabels.collectAsStateWithLifecycle()
+
     var map by remember { mutableStateOf<KakaoMap?>(null) }
     var clickedLabel by remember { mutableStateOf<Label?>(null) }
 
-    // map, mapSearchPlace가 변경 시에 label 다시 그리기
+    // map, mapSearchPlace 가 변경 시에 label 다시 그리기
     LaunchedEffect(map, mapSearchPlace) {
         // 지도가 노출되고 나서 라벨 표시, 라벨과 함께 표시하게되면 mapReady 오랜 시간 소요
         map?.labelManager?.clearAll()
@@ -296,7 +291,7 @@ private fun MapContent(
                 )
             )
         }
-        map?.setOnLabelClickListener { kakaoMap, layer, label ->
+        map?.setOnLabelClickListener { _, _, label ->
             clickedLabel = label
             scaleToLabel(label, 1.5f)
         }
@@ -306,6 +301,35 @@ private fun MapContent(
         placeLabels.entries.find { it.value == clickedLabel }?.key?.let { model ->
             PlaceModalSheet(
                 searchPlaceModel = model,
+                onNavigateToNaverMap = { dlat, dlng, dname ->
+                    navigateToNaverMap(
+                        context = context,
+                        dlat = dlat,
+                        dlng = dlng,
+                        dname = dname
+                    )
+                },
+                onNavigateToKakaoMap = { dlat, dlng ->
+                    navigateToKakaoMap(
+                        context = context,
+                        dlat = dlat,
+                        dlng = dlng
+                    )
+                },
+                onNavigateToGoogleMap = { dlat, dlng, dname ->
+                    navigateToGoogleMap(
+                        context = context,
+                        dlat = dlat,
+                        dlng = dlng,
+                        dname = dname
+                    )
+                },
+                onCopy = { address ->
+                    copyInClipBoard(
+                        context = context,
+                        text = address
+                    )
+                },
                 onDismiss = {
                     clickedLabel?.let { label ->
                         scaleToLabel(label, 1f)
@@ -318,7 +342,7 @@ private fun MapContent(
 
     Column(modifier) {
         MapCategoryTab(
-            category = store,
+            category = mapUiState.store,
             onCategoryChange = { mapViewModel.selectGifticonStore(it) }
         )
         Box(
@@ -396,7 +420,12 @@ private fun MapContent(
                             },
                             modifier = Modifier
                                 .padding(start = 16.dp)
-                                .clickable { moveToSetting(context) },
+                                .clickable {
+                                    navigateToSetting(
+                                        context = context,
+                                        packageName = context.packageName
+                                    )
+                                },
                             style = BuddyConTheme.typography.body04
                         )
                     }
@@ -465,8 +494,11 @@ private fun MapCategoryTab(
     }
 }
 
-private fun transitionBottomSheet(current: BottomSheetValue, offset: Float): BottomSheetValue {
-    return if (offset > 0f) {
+private fun transitionBottomSheet(
+    current: BottomSheetValue,
+    offset: Float
+): BottomSheetValue {
+    val value = if (offset > 0f) {
         when (current) {
             BottomSheetValue.Collapsed -> BottomSheetValue.PartiallyExpanded
             BottomSheetValue.PartiallyExpanded -> BottomSheetValue.Expanded
@@ -479,10 +511,5 @@ private fun transitionBottomSheet(current: BottomSheetValue, offset: Float): Bot
             BottomSheetValue.Expanded -> BottomSheetValue.PartiallyExpanded
         }
     }
-}
-
-private fun moveToSetting(context: Context) {
-    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-    intent.data = Uri.parse("package:${context.packageName}")
-    context.startActivity(intent)
+    return value
 }

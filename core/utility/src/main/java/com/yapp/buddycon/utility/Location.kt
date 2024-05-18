@@ -26,7 +26,7 @@ fun getCurrentLocation(
     }
 }
 
-// 지도 위 마커 추가 및 반환
+// 지도 위 마커 추가 및 리턴
 fun getLocationLabels(
     labelManager: LabelManager,
     searchPlaceModels: List<SearchPlaceModel>
@@ -49,6 +49,7 @@ fun getLocationLabels(
     }.toMap()
 }
 
+// TODO 마커 변경되면 추후 수정 예정
 fun scaleToLabel(
     label: Label,
     scale: Float
@@ -76,6 +77,7 @@ fun GifticonStore?.getDrawableRes() = when (this) {
     }
 }
 
+// TODO 마커 변경 시 변경 예정
 fun GifticonStore?.getExpandedDrawableRes() = when (this) {
     GifticonStore.STARBUCKS,
     GifticonStore.TWOSOME_PLACE,
@@ -84,14 +86,14 @@ fun GifticonStore?.getExpandedDrawableRes() = when (this) {
     GifticonStore.COFFEE_BEAN,
     GifticonStore.GONG_CHA,
     GifticonStore.BASKIN_ROBBINS -> {
-        R.drawable.ic_location
+        R.drawable.ic_coffee
     }
 
     GifticonStore.MACDONALD -> {
-        R.drawable.ic_location
+        R.drawable.ic_fastfood
     }
 
     else -> {
-        R.drawable.ic_location
+        R.drawable.ic_store
     }
 }

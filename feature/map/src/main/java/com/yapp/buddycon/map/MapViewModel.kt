@@ -11,6 +11,7 @@ import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.domain.model.type.SortType
 import com.yapp.buddycon.domain.repository.GifticonRepository
 import com.yapp.buddycon.domain.repository.KakaoRepository
+import com.yapp.buddycon.utility.stability.MapSearchPlace
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,45 +20,24 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
-enum class BottomSheetValue(val sheetPeekHeightDp: Float) {
-    Collapsed(36f),
-    PartiallyExpanded(111f),
-    Expanded(540f)
-}
-
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val gifticonRepository: GifticonRepository,
     private val kakaoRepository: KakaoRepository
 ) : ViewModel() {
 
-    private var _store = MutableStateFlow(GifticonStore.TOTAL)
-    val store = _store.asStateFlow()
+    private val _mapUiState = MutableStateFlow(MapUiState())
+    val mapUiState = _mapUiState.asStateFlow()
 
-    private var _sheetValue = MutableStateFlow(BottomSheetValue.Collapsed)
-    val sheetValue = _sheetValue.asStateFlow()
-
-    private var _heightDp = MutableStateFlow(BottomSheetValue.Collapsed.sheetPeekHeightDp)
-    val heightDp = _heightDp.asStateFlow()
-
-    private var _offset = MutableStateFlow(0f)
-    val offset = _offset.asStateFlow()
-
-    private val _gifticonPagingItems = MutableStateFlow<PagingData<AvailableGifticon.AvailableGifticonInfo>>(PagingData.empty())
-    val gifticonPagingItems = _gifticonPagingItems.asStateFlow()
-
-    private val _deadLineCount = MutableStateFlow(0)
-    val deadLineCount = _deadLineCount.asStateFlow()
-
-    private val _totalCount = MutableStateFlow(0)
-    val totalCount = _totalCount.asStateFlow()
+    private val _gifticonInfos = MutableStateFlow<PagingData<AvailableGifticon.AvailableGifticonInfo>>(PagingData.empty())
+    val gifticonInfos = _gifticonInfos.asStateFlow()
 
     private val _mapSearchPlace = MutableStateFlow(MapSearchPlace())
     val mapSearchPlace = _mapSearchPlace.asStateFlow()
 
     // 전체일 경우에 가지고 있는 기프티콘 종류의 매장만 검색
-    private val _gifticonExistStore = MutableStateFlow<List<GifticonStore>>(listOf())
-    val gifticonExistStore = _gifticonExistStore.asStateFlow()
+    private val _totalStores = MutableStateFlow<List<GifticonStore>>(listOf())
+    val totalStores = _totalStores.asStateFlow()
 
     private val _placeLabels = MutableStateFlow<Map<SearchPlaceModel, Label?>>(mapOf())
     val placeLabels = _placeLabels.asStateFlow()
@@ -69,18 +49,20 @@ class MapViewModel @Inject constructor(
 
     private fun fetchAvailableGifticon() {
         gifticonRepository.fetchAvailableGifticon(
-            gifticonStore = store.value,
+            gifticonStore = mapUiState.value.store,
             gifticonSortType = SortType.EXPIRATION_DATE
         ).cachedIn(viewModelScope)
             .onEach {
-                _gifticonPagingItems.value = it
+                _gifticonInfos.value = it
             }.launchIn(viewModelScope)
     }
 
     private fun getGifticonCount() {
         gifticonRepository.getGifticonCount(used = false)
             .onEach {
-                _totalCount.value = it
+                _mapUiState.value = _mapUiState.value.copy(
+                    totalCount = it
+                )
             }.launchIn(viewModelScope)
     }
 
@@ -107,27 +89,36 @@ class MapViewModel @Inject constructor(
     }
 
     fun selectGifticonStore(store: GifticonStore) {
-        _store.value = store
+        _mapUiState.value = _mapUiState.value.copy(
+            store = store
+        )
         fetchAvailableGifticon()
     }
 
     fun changeBottomSheetValue(sheetValue: BottomSheetValue) {
-        _sheetValue.value = sheetValue
-        _heightDp.value = sheetValue.sheetPeekHeightDp
-        _offset.value = 0f
+        _mapUiState.value = _mapUiState.value.copy(
+            sheetValue = sheetValue,
+            heightDp = sheetValue.sheetPeekHeightDp,
+            offset = 0f
+        )
     }
 
     fun setOffset(offset: Float) {
-        _heightDp.value -= offset
-        _offset.value = -offset
+        val curHeightDp = mapUiState.value.heightDp
+        _mapUiState.value = _mapUiState.value.copy(
+            heightDp = curHeightDp - offset,
+            offset = -offset
+        )
     }
 
     fun setGifticonItemsInfo(
         deadLineCount: Int,
-        gifticonStores: List<GifticonStore>
+        totalStores: List<GifticonStore>
     ) {
-        _deadLineCount.value = deadLineCount
-        _gifticonExistStore.value = gifticonStores
+        _mapUiState.value = _mapUiState.value.copy(
+            deadLineCount = deadLineCount
+        )
+        _totalStores.value = totalStores
     }
 
     fun setPlaceLabels(placeLabels: Map<SearchPlaceModel, Label?>) {
