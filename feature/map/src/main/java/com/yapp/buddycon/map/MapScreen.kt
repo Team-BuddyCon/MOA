@@ -220,7 +220,8 @@ private fun MapBottomSheet(
             .heightIn(
                 min = BottomSheetValue.Collapsed.sheetPeekHeightDp.dp,
                 max = BottomSheetValue.Expanded.sheetPeekHeightDp.dp
-            ).fillMaxSize()
+            )
+            .fillMaxSize()
             .background(BuddyConTheme.colors.background)
             .pointerInput(Unit) {
                 detectVerticalDragGestures(
@@ -254,7 +255,7 @@ private fun MapBottomSheet(
             else -> {
                 GifticonInfoModalSheetContent(
                     countOfUsableGifticon = mapUiState.totalCount,
-                    countOfImminetGifticon = mapUiState.deadLineCount,
+                    countOfImminetGifticon = mapUiState.deadLineCount
                 )
             }
         }
@@ -498,7 +499,7 @@ private fun transitionBottomSheet(
     current: BottomSheetValue,
     offset: Float
 ): BottomSheetValue {
-    val value = if (offset > 0f) {
+    return if (offset > 0f) {
         when (current) {
             BottomSheetValue.Collapsed -> BottomSheetValue.PartiallyExpanded
             BottomSheetValue.PartiallyExpanded -> BottomSheetValue.Expanded
@@ -511,5 +512,4 @@ private fun transitionBottomSheet(
             BottomSheetValue.Expanded -> BottomSheetValue.PartiallyExpanded
         }
     }
-    return value
 }

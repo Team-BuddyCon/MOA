@@ -15,6 +15,7 @@ import com.yapp.buddycon.utility.stability.MapSearchPlace
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.zip
@@ -73,12 +74,16 @@ class MapViewModel @Inject constructor(
     ) {
         if (stores.isEmpty()) return
         stores.map { store ->
-            kakaoRepository.searchPlacesByKeyword(
-                query = store.value,
-                x = x,
-                y = y,
-                radius = 2000
-            )
+            if (store == GifticonStore.NONE || store == GifticonStore.OTHERS) {
+                flowOf(listOf())
+            } else {
+                kakaoRepository.searchPlacesByKeyword(
+                    query = store.value,
+                    x = x,
+                    y = y,
+                    radius = 2000
+                )
+            }
         }.reduce { acc, flow ->
             acc.zip(flow) { searchPlaceModels, searchPlaceModel ->
                 searchPlaceModels + searchPlaceModel
