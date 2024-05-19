@@ -44,11 +44,10 @@ class MapViewModel @Inject constructor(
     val placeLabels = _placeLabels.asStateFlow()
 
     init {
-        fetchAvailableGifticon()
         getGifticonCount()
     }
 
-    private fun fetchAvailableGifticon() {
+    fun fetchAvailableGifticon() {
         gifticonRepository.fetchAvailableGifticon(
             gifticonStore = mapUiState.value.store,
             gifticonSortType = SortType.EXPIRATION_DATE

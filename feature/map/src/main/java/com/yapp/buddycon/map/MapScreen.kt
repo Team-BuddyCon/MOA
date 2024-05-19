@@ -85,7 +85,8 @@ private const val MapBarSize = 184f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
-    mapViewModel: MapViewModel = hiltViewModel()
+    mapViewModel: MapViewModel = hiltViewModel(),
+    onNavigateToGifticonDetail: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -139,7 +140,9 @@ fun MapScreen(
             }
         }
     }
-
+    LaunchedEffect(Unit) {
+        mapViewModel.fetchAvailableGifticon()
+    }
     // 최초 시스템 위치 권한 요청
     RequestLocationPermission(
         onGranted = {
@@ -158,7 +161,8 @@ fun MapScreen(
     BottomSheetScaffold(
         sheetContent = {
             MapBottomSheet(
-                mapHeightDp = mapHeightDp
+                mapHeightDp = mapHeightDp,
+                onNavigateToGifticonDetail = onNavigateToGifticonDetail
             )
         },
         sheetPeekHeight = mapUiState.heightDp.dp,
@@ -196,7 +200,8 @@ fun MapScreen(
 private fun MapBottomSheet(
     modifier: Modifier = Modifier,
     mapViewModel: MapViewModel = hiltViewModel(),
-    mapHeightDp: Float
+    mapHeightDp: Float,
+    onNavigateToGifticonDetail: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
     val density = context.resources.displayMetrics.density
@@ -248,7 +253,8 @@ private fun MapBottomSheet(
                     countOfUsableGifticon = mapUiState.totalCount,
                     countOfImminetGifticon = mapUiState.deadLineCount,
                     gifticonInfos = gifticonInfos,
-                    gifticonStore = mapUiState.store
+                    gifticonStore = mapUiState.store,
+                    onClick = onNavigateToGifticonDetail
                 )
             }
 
