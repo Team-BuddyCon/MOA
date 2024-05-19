@@ -43,7 +43,6 @@ class AvailableGifticonViewModel @Inject constructor(
     private var availableGifticonPageState = AvailableGifticonPageState()
 
     init {
-        Log.e("MOATest", "[AvailableGifticonViewModel] - init !!!")
         getAvailableGifiticon()
     }
 

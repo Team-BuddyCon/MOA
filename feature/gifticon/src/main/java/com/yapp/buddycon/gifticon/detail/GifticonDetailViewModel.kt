@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,16 +32,18 @@ class GifticonDetailViewModel @Inject constructor(
     private val _mapSearchPlace = MutableStateFlow<MapSearchPlace>(MapSearchPlace())
     val mapSearchPlace = _mapSearchPlace.asStateFlow()
 
-    private var _updateGifticonUsedStateDataResult = MutableStateFlow<DataResult<Unit>>(DataResult.None)
+    private var _updateGifticonUsedStateDataResult = MutableStateFlow<DataResult<Boolean>>(DataResult.None)
     val updateGifticonUsedStateDataResult = _updateGifticonUsedStateDataResult.asStateFlow()
 
-    init {
-        Log.d("MOATest", "[GifticonDetailViewModel], ${this.hashCode()}")
-    }
+    private var _isUsedGifticon = MutableStateFlow(false)
+    val isUsedGifticon = _isUsedGifticon.asStateFlow()
 
     fun requestGifticonDetail(gifticonId: Int) {
         gifticonRepository.requestGifticonDetail(gifticonId)
-            .onEach { _gifticonDetailModel.value = it }
+            .onEach {
+                _gifticonDetailModel.value = it
+                updateGiftionUsedStateValue(it.used)
+            }
             .launchIn(viewModelScope)
     }
 
@@ -74,8 +77,27 @@ class GifticonDetailViewModel @Inject constructor(
                 }
                 _updateGifticonUsedStateDataResult.value = DataResult.Failure(throwable = throwable)
             }.collectLatest {
-                _updateGifticonUsedStateDataResult.value = DataResult.Success(data = Unit)
+                getGifticonUsedState(gifticonId = gifticonId)
             }
         }
+    }
+
+    private fun getGifticonUsedState(gifticonId: Int) {
+        viewModelScope.launch {
+            gifticonRepository.requestGifticonDetail(gifticonId)
+                .catch { throwable ->
+                    throwable.stackTrace.forEach {
+                        Log.e("MOATest", "[stackTrace] : $it")
+                    }
+                    _updateGifticonUsedStateDataResult.value = DataResult.Failure(throwable = throwable)
+                }
+                .collectLatest { gifticonDetailModel ->
+                    _updateGifticonUsedStateDataResult.value = DataResult.Success(data = gifticonDetailModel.used)
+                }
+        }
+    }
+
+    fun updateGiftionUsedStateValue(isUsed: Boolean) {
+        _isUsedGifticon.update { isUsed }
     }
 }

@@ -17,7 +17,8 @@ data class GifticonDetailResponseBody(
     val memo: String,
     val expireDate: String,
     val gifticonStore: String,
-    val gifticonStoreCategory: String
+    val gifticonStoreCategory: String,
+    val used: Boolean
 ) {
     fun toModel() = GifticonDetailModel(
         gifticonId = gifticonId,
@@ -26,6 +27,7 @@ data class GifticonDetailResponseBody(
         memo = memo,
         expireDate = expireDate,
         gifticonStore = GifticonStore.valueOf(gifticonStore),
-        gifticonStoreCategory = GifticonStoreCategory.valueOf(gifticonStoreCategory)
+        gifticonStoreCategory = GifticonStoreCategory.valueOf(gifticonStoreCategory),
+        used = used
     )
 }
