@@ -68,6 +68,7 @@ import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.appbar.getTopAppBarHeight
 import com.yapp.buddycon.designsystem.component.button.CategoryStoreButton
 import com.yapp.buddycon.designsystem.component.modal.FilterModalSheet
+import com.yapp.buddycon.designsystem.component.modal.toOtherFormat
 import com.yapp.buddycon.designsystem.component.tag.DDayTag
 import com.yapp.buddycon.designsystem.component.tag.SortTag
 import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
@@ -321,7 +322,7 @@ private fun AvailableGifticonItem(
             maxLines = 1
         )
         Text(
-            text = "~${availablieGifticonInfo.expireDate}", // 날짜 표출 형식 수정 필요
+            text = "~${availablieGifticonInfo.expireDate.toOtherFormat("yyyy.MM.dd")}",
             modifier = Modifier.padding(top = Paddings.medium),
             style = BuddyConTheme.typography.body03.copy(color = Grey60)
         )

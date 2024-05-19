@@ -6,6 +6,7 @@ import com.yapp.buddycon.network.service.gifticon.response.CreateGifticonRespons
 import com.yapp.buddycon.network.service.gifticon.response.GifticonBasicResponse
 import com.yapp.buddycon.network.service.gifticon.response.GifticonCountResponse
 import com.yapp.buddycon.network.service.gifticon.response.GifticonDetailResponse
+import com.yapp.buddycon.network.service.gifticon.response.UnavailableGifticonResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -56,9 +57,16 @@ interface GiftiConService {
         @Body editGifticonRequest: EditGifticonRequest
     ): Response<GifticonBasicResponse>
 
+    /** 기프티콘 사용 여부 변경 */
     @PATCH("api/v1/gifticons/{gifticon-id}")
     suspend fun updateGifticonUsedState(
         @Path("gifticon-id") gifticonId: Int,
         @Query("used") used: Boolean
     ): Response<GifticonBasicResponse>
+
+    @GET("api/v1/gifticons/unavailable")
+    suspend fun requestUnavailableGiftiCons(
+        @Query("pageNumber") pageNumber: Int, // page
+        @Query("rowCount") rowCount: Int = 10 // page 당 요청 데이터 개수
+    ): Response<UnavailableGifticonResponse>
 }

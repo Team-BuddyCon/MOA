@@ -3,6 +3,7 @@ package com.yapp.buddycon.network.service.gifticon.response
 import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
+import com.yapp.buddycon.domain.model.gifticon.UnavailableGifticon
 import com.yapp.buddycon.domain.model.type.mapStringValueToGifticonStore
 import com.yapp.buddycon.domain.model.type.mapStringValueToGifiticonStoreCategory
 
@@ -42,6 +43,15 @@ data class Body(
             category = mapStringValueToGifticonStore(gifticonStore),
             storeCategory = mapStringValueToGifiticonStoreCategory(gifticonStoreCategory)
         )
+
+        fun mapToUnavailableGifticonInfo() = UnavailableGifticon.UnavailableGifticonInfo(
+            gifticonId = gifticonId,
+            imageUrl = this.imageUrl,
+            name = this.name,
+            expireDate = this.expireDate,
+            category = mapStringValueToGifticonStore(gifticonStore),
+            storeCategory = mapStringValueToGifiticonStoreCategory(gifticonStoreCategory)
+        )
     }
 
     data class Pageable(
@@ -53,6 +63,13 @@ data class Body(
 
     fun mapToAvailableGifticon() = AvailableGifticon(
         availableGifticons = this.content.map { it.mapToAvailableGifticonInfo() }.also { Log.e("MOATest", "size : ${this.content.size}") },
+        isFirstPage = this.first,
+        isLastPage = this.last,
+        pageNumber = this.pageable.pageNumber
+    )
+
+    fun mapToUnavailableGifticon() = UnavailableGifticon(
+        unAvailableGifticons = this.content.map { it.mapToUnavailableGifticonInfo() }.also { Log.e("MOATest", "size : ${this.content.size}") },
         isFirstPage = this.first,
         isLastPage = this.last,
         pageNumber = this.pageable.pageNumber

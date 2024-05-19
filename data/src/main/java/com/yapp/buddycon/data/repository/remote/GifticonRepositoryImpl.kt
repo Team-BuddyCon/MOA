@@ -8,8 +8,10 @@ import androidx.paging.PagingData
 import com.google.gson.Gson
 import com.yapp.buddycon.data.source.GifticonPagingSource
 import com.yapp.buddycon.data.source.PAGING_SIZE
+import com.yapp.buddycon.data.source.UnavailableGifticonPagingSource
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
 import com.yapp.buddycon.domain.model.gifticon.GifticonDetailModel
+import com.yapp.buddycon.domain.model.gifticon.UnavailableGifticon
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
 import com.yapp.buddycon.domain.model.type.SortType
@@ -85,6 +87,17 @@ class GifticonRepositoryImpl @Inject constructor(
                     gifticonStoreCategory = gifticonStoreCategory,
                     gifticonStore = gifticonStore,
                     gifticonSortType = gifticonSortType
+                )
+            }
+        ).flow
+    }
+
+    override fun fetchUnavailableGifticon(): Flow<PagingData<UnavailableGifticon.UnavailableGifticonInfo>> {
+        return Pager(
+            config = PagingConfig(pageSize = PAGING_SIZE),
+            pagingSourceFactory = {
+                UnavailableGifticonPagingSource(
+                    giftiConService = giftiConService
                 )
             }
         ).flow

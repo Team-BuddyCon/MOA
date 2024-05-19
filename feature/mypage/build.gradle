@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation project(":core:designsystem")
+    implementation project(":core:utility")
     implementation project(":domain")
 
     implementation libs.androidx.core.ktx
@@ -59,4 +60,7 @@ dependencies {
     implementation libs.kakao.user
     implementation libs.hilt.android
     kapt libs.hilt.compiler
+    implementation libs.androidx.paging.compose
+    implementation libs.androidx.paging.runtime
+    implementation libs.coil.compose
 }

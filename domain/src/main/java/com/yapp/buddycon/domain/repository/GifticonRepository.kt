@@ -3,6 +3,7 @@ package com.yapp.buddycon.domain.repository
 import androidx.paging.PagingData
 import com.yapp.buddycon.domain.model.gifticon.AvailableGifticon
 import com.yapp.buddycon.domain.model.gifticon.GifticonDetailModel
+import com.yapp.buddycon.domain.model.gifticon.UnavailableGifticon
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.domain.model.type.GifticonStoreCategory
 import com.yapp.buddycon.domain.model.type.SortType
@@ -26,6 +27,8 @@ interface GifticonRepository {
         gifticonStore: GifticonStore? = null,
         gifticonSortType: SortType? = null,
     ): Flow<PagingData<AvailableGifticon.AvailableGifticonInfo>>
+
+    fun fetchUnavailableGifticon(): Flow<PagingData<UnavailableGifticon.UnavailableGifticonInfo>>
 
     fun getGifticonCount(
         used: Boolean
