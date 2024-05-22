@@ -98,13 +98,15 @@ fun BuddyConSnackbar(
 fun showBuddyConSnackBar(
     message: String,
     scope: CoroutineScope,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    onComplete: suspend () -> Unit = {}
 ) {
     scope.launch {
         snackbarHostState.showSnackbar(
             message = message,
             duration = SnackbarDuration.Short
         )
+        onComplete()
     }
 }
 

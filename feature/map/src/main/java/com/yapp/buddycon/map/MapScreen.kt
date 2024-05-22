@@ -1,12 +1,17 @@
 package com.yapp.buddycon.map
 
+import android.content.Context
+import android.content.Intent
 import android.location.Location
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,7 +59,6 @@ import com.kakao.vectormap.label.Label
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithNotification
 import com.yapp.buddycon.designsystem.component.button.CategoryButton
-import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.modal.GifticonInfoListModalSheet
 import com.yapp.buddycon.designsystem.component.modal.GifticonInfoModalSheetContent
 import com.yapp.buddycon.designsystem.component.modal.PlaceModalSheet
@@ -97,6 +101,8 @@ fun MapScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var currentLocation by remember { mutableStateOf(MapLocation()) }
+    var isGrantedPermission by remember { mutableStateOf(checkLocationPermission(context)) }
+    var isShowToast by remember { mutableStateOf(false) }
 
     val configuration = LocalConfiguration.current
     val mapHeightDp = configuration.screenHeightDp.toFloat() - MapBarSize
@@ -128,13 +134,27 @@ fun MapScreen(
         }
     }
 
+    // 위치 권한 있을 경우 현재 위치 확인
+    LaunchedEffect(isGrantedPermission) {
+        if (isGrantedPermission) {
+            getCurrentLocation(context = context) {
+                currentLocation = currentLocation.copy(location = it)
+            }
+        }
+    }
+
+    // 최초 시스템 위치 권한 요청
     RequestLocationPermission(
         onGranted = {
+            isGrantedPermission = checkLocationPermission(context)
+            isShowToast = true
             showBuddyConSnackBar(
                 message = context.getString(R.string.map_location_permission),
                 scope = coroutineScope,
                 snackbarHostState = snackbarHostState
-            )
+            ) {
+                isShowToast = false
+            }
         }
     )
     BottomSheetScaffold(
@@ -166,14 +186,10 @@ fun MapScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(BuddyConTheme.colors.background),
-            snackbarHostState = snackbarHostState,
             mapLocation = currentLocation,
             mapSearchPlace = mapSearchPlace,
-            onGranted = {
-                getCurrentLocation(context = context) {
-                    currentLocation = currentLocation.copy(location = it)
-                }
-            }
+            isGranted = isGrantedPermission,
+            isShowToast = isShowToast
         )
     }
 }
@@ -255,36 +271,21 @@ private fun MapBottomSheet(
 private fun MapContent(
     modifier: Modifier = Modifier,
     mapViewModel: MapViewModel = hiltViewModel(),
-    snackbarHostState: SnackbarHostState,
     mapLocation: MapLocation,
     mapSearchPlace: MapSearchPlace,
-    onGranted: () -> Unit = {}
+    isGranted: Boolean,
+    isShowToast: Boolean = false
 ) {
+    Timber.d("MapContent")
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
-    // 위치 권한
-    var isGrantedPermission by remember { mutableStateOf(checkLocationPermission(context)) }
-
-    // 위치 권한 유도 팝업
-    var showPermissonDialog by remember { mutableStateOf(false) }
-
-    // 위치 권한 요청
-    var requestPermissionEvent by remember { mutableStateOf(false) }
-
     val store by mapViewModel.store.collectAsStateWithLifecycle()
     val placeLabels by mapViewModel.placeLabels.collectAsStateWithLifecycle()
     var map by remember { mutableStateOf<KakaoMap?>(null) }
     var clickedLabel by remember { mutableStateOf<Label?>(null) }
 
-    // 권한 있을 경우 -> 현재 위치 요청
-    LaunchedEffect(Unit) {
-        if (isGrantedPermission) {
-            onGranted()
-        }
-    }
-
-    LaunchedEffect(mapSearchPlace) {
+    // map, mapSearchPlace가 변경 시에 label 다시 그리기
+    LaunchedEffect(map, mapSearchPlace) {
         // 지도가 노출되고 나서 라벨 표시, 라벨과 함께 표시하게되면 mapReady 오랜 시간 소요
         map?.labelManager?.clearAll()
         map?.labelManager?.let { manager ->
@@ -315,37 +316,6 @@ private fun MapContent(
         }
     }
 
-    if (showPermissonDialog) {
-        DefaultDialog(
-            dialogTitle = stringResource(R.string.location_permission_dialog_title),
-            dismissText = stringResource(R.string.location_permission_later),
-            confirmText = stringResource(R.string.location_permission_granted),
-            dialogContent = stringResource(R.string.location_permission_dialog_content),
-            onConfirm = {
-                requestPermissionEvent = true
-                showPermissonDialog = false
-            },
-            onDismissRequest = { showPermissonDialog = false }
-        )
-    }
-
-    if (requestPermissionEvent) {
-        RequestLocationPermission(
-            onGranted = {
-                showBuddyConSnackBar(
-                    message = context.getString(R.string.map_location_permission),
-                    scope = coroutineScope,
-                    snackbarHostState = snackbarHostState
-                )
-                isGrantedPermission = true
-            },
-            onDeny = {
-                isGrantedPermission = false
-                requestPermissionEvent = false
-            }
-        )
-    }
-
     Column(modifier) {
         MapCategoryTab(
             category = store,
@@ -363,6 +333,7 @@ private fun MapContent(
                     it.start(
                         object : MapLifeCycleCallback() {
                             override fun onMapDestroy() {
+                                map = null
                             }
 
                             override fun onMapError(error: Exception?) {
@@ -386,46 +357,12 @@ private fun MapContent(
                 }
             )
 
-            if (isGrantedPermission.not()) {
+            if (isGranted.not()) {
                 Spacer(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Black.copy(0.4f))
                 )
-                Card(
-                    modifier = Modifier
-                        .padding(top = Paddings.xlarge)
-                        .align(Alignment.TopCenter)
-                        .height(45.dp)
-                        .clickable { showPermissonDialog = true },
-                    shape = RoundedCornerShape((22.5).dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = BuddyConTheme.colors.background
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
-                    )
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(horizontal = (17.5).dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(style = SpanStyle(Pink100)) {
-                                    append("위치 정보 이용")
-                                }
-                                append("에 동의해야 사용할 수 있어요.")
-                            },
-                            style = BuddyConTheme.typography.body04.copy(
-                                color = Grey70
-                            )
-                        )
-                    }
-                }
-            } else {
                 Card(
                     modifier = Modifier
                         .padding(top = Paddings.xlarge)
@@ -439,24 +376,65 @@ private fun MapContent(
                         defaultElevation = 4.dp
                     )
                 ) {
-                    Box(
+                    Row(
                         modifier = Modifier
                             .fillMaxHeight()
                             .padding(horizontal = (17.5).dp),
-                        contentAlignment = Alignment.Center
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = buildAnnotatedString {
-                                append("상단 탭을 눌러 ")
-                                withStyle(style = SpanStyle(Pink100)) {
-                                    append("주변에 있는 매장")
-                                }
-                                append("을 확인하세요.")
-                            },
+                            text = stringResource(R.string.location_permission_guide_message),
                             style = BuddyConTheme.typography.body04.copy(
                                 color = Grey70
                             )
                         )
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(style = SpanStyle(Pink100)) {
+                                    append(stringResource(R.string.location_permission_move_setting))
+                                }
+                            },
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .clickable { moveToSetting(context) },
+                            style = BuddyConTheme.typography.body04
+                        )
+                    }
+                }
+            } else {
+                if (!isShowToast) {
+                    Card(
+                        modifier = Modifier
+                            .padding(top = Paddings.xlarge)
+                            .align(Alignment.TopCenter)
+                            .height(45.dp),
+                        shape = RoundedCornerShape((22.5).dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = BuddyConTheme.colors.background
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 4.dp
+                        )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(horizontal = (17.5).dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = buildAnnotatedString {
+                                    append("상단 탭을 눌러 ")
+                                    withStyle(style = SpanStyle(Pink100)) {
+                                        append("주변에 있는 매장")
+                                    }
+                                    append("을 확인하세요.")
+                                },
+                                style = BuddyConTheme.typography.body04.copy(
+                                    color = Grey70
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -501,4 +479,10 @@ private fun transitionBottomSheet(current: BottomSheetValue, offset: Float): Bot
             BottomSheetValue.Expanded -> BottomSheetValue.PartiallyExpanded
         }
     }
+}
+
+private fun moveToSetting(context: Context) {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+    intent.data = Uri.parse("package:${context.packageName}")
+    context.startActivity(intent)
 }

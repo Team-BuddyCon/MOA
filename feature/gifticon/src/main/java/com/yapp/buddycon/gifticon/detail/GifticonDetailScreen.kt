@@ -1,7 +1,11 @@
 package com.yapp.buddycon.gifticon.detail
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.location.Location
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -26,6 +30,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,7 +61,6 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBackAndEdit
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.component.custom.FullGifticonImage
-import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.snackbar.BuddyConSnackbar
 import com.yapp.buddycon.designsystem.component.snackbar.showBuddyConSnackBar
 import com.yapp.buddycon.designsystem.component.tag.DDayTag
@@ -68,12 +72,21 @@ import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink50
 import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.domain.model.type.GifticonStore
-import com.yapp.buddycon.utility.RequestLocationPermission
 import com.yapp.buddycon.utility.checkLocationPermission
 import com.yapp.buddycon.utility.getCurrentLocation
 import com.yapp.buddycon.utility.getLocationLabels
 import timber.log.Timber
 import java.text.SimpleDateFormat
+
+@Stable
+data class MapLocation(
+    val location: Location? = null
+)
+
+@Stable
+data class MapSearchPlace(
+    val searchPlaceModels: List<SearchPlaceModel> = listOf()
+)
 
 @Composable
 fun GifticonDetailScreen(
@@ -146,15 +159,26 @@ private fun GifticonDetailContent(
     val scrollState = rememberScrollState()
     var isImageExpanded by remember { mutableStateOf(false) }
     val gifticonDetailModel by gifticonDetailViewModel.gifticonDetailModel.collectAsStateWithLifecycle()
-    var currentLocation by remember { mutableStateOf<Location?>(null) }
+    var currentLocation by remember { mutableStateOf<MapLocation>(MapLocation()) }
     val searchPlaceModels by gifticonDetailViewModel.searchPlacesModel.collectAsStateWithLifecycle()
+
+    // 위치 권한 체크
+    var isGrantedPermission by remember { mutableStateOf(checkLocationPermission(context)) }
+
+    LaunchedEffect(isGrantedPermission) {
+        if (isGrantedPermission) {
+            getCurrentLocation(context) {
+                currentLocation = currentLocation.copy(location = it)
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         gifticonDetailViewModel.requestGifticonDetail(gifticonId)
     }
 
     LaunchedEffect(currentLocation, gifticonDetailModel.gifticonStore) {
-        currentLocation?.let { location ->
+        currentLocation.location?.let { location ->
             if (gifticonDetailModel.gifticonStore != GifticonStore.OTHERS) {
                 gifticonDetailViewModel.searchPlacesByKeyword(
                     query = gifticonDetailModel.gifticonStore.value,
@@ -232,14 +256,10 @@ private fun GifticonDetailContent(
             value = gifticonDetailModel.memo
         )
         GifticonMap(
-            location = currentLocation,
-            searchPlaceModels = searchPlaceModels,
+            mapLocation = currentLocation,
+            mapSearchPlace = searchPlaceModels,
             gifticonStore = gifticonDetailModel.gifticonStore,
-            onGranted = {
-                getCurrentLocation(context) {
-                    currentLocation = it
-                }
-            },
+            isGrantedPermission = isGrantedPermission,
             onExpandMapClicked = {
                 onNavigateToNearestUse()
             }
@@ -275,60 +295,22 @@ private fun GifticonDetailInfoRow(
 
 @Composable
 private fun GifticonMap(
-    location: Location?,
-    searchPlaceModels: List<SearchPlaceModel> = listOf(),
+    mapLocation: MapLocation = MapLocation(),
+    mapSearchPlace: MapSearchPlace = MapSearchPlace(),
     gifticonStore: GifticonStore = GifticonStore.OTHERS,
-    onGranted: () -> Unit = {},
+    isGrantedPermission: Boolean = false,
     onExpandMapClicked: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    // 위치 권한 체크
-    var isGrantedPermission by remember {
-        mutableStateOf(checkLocationPermission(context))
-    }
-
-    // 위치 권한 유도 팝업
-    var showPermissonDialog by remember { mutableStateOf(false) }
-
-    // 위치 권한 요청
-    var requestPermissionEvent by remember { mutableStateOf(false) }
     var map by remember { mutableStateOf<KakaoMap?>(null) }
 
-    if (isGrantedPermission) {
-        onGranted()
-    }
-
-    if (showPermissonDialog) {
-        DefaultDialog(
-            dialogTitle = stringResource(R.string.location_permission_dialog_title),
-            dismissText = stringResource(R.string.location_permission_later),
-            confirmText = stringResource(R.string.location_permission_granted),
-            dialogContent = stringResource(R.string.location_permission_dialog_content),
-            onConfirm = {
-                showPermissonDialog = false
-                requestPermissionEvent = true
-            },
-            onDismissRequest = { showPermissonDialog = false }
-        )
-    }
-
-    if (requestPermissionEvent) {
-        RequestLocationPermission(
-            onGranted = {
-                isGrantedPermission = true
-            },
-            onDeny = {
-                isGrantedPermission = false
-                requestPermissionEvent = false
-            }
-        )
-    }
-
-    LaunchedEffect(searchPlaceModels) {
+    // map, mapSearchPlace가 변경 시에 label 다시 그리기
+    LaunchedEffect(map, mapSearchPlace) {
+        map?.labelManager?.clearAll()
         map?.labelManager?.let { manager ->
             getLocationLabels(
                 labelManager = manager,
-                searchPlaceModels = searchPlaceModels
+                searchPlaceModels = mapSearchPlace.searchPlaceModels
             )
         }
     }
@@ -350,6 +332,7 @@ private fun GifticonMap(
                 it.start(
                     object : MapLifeCycleCallback() {
                         override fun onMapDestroy() {
+                            map = null
                         }
 
                         override fun onMapError(error: Exception?) {
@@ -362,7 +345,7 @@ private fun GifticonMap(
                         }
 
                         override fun getPosition(): LatLng {
-                            location?.let { location ->
+                            mapLocation.location?.let { location ->
                                 return LatLng.from(location.latitude, location.longitude)
                             } ?: kotlin.run {
                                 return super.getPosition()
@@ -383,15 +366,15 @@ private fun GifticonMap(
                     .align(Alignment.Center)
                     .background(BuddyConTheme.colors.background, RoundedCornerShape((22.5).dp))
                     .padding(horizontal = 20.dp, vertical = 14.dp)
-                    .clickable { showPermissonDialog = true },
+                    .clickable { moveToSetting(context) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(Color.Red)) {
-                            append("위치 허용")
+                            append("위치 정보 이용")
                         }
-                        append("을 해야 사용할 수 있어요")
+                        append("에 동의해야 사용할 수 있어요.")
                     },
                     style = BuddyConTheme.typography.body04.copy(color = Grey70)
                 )
@@ -441,4 +424,10 @@ private fun GifticonMap(
             }
         }
     }
+}
+
+private fun moveToSetting(context: Context) {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+    intent.data = Uri.parse("package:${context.packageName}")
+    context.startActivity(intent)
 }
