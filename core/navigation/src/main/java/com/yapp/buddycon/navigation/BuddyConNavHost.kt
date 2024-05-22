@@ -74,9 +74,18 @@ fun BuddyConNavHost(
             }
 
             composable(route = StartUpDestination.Login.route) {
-                LoginScreen {
-                    navHostController.navigate(StartUpDestination.SignUp.route)
-                }
+                LoginScreen(
+                    onNavigateToSignUp = {
+                        navHostController.navigate(StartUpDestination.SignUp.route)
+                    },
+                    onNavigateToGifticon = {
+                        navHostController.navigate(GifticonDestination.Gifticon.route) {
+                            popUpTo(StartUpDestination.Login.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
             }
 
             composable(route = StartUpDestination.SignUp.route) {

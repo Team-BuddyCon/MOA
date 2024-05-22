@@ -44,7 +44,7 @@ class LoginViewModel @Inject constructor(
             tokenRepository.saveAccessToken(it.accessToken)
             tokenRepository.saveRefreshToken(it.refreshToken)
             tokenRepository.saveAccessTokenExpiresIn(it.accessTokenExpiresIn)
-            _effect.emit(LoginSideEffect.Success)
+            _effect.emit(if (it.isFirstLogin) LoginSideEffect.FirstLogin else LoginSideEffect.ReLogin)
         }.launchIn(viewModelScope)
     }
 
