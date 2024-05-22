@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.amplitude.android.Amplitude
 import com.yapp.buddycon.navigation.gifticon.GifticonDestination
 import com.yapp.buddycon.navigation.gifticon.gifticonGraph
 import com.yapp.buddycon.navigation.map.mapGraph
@@ -24,7 +25,8 @@ private const val ROOT_GRAPH = "root_graph"
 
 @Composable
 fun BuddyConNavHost(
-    navHostController: NavHostController = rememberNavController()
+    navHostController: NavHostController = rememberNavController(),
+    amplitude: Amplitude
 ) {
     Scaffold(
         bottomBar = { BuddyConBottomBar(navHostController) }
@@ -113,7 +115,7 @@ fun BuddyConNavHost(
                 }
             }
 
-            gifticonGraph(navHostController)
+            gifticonGraph(navHostController, amplitude)
             mapGraph(navHostController)
             mypageGraph(navHostController)
         }

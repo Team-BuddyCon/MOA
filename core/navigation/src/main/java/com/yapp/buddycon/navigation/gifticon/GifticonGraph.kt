@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.amplitude.android.Amplitude
 import com.yapp.buddycon.gifticon.GifticonScreeen
 import com.yapp.buddycon.gifticon.detail.GifticonDetailScreen
 import com.yapp.buddycon.gifticon.edit.GifticonEditScreen
@@ -17,7 +18,8 @@ private const val GIFTICON_GRAPH = "gifticon_graph"
 private const val KEY_AFTER_GIFTICON_REGISTRATION_COMPLETES = "KEY_AFTER_GIFTICON_REGISTRATION_COMPLETES"
 
 fun NavGraphBuilder.gifticonGraph(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    amplitude: Amplitude
 ) {
     navigation(
         startDestination = GifticonDestination.Gifticon.route,
@@ -51,6 +53,7 @@ fun NavGraphBuilder.gifticonGraph(
                         }
                     }
                 },
+                amplitude = amplitude,
                 onBack = { navHostController.popBackStack() }
             )
         }

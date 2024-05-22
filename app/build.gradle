@@ -20,6 +20,7 @@ android {
         versionName "1.0"
 
         buildConfigField("String", "KAKAO_APP_KEY", properties.getProperty("KAKAO_APP_KEY"))
+        buildConfigField("String", "AMPLITUDE_API_KEY", properties.getProperty("AMPLITUDE_API_KEY"))
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -77,6 +78,9 @@ dependencies {
     implementation libs.timber
     implementation libs.accompanist.systemuicontroller
     implementation libs.kakao.user
+
+    // amplitude
+    implementation libs.amplitude
 
     // test
     testImplementation libs.junit

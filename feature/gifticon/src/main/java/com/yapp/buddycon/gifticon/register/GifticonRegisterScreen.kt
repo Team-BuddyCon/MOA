@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.amplitude.android.Amplitude
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import com.yapp.buddycon.designsystem.R
@@ -72,6 +73,7 @@ import java.util.Locale
 fun GifticonRegisterScreen(
     gifticonViewModel: GifticonViewModel = hiltViewModel(),
     gifticonRegisterViewModel: GifticonRegisterViewModel = hiltViewModel(),
+    amplitude: Amplitude,
     onNavigateToGifticonDetail: (Int) -> Unit = {},
     onBack: () -> Unit = {}
 ) {
@@ -208,7 +210,8 @@ fun GifticonRegisterScreen(
                     .padding(paddingValues)
                     .fillMaxSize()
                     .background(BuddyConTheme.colors.background),
-                imageUri = imageUri
+                imageUri = imageUri,
+                amplitude = amplitude
             )
         }
     }
@@ -219,7 +222,8 @@ fun GifticonRegisterScreen(
 private fun GifticonRegisterContent(
     modifier: Modifier = Modifier,
     gifticonRegisterViewModel: GifticonRegisterViewModel = hiltViewModel(),
-    imageUri: Uri? = null
+    imageUri: Uri? = null,
+    amplitude: Amplitude
 ) {
     val scrollState = rememberScrollState()
     val gifticonRegisterUiState by gifticonRegisterViewModel.uiState.collectAsStateWithLifecycle()
@@ -237,6 +241,7 @@ private fun GifticonRegisterContent(
     if (isShowCategoryModal) {
         CategoryModalSheet(
             onSelectCategory = { gifticonRegisterViewModel.setCategory(it) },
+            onSubmitOthers = { amplitude.track("New Brand", mapOf("Name" to it)) },
             onDismiss = { isShowCategoryModal = false }
         )
     }
