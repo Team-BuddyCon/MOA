@@ -1,6 +1,7 @@
 package com.yapp.buddycon.designsystem.component.modal
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,7 +66,8 @@ fun GifticonInfoListModalSheet(
     countOfUsableGifticon: Int,
     countOfImminetGifticon: Int,
     gifticonInfos: LazyPagingItems<AvailableGifticon.AvailableGifticonInfo>,
-    gifticonStore: GifticonStore
+    gifticonStore: GifticonStore,
+    onClick: (Int) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -123,7 +125,11 @@ fun GifticonInfoListModalSheet(
         ) {
             items(gifticonInfos.itemCount) { index ->
                 gifticonInfos[index]?.let { gifticonInfo ->
-                    Column {
+                    Column(
+                        modifier = Modifier.clickable {
+                            onClick(gifticonInfo.gifticonId)
+                        }
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()

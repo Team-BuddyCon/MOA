@@ -1,11 +1,6 @@
 package com.yapp.buddycon.gifticon.detail
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.location.Location
-import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,7 +25,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,23 +64,15 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey70
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.Pink50
-import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.utility.checkLocationPermission
 import com.yapp.buddycon.utility.getCurrentLocation
 import com.yapp.buddycon.utility.getLocationLabels
+import com.yapp.buddycon.utility.navigateToSetting
+import com.yapp.buddycon.utility.stability.MapLocation
+import com.yapp.buddycon.utility.stability.MapSearchPlace
 import timber.log.Timber
 import java.text.SimpleDateFormat
-
-@Stable
-data class MapLocation(
-    val location: Location? = null
-)
-
-@Stable
-data class MapSearchPlace(
-    val searchPlaceModels: List<SearchPlaceModel> = listOf()
-)
 
 @Composable
 fun GifticonDetailScreen(
@@ -158,9 +144,10 @@ private fun GifticonDetailContent(
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     var isImageExpanded by remember { mutableStateOf(false) }
+
+    var mapLocation: MapLocation by remember { mutableStateOf(MapLocation()) }
     val gifticonDetailModel by gifticonDetailViewModel.gifticonDetailModel.collectAsStateWithLifecycle()
-    var currentLocation by remember { mutableStateOf<MapLocation>(MapLocation()) }
-    val searchPlaceModels by gifticonDetailViewModel.searchPlacesModel.collectAsStateWithLifecycle()
+    val mapSearchPlace by gifticonDetailViewModel.mapSearchPlace.collectAsStateWithLifecycle()
 
     // 위치 권한 체크
     var isGrantedPermission by remember { mutableStateOf(checkLocationPermission(context)) }
@@ -168,7 +155,7 @@ private fun GifticonDetailContent(
     LaunchedEffect(isGrantedPermission) {
         if (isGrantedPermission) {
             getCurrentLocation(context) {
-                currentLocation = currentLocation.copy(location = it)
+                mapLocation = mapLocation.copy(location = it)
             }
         }
     }
@@ -177,8 +164,8 @@ private fun GifticonDetailContent(
         gifticonDetailViewModel.requestGifticonDetail(gifticonId)
     }
 
-    LaunchedEffect(currentLocation, gifticonDetailModel.gifticonStore) {
-        currentLocation.location?.let { location ->
+    LaunchedEffect(mapLocation, gifticonDetailModel.gifticonStore) {
+        mapLocation.location?.let { location ->
             if (gifticonDetailModel.gifticonStore != GifticonStore.OTHERS) {
                 gifticonDetailViewModel.searchPlacesByKeyword(
                     query = gifticonDetailModel.gifticonStore.value,
@@ -194,7 +181,6 @@ private fun GifticonDetailContent(
         isExpanded = isImageExpanded,
         onExpandChanged = { isImageExpanded = it }
     )
-
     Column(modifier.verticalScroll(scrollState)) {
         Box(
             modifier = Modifier
@@ -211,10 +197,12 @@ private fun GifticonDetailContent(
                 contentScale = ContentScale.Crop
             )
             if (gifticonDetailModel.expireDate.isNotEmpty()) {
-                DDayTag(
-                    modifier = Modifier.padding(top = 12.dp, start = 12.dp),
-                    dateMillis = SimpleDateFormat("yyyy-MM-dd").parse(gifticonDetailModel.expireDate).time
-                )
+                SimpleDateFormat("yyyy-MM-dd").parse(gifticonDetailModel.expireDate)?.let {
+                    DDayTag(
+                        modifier = Modifier.padding(top = 12.dp, start = 12.dp),
+                        dateMillis = it.time
+                    )
+                }
             }
             Box(
                 modifier = Modifier
@@ -256,9 +244,9 @@ private fun GifticonDetailContent(
             value = gifticonDetailModel.memo
         )
         GifticonMap(
-            mapLocation = currentLocation,
-            mapSearchPlace = searchPlaceModels,
-            gifticonStore = gifticonDetailModel.gifticonStore,
+            mapLocation = mapLocation,
+            mapSearchPlace = mapSearchPlace,
+            store = gifticonDetailModel.gifticonStore,
             isGrantedPermission = isGrantedPermission,
             onExpandMapClicked = {
                 onNavigateToNearestUse()
@@ -297,7 +285,7 @@ private fun GifticonDetailInfoRow(
 private fun GifticonMap(
     mapLocation: MapLocation = MapLocation(),
     mapSearchPlace: MapSearchPlace = MapSearchPlace(),
-    gifticonStore: GifticonStore = GifticonStore.OTHERS,
+    store: GifticonStore = GifticonStore.OTHERS,
     isGrantedPermission: Boolean = false,
     onExpandMapClicked: () -> Unit = {}
 ) {
@@ -366,7 +354,12 @@ private fun GifticonMap(
                     .align(Alignment.Center)
                     .background(BuddyConTheme.colors.background, RoundedCornerShape((22.5).dp))
                     .padding(horizontal = 20.dp, vertical = 14.dp)
-                    .clickable { moveToSetting(context) },
+                    .clickable {
+                        navigateToSetting(
+                            context = context,
+                            packageName = context.packageName
+                        )
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -380,7 +373,7 @@ private fun GifticonMap(
                 )
             }
         } else {
-            if (gifticonStore == GifticonStore.OTHERS) {
+            if (store == GifticonStore.OTHERS) {
                 Spacer(
                     modifier = Modifier
                         .fillMaxSize()
@@ -424,10 +417,4 @@ private fun GifticonMap(
             }
         }
     }
-}
-
-private fun moveToSetting(context: Context) {
-    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-    intent.data = Uri.parse("package:${context.packageName}")
-    context.startActivity(intent)
 }

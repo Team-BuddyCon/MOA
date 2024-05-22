@@ -1,13 +1,5 @@
 package com.yapp.buddycon.designsystem.component.modal
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -56,9 +47,12 @@ private val PlaceModalSheetButtonRadius = 12.dp
 fun PlaceModalSheet(
     sheetState: SheetState = rememberModalBottomSheetState(),
     searchPlaceModel: SearchPlaceModel,
+    onNavigateToNaverMap: (String, String, String) -> Unit = { _, _, _ -> },
+    onNavigateToKakaoMap: (String, String) -> Unit = { _, _ -> },
+    onNavigateToGoogleMap: (String, String, String) -> Unit = { _, _, _ -> },
+    onCopy: (String) -> Unit = {},
     onDismiss: () -> Unit = {}
 ) {
-    val context = LocalContext.current
     var isClicked by remember { mutableStateOf(false) }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -77,23 +71,13 @@ fun PlaceModalSheet(
                     .fillMaxWidth()
                     .weight(1f)
                     .clickable {
-                        val naverMapUri = Uri
-                            .Builder()
-                            .scheme("nmap")
-                            .authority("route")
-                            .appendPath("public")
-                            .appendQueryParameter("appname", "com.yapp.buddycon")
-                            .appendQueryParameter("dlat", searchPlaceModel.y.toString())
-                            .appendQueryParameter("dlng", searchPlaceModel.x.toString())
-                            .appendQueryParameter("dname", searchPlaceModel.place_name)
-                            .build()
-
-                        runDeepLink(
-                            context = context,
-                            uri = naverMapUri,
-                            marketLink = "market://details?id=com.nhn.android.nmap"
+                        onNavigateToNaverMap(
+                            searchPlaceModel.y.toString(),
+                            searchPlaceModel.x.toString(),
+                            searchPlaceModel.place_name
                         )
-                    }.padding(horizontal = Paddings.xlarge),
+                    }
+                    .padding(horizontal = Paddings.xlarge),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -114,18 +98,9 @@ fun PlaceModalSheet(
                     .fillMaxWidth()
                     .weight(1f)
                     .clickable {
-                        val kakaoMapUri = Uri
-                            .Builder()
-                            .scheme("kakaomap")
-                            .authority("route")
-                            .appendQueryParameter("ep", "${searchPlaceModel.y},${searchPlaceModel.x}")
-                            .appendQueryParameter("by", "PUBLICTRANSIT")
-                            .build()
-
-                        runDeepLink(
-                            context = context,
-                            uri = kakaoMapUri,
-                            marketLink = "market://details?id=net.daum.android.map"
+                        onNavigateToKakaoMap(
+                            searchPlaceModel.y.toString(),
+                            searchPlaceModel.x.toString()
                         )
                     }
                     .padding(horizontal = Paddings.xlarge),
@@ -149,18 +124,10 @@ fun PlaceModalSheet(
                     .fillMaxWidth()
                     .weight(1f)
                     .clickable {
-                        val googleMapUri = Uri
-                            .Builder()
-                            .scheme("geo")
-                            .appendPath("${searchPlaceModel.y},${searchPlaceModel.x}")
-                            .appendQueryParameter("q", "${searchPlaceModel.place_name}")
-                            .build()
-
-                        runDeepLink(
-                            context = context,
-                            uri = googleMapUri,
-                            marketLink = "market://details?id=com.google.android.apps.maps",
-                            packageName = "com.google.android.apps.maps"
+                        onNavigateToGoogleMap(
+                            searchPlaceModel.y.toString(),
+                            searchPlaceModel.x.toString(),
+                            searchPlaceModel.place_name
                         )
                     }
                     .padding(horizontal = Paddings.xlarge),
@@ -240,12 +207,7 @@ fun PlaceModalSheet(
                         )
                     }
                     Button(
-                        onClick = {
-                            copyInClipBoard(
-                                context = context,
-                                text = searchPlaceModel.address_name
-                            )
-                        },
+                        onClick = { onCopy(searchPlaceModel.address_name) },
                         modifier = Modifier
                             .padding(start = Paddings.medium)
                             .weight(1f)
@@ -265,44 +227,5 @@ fun PlaceModalSheet(
                 }
             }
         }
-    }
-}
-
-private fun copyInClipBoard(
-    context: Context,
-    text: String
-) {
-    val manager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clip = ClipData.newPlainText("Address", text)
-    manager.setPrimaryClip(clip)
-
-    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-        Toast.makeText(context, context.getString(R.string.copy_complete), Toast.LENGTH_SHORT).show()
-    }
-}
-
-private fun runDeepLink(
-    context: Context,
-    uri: Uri,
-    marketLink: String,
-    packageName: String? = null
-) {
-    val intent = Intent(Intent.ACTION_VIEW, uri)
-    intent.addCategory(Intent.CATEGORY_BROWSABLE)
-
-    packageName?.let { name ->
-        intent.setPackage(name)
-    }
-
-    val list = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        context.packageManager.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong()))
-    } else {
-        context.packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-    }
-
-    if (list.isEmpty()) {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(marketLink)))
-    } else {
-        context.startActivity(intent)
     }
 }
