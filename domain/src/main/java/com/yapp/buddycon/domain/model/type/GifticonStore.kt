@@ -16,7 +16,7 @@ enum class GifticonStore(val value: String, val code: String?) {
     NONE("", "")
 }
 
-fun convertStringValueToGifticonStore(stringValue: String) =
+fun mapStringValueToGifticonStore(stringValue: String) =
     when (stringValue) {
         GifticonStore.STARBUCKS.name -> GifticonStore.STARBUCKS
         GifticonStore.TWOSOME_PLACE.name -> GifticonStore.TWOSOME_PLACE

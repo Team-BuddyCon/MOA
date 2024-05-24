@@ -3,6 +3,7 @@ package com.yapp.buddycon.gifticon.detail
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -43,6 +46,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -59,12 +64,17 @@ import com.yapp.buddycon.designsystem.component.snackbar.BuddyConSnackbar
 import com.yapp.buddycon.designsystem.component.snackbar.showBuddyConSnackBar
 import com.yapp.buddycon.designsystem.component.tag.DDayTag
 import com.yapp.buddycon.designsystem.component.utils.DividerHorizontal
+import com.yapp.buddycon.designsystem.component.utils.SpacerVertical
 import com.yapp.buddycon.designsystem.theme.Black
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey70
+import com.yapp.buddycon.designsystem.theme.Grey90
 import com.yapp.buddycon.designsystem.theme.Paddings
+import com.yapp.buddycon.designsystem.theme.Pink100
 import com.yapp.buddycon.designsystem.theme.Pink50
+import com.yapp.buddycon.designsystem.theme.White
 import com.yapp.buddycon.domain.model.type.GifticonStore
+import com.yapp.buddycon.gifticon.available.base.HandleDataResult
 import com.yapp.buddycon.utility.checkLocationPermission
 import com.yapp.buddycon.utility.getCurrentLocation
 import com.yapp.buddycon.utility.getLocationLabels
@@ -80,7 +90,8 @@ fun GifticonDetailScreen(
     fromRegister: Boolean?,
     onBack: () -> Unit,
     onNavigateToNearestUse: (id: Int) -> Unit,
-    onNavigateToGifticonEdit: (id: Int) -> Unit
+    onNavigateToGifticonEdit: (id: Int) -> Unit,
+    gifticonDetailViewModel: GifticonDetailViewModel = hiltViewModel(),
 ) {
     checkNotNull(gifticonId)
     checkNotNull(fromRegister)
@@ -92,6 +103,8 @@ fun GifticonDetailScreen(
     // 스낵바 2번 호출되는 현상 방지
     var showedSnackbar by remember { mutableStateOf(false) }
 
+    val isUsedGifticon by gifticonDetailViewModel.isUsedGifticon.collectAsStateWithLifecycle()
+
     if (fromRegister && showedSnackbar.not()) {
         showBuddyConSnackBar(
             message = context.getString(R.string.gifticon_register_complete_snackbar),
@@ -100,6 +113,15 @@ fun GifticonDetailScreen(
         )
         showedSnackbar = true
     }
+
+    HandleDataResult(
+        dataResultStateFlow = gifticonDetailViewModel.updateGifticonUsedStateDataResult,
+        onSuccess = {
+            gifticonDetailViewModel.updateGiftionUsedStateValue(isUsed = it.data)
+        },
+        onFailure = {},
+        onLoading = {}
+    )
 
     Scaffold(
         topBar = {
@@ -114,8 +136,13 @@ fun GifticonDetailScreen(
                 modifier = Modifier
                     .padding(horizontal = Paddings.xlarge)
                     .fillMaxWidth(),
-                text = stringResource(R.string.gifticon_used_complete)
+                text = if (isUsedGifticon) stringResource(R.string.gifticon_init_used_complete) else stringResource(R.string.gifticon_used_complete),
+                containerColor = if (isUsedGifticon) Grey90 else Pink100
             ) {
+                gifticonDetailViewModel.updateGifticonUsedState(
+                    gifticonId = gifticonId,
+                    newUsedState = isUsedGifticon.not()
+                )
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -125,10 +152,12 @@ fun GifticonDetailScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
+            gifticonDetailViewModel = gifticonDetailViewModel,
             gifticonId = gifticonId,
             onNavigateToNearestUse = {
                 onNavigateToNearestUse(gifticonId)
-            }
+            },
+            isUsedGifticon = isUsedGifticon
         )
     }
 }
@@ -137,9 +166,10 @@ fun GifticonDetailScreen(
 @Composable
 private fun GifticonDetailContent(
     modifier: Modifier = Modifier,
-    gifticonDetailViewModel: GifticonDetailViewModel = hiltViewModel(),
+    gifticonDetailViewModel: GifticonDetailViewModel,
     gifticonId: Int,
-    onNavigateToNearestUse: () -> Unit
+    onNavigateToNearestUse: () -> Unit,
+    isUsedGifticon: Boolean
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -194,31 +224,69 @@ private fun GifticonDetailContent(
                 model = gifticonDetailModel.imageUrl,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                colorFilter = if (isUsedGifticon) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null
             )
-            if (gifticonDetailModel.expireDate.isNotEmpty()) {
-                SimpleDateFormat("yyyy-MM-dd").parse(gifticonDetailModel.expireDate)?.let {
-                    DDayTag(
-                        modifier = Modifier.padding(top = 12.dp, start = 12.dp),
-                        dateMillis = it.time
+
+            if (isUsedGifticon) {
+                ConstraintLayout(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    val (column) = createRefs()
+
+                    Column(
+                        modifier = Modifier
+                            .background(Black.copy(0.4f), CircleShape)
+                            .constrainAs(column) {
+                                linkTo(start = parent.start, end = parent.end)
+                                linkTo(top = parent.top, bottom = parent.bottom)
+                                width = Dimension.ratio("1:1")
+                                height = Dimension.wrapContent
+                            },
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        SpacerVertical(height = 30.dp)
+                        Text(
+                            text = "사용완료",
+                            style = BuddyConTheme.typography.title02,
+                            color = White
+                        )
+                        SpacerVertical(height = 6.dp)
+                        Icon(
+                            painter = painterResource(R.drawable.ic_gift_box),
+                            contentDescription = null,
+                            modifier = Modifier.size(56.dp),
+                            tint = Color.Unspecified
+                        )
+                        SpacerVertical(height = 23.dp)
+                    }
+                }
+            } else {
+                if (gifticonDetailModel.expireDate.isNotEmpty()) {
+                    SimpleDateFormat("yyyy-MM-dd").parse(gifticonDetailModel.expireDate)?.let {
+                        DDayTag(
+                            modifier = Modifier.padding(top = 12.dp, start = 12.dp),
+                            dateMillis = it.time
+                        )
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 12.dp, end = 12.dp)
+                        .size(40.dp)
+                        .background(Black.copy(0.4f), CircleShape)
+                        .clickable { isImageExpanded = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_search),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.Unspecified
                     )
                 }
-            }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 12.dp, end = 12.dp)
-                    .size(40.dp)
-                    .background(Black.copy(0.4f), CircleShape)
-                    .clickable { isImageExpanded = true },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_search),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.Unspecified
-                )
             }
         }
         Text(

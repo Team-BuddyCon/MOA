@@ -37,9 +37,11 @@ import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
+import com.yapp.buddycon.domain.model.type.GifticonStore
 import com.yapp.buddycon.gifticon.available.LoadingStateScreen
 import com.yapp.buddycon.gifticon.available.base.HandleDataResult
 import com.yapp.buddycon.gifticon.detail.GifticonDetailViewModel
+import com.yapp.buddycon.utility.getDrawableRes
 import timber.log.Timber
 
 @Composable
@@ -193,18 +195,21 @@ private fun NearestUseMap(
                                     kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(LatLng.from(latAverage, lonAverage), adjustedZoomLevel))
 
                                     /** 내 위치, 장소 리스트 마커 그리기 */
+                                    kakaoMap.labelManager?.clearAll()
                                     kakaoMap.labelManager?.let { manager ->
-                                        getLocationLabel(
+                                        /** 내 위치 표시 아이콘 - 문의하기 */
+                                        getLocationLabelForUserLocation(
                                             labelManager = manager,
                                             latitude = location.latitude,
                                             longitude = location.longitude
                                         )
 
                                         searchPlacesModel.forEach { seachPlaceModel ->
-                                            getLocationLabel(
+                                            getLocationLabelForNearestUsePlace(
                                                 labelManager = manager,
                                                 latitude = seachPlaceModel.y.toDouble(),
-                                                longitude = seachPlaceModel.x.toDouble()
+                                                longitude = seachPlaceModel.x.toDouble(),
+                                                gifticonStore = seachPlaceModel.store
                                             )
                                         }
                                     }
@@ -237,7 +242,7 @@ private fun getCurrentLocation(
     }
 }
 
-private fun getLocationLabel(
+private fun getLocationLabelForUserLocation(
     labelManager: LabelManager,
     latitude: Double,
     longitude: Double
@@ -246,7 +251,34 @@ private fun getLocationLabel(
         ?.addLabel(
             LabelOptions.from(LatLng.from(latitude, longitude))
                 .setStyles(
-                    labelManager.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.ic_location)))
+                    labelManager.addLabelStyles(
+                        LabelStyles.from(
+                            LabelStyle.from(
+                                R.drawable.ic_location
+                            )
+                        )
+                    )
+                )
+        )
+}
+
+private fun getLocationLabelForNearestUsePlace(
+    labelManager: LabelManager,
+    latitude: Double,
+    longitude: Double,
+    gifticonStore: String
+) {
+    labelManager.layer
+        ?.addLabel(
+            LabelOptions.from(LatLng.from(latitude, longitude))
+                .setStyles(
+                    labelManager.addLabelStyles(
+                        LabelStyles.from(
+                            LabelStyle.from(
+                                GifticonStore.values().find { it.value == gifticonStore }.getDrawableRes()
+                            )
+                        )
+                    )
                 )
         )
 }

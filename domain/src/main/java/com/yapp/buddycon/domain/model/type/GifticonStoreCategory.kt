@@ -15,3 +15,11 @@ enum class GifticonStoreCategory(val value: String) {
         }
     }
 }
+
+fun mapStringValueToGifiticonStoreCategory(string: String?) =
+    when (string) {
+        "CAFE" -> GifticonStoreCategory.CAFE
+        "CONVENIENCE_STORE" -> GifticonStoreCategory.CONVENIENCE_STORE
+        "OTHERS" -> GifticonStoreCategory.OTHERS
+        else -> GifticonStoreCategory.TOTAL
+    }

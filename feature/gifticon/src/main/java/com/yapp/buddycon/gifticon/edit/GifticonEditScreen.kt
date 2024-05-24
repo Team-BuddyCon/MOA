@@ -41,6 +41,7 @@ import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.component.button.GifticonDeleteButton
 import com.yapp.buddycon.designsystem.component.custom.FullGifticonImage
 import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
+import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectUsage
 import com.yapp.buddycon.designsystem.component.input.EssentialInputText
@@ -59,6 +60,7 @@ fun GifticonEditScreen(
     gifticonDetailViewModel: GifticonDetailViewModel,
     gifticonId: Int?,
     onBack: () -> Unit,
+    onBackToHome: () -> Unit,
     gifticonEditViewModel: GifticonEditViewModel = hiltViewModel()
 ) {
     checkNotNull(gifticonId)
@@ -92,7 +94,9 @@ fun GifticonEditScreen(
                 .fillMaxSize(),
             gifticonDetailViewModel = gifticonDetailViewModel,
             gifticonEditViewModel = gifticonEditViewModel,
-            onEditSuccessResult = onBack
+            onEditSuccessResult = onBack,
+            onGifticonDeleteSuccessResult = onBackToHome,
+            gifticonId = gifticonId
         )
     }
 }
@@ -103,7 +107,9 @@ private fun GifticonEditDetailContent(
     modifier: Modifier = Modifier,
     gifticonDetailViewModel: GifticonDetailViewModel,
     gifticonEditViewModel: GifticonEditViewModel,
-    onEditSuccessResult: () -> Unit
+    onEditSuccessResult: () -> Unit,
+    onGifticonDeleteSuccessResult: () -> Unit,
+    gifticonId: Int
 ) {
     val scrollState = rememberScrollState()
     var isImageExpanded by remember { mutableStateOf(false) }
@@ -113,7 +119,10 @@ private fun GifticonEditDetailContent(
 
     var isShowCalendarModal by remember { mutableStateOf(false) }
     var isShowCategoryModal by remember { mutableStateOf(false) }
+
     var isShowSuccessDialog by remember { mutableStateOf(false) }
+    var isShowGifticonDeleteOrNotDialog by remember { mutableStateOf(false) }
+    var isShowGifticonDeleteCompleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         gifticonEditViewModel.initEditValueState(
@@ -127,6 +136,16 @@ private fun GifticonEditDetailContent(
     HandleDataResult(
         dataResultStateFlow = gifticonEditViewModel.editGifticonDetailDataResult,
         onSuccess = { isShowSuccessDialog = true },
+        onFailure = { },
+        onLoading = { }
+    )
+
+    HandleDataResult(
+        dataResultStateFlow = gifticonEditViewModel.deleteGifticonDataResult,
+        onSuccess = {
+            isShowGifticonDeleteOrNotDialog = false
+            isShowGifticonDeleteCompleteDialog = true
+        },
         onFailure = { },
         onLoading = { }
     )
@@ -151,6 +170,28 @@ private fun GifticonEditDetailContent(
             onClick = {
                 onEditSuccessResult()
             }
+        )
+    }
+
+    if (isShowGifticonDeleteOrNotDialog) {
+        DefaultDialog(
+            dialogTitle = stringResource(R.string.gifticon_delete_or_not_dialog_title),
+            dismissText = stringResource(R.string.gifticon_delete_or_not_dialog_close),
+            confirmText = stringResource(R.string.gifticon_delete_or_not_dialog_delete),
+            onConfirm = {
+                gifticonEditViewModel.deleteGifticon(gifticonId = gifticonId)
+            },
+            onDismissRequest = {
+                isShowGifticonDeleteOrNotDialog = false
+            }
+        )
+    }
+
+    if (isShowGifticonDeleteCompleteDialog) {
+        ConfirmDialog(
+            dialogTitle = stringResource(id = R.string.gifticon_delete_complete_dialog_title),
+            onClick = onGifticonDeleteSuccessResult,
+            buttonText = stringResource(id = R.string.gifticon_delete_complete_dialog_back_to_home)
         )
     }
 
@@ -238,7 +279,7 @@ private fun GifticonEditDetailContent(
         ) {
             GifticonDeleteButton(
                 onClick = {
-                    // todo - delete gifticon
+                    isShowGifticonDeleteOrNotDialog = true
                 }
             )
         }

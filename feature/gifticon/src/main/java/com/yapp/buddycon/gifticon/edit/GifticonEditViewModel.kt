@@ -28,6 +28,9 @@ class GifticonEditViewModel @Inject constructor(
     private var _editGifticonDetailDataResult = MutableStateFlow<DataResult<Unit>>(DataResult.None)
     val editGifticonDetailDataResult = _editGifticonDetailDataResult.asStateFlow()
 
+    private var _deleteGifticonDataResult = MutableStateFlow<DataResult<Unit>>(DataResult.None)
+    val deleteGifticonDataResult = _deleteGifticonDataResult.asStateFlow()
+
     fun initEditValueState(name: String, expireDate: String, category: GifticonStore, memo: String) {
         _editValueState.value = _editValueState.value.copy(
             newName = name,
@@ -78,6 +81,23 @@ class GifticonEditViewModel @Inject constructor(
                 }.collectLatest {
                     _editGifticonDetailDataResult.value = DataResult.Success(data = Unit)
                 }
+            }
+        }
+    }
+
+    fun deleteGifticon(gifticonId: Int) {
+        viewModelScope.launch {
+            gifticonRepository.deleteGifticon(
+                gifticonId = gifticonId
+            ).onStart {
+                _deleteGifticonDataResult.value = DataResult.Loading
+            }.catch { throwable ->
+                throwable.stackTrace.forEach {
+                    Log.e("MOATest", "[stackTrace] : $it")
+                }
+                _deleteGifticonDataResult.value = DataResult.Failure(throwable = throwable)
+            }.collectLatest {
+                _deleteGifticonDataResult.value = DataResult.Success(data = Unit)
             }
         }
     }

@@ -3,6 +3,7 @@ package com.yapp.buddycon.mypage
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,15 +15,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarForSetting
 import com.yapp.buddycon.designsystem.component.setting.MainSettingBar
 import com.yapp.buddycon.designsystem.component.utils.DividerHorizontal
@@ -35,10 +38,15 @@ import com.yapp.buddycon.designsystem.theme.White
 
 const val TAG = "BuddyConTest"
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyPageScreen() {
+fun MyPageScreen(
+    onNavigateToUsedGifticon: () -> Unit,
+    myPageViewModel: MyPageViewModel = hiltViewModel()
+) {
     val scrollState = rememberScrollState()
+
+    val userName by myPageViewModel.userName.collectAsStateWithLifecycle()
+    val usedGifticonCount by myPageViewModel.usedGifticonCount.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { TopAppBarForSetting(action = {}) }
@@ -49,11 +57,14 @@ fun MyPageScreen() {
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            UserName(userName = "버디콘") // todo - 실제 userName 전달
+            UserName(userName = userName)
 
             SpacerVertical(height = 16.dp)
 
-            UsedGifticonInfo(usedGifticon = 5) // todo - 실제 사용한 기프티콘 개수 전달
+            UsedGifticonInfo(
+                usedGifticon = usedGifticonCount,
+                onUsedGiftionClick = onNavigateToUsedGifticon
+            )
 
             SpacerVertical(height = 8.dp)
 
@@ -72,7 +83,10 @@ private fun UserName(userName: String) {
 }
 
 @Composable
-private fun UsedGifticonInfo(usedGifticon: Int) {
+private fun UsedGifticonInfo(
+    usedGifticon: Int,
+    onUsedGiftionClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -81,7 +95,8 @@ private fun UsedGifticonInfo(usedGifticon: Int) {
                 color = Grey90,
                 shape = RoundedCornerShape(20.dp)
             )
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable { onUsedGiftionClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(

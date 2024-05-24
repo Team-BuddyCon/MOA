@@ -79,6 +79,7 @@
     <string name="gifticon_memo_placeholder">최대 50자 입력</string>
     <string name="gifticon_register_success">기프티콘이 성공적으로 등록됐어요.</string>
     <string name="gifticon_used_complete">사용완료</string>
+    <string name="gifticon_init_used_complete">사용완료 되돌리기</string>
     <string name="gifticon_map_enlargement">지도 확대하기</string>
     <string name="gifticon_register_complete_snackbar">기프티콘이 성공적으로 등록됐어요.</string>
     <string name="nearst_use_check_complete">확인했어요</string>
@@ -89,8 +90,16 @@
     <string name="gifticon_others_register_placeholder">예) 롯데리아</string>
     <string name="gifticon_others_register_guide_message">앞으로 더 많은 브랜드를 지원하기 위해서 노력할게요.</string>
 
+    <string name="gifticon_delete_or_not_dialog_title">기프티콘을 삭제할까요?</string>
+    <string name="gifticon_delete_or_not_dialog_close">닫기</string>
+    <string name="gifticon_delete_or_not_dialog_delete">삭제하기</string>
+    <string name="gifticon_delete_complete_dialog_title">기프티콘이 삭제되었어요</string>
+    <string name="gifticon_delete_complete_dialog_back_to_home">홈으로 이동</string>
+
     <string name="map">지도</string>
     <string name="map_location_permission">위치 정보를 불러왔어요!</string>
+
+    <string name="used_gifticon_screen_appbar_title">사용완료 기프티콘</string>
 
     <!--    Error Popup-->
     <string name="kakao_login_error_title">카카오톡으로 시작할 수 없어요</string>

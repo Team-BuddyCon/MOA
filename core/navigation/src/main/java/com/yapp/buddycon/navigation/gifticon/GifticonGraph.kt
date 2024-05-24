@@ -15,7 +15,7 @@ import com.yapp.buddycon.gifticon.nearestuse.NearestUseScreen
 import com.yapp.buddycon.gifticon.register.GifticonRegisterScreen
 
 private const val GIFTICON_GRAPH = "gifticon_graph"
-private const val KEY_AFTER_GIFTICON_REGISTRATION_COMPLETES = "KEY_AFTER_GIFTICON_REGISTRATION_COMPLETES"
+private const val KEY_AFTER_GIFTICON_REGISTRATION_COMPLETE = "KEY_AFTER_GIFTICON_REGISTRATION_COMPLETE"
 
 fun NavGraphBuilder.gifticonGraph(
     navHostController: NavHostController,
@@ -26,7 +26,7 @@ fun NavGraphBuilder.gifticonGraph(
         route = GIFTICON_GRAPH
     ) {
         composable(GifticonDestination.Gifticon.route) { entry ->
-            val afterGifticonRegistrationCompletes = entry.savedStateHandle.get<Boolean>(KEY_AFTER_GIFTICON_REGISTRATION_COMPLETES)
+            val afterGifticonRegistrationCompletes = entry.savedStateHandle.get<Boolean>(KEY_AFTER_GIFTICON_REGISTRATION_COMPLETE)
             Log.e("MOATest", "afterRegisterCompletes : $afterGifticonRegistrationCompletes")
 
             GifticonScreeen(
@@ -66,7 +66,7 @@ fun NavGraphBuilder.gifticonGraph(
             val fromRegister = entry.arguments?.getBoolean(GifticonDestination.Detail.fromRegisterArg).also {
                 navHostController.previousBackStackEntry
                     ?.savedStateHandle
-                    ?.set(KEY_AFTER_GIFTICON_REGISTRATION_COMPLETES, it)
+                    ?.set(KEY_AFTER_GIFTICON_REGISTRATION_COMPLETE, it)
             }
 
             GifticonDetailScreen(
@@ -110,7 +110,14 @@ fun NavGraphBuilder.gifticonGraph(
             GifticonEditScreen(
                 gifticonDetailViewModel = hiltViewModel(parentEntry),
                 gifticonId = gifticonId,
-                onBack = { navHostController.popBackStack() }
+                onBack = { navHostController.popBackStack() },
+                onBackToHome = {
+                    navHostController.navigate(GifticonDestination.Gifticon.route) {
+                        popUpTo(GifticonDestination.Gifticon.route) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
     }
