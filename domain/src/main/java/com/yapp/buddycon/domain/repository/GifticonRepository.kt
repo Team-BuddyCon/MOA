@@ -31,7 +31,10 @@ interface GifticonRepository {
     fun fetchUnavailableGifticon(): Flow<PagingData<UnavailableGifticon.UnavailableGifticonInfo>>
 
     fun getGifticonCount(
-        used: Boolean
+        used: Boolean,
+        gifticonStoreCategory: GifticonStoreCategory? = null,
+        gifticonStore: GifticonStore? = null,
+        remainingDays: Int? = null
     ): Flow<Int>
 
     fun editGifticonDetail(

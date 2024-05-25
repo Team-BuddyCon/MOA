@@ -103,11 +103,19 @@ class GifticonRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getGifticonCount(used: Boolean): Flow<Int> = flow {
+    override fun getGifticonCount(
+        used: Boolean,
+        gifticonStoreCategory: GifticonStoreCategory?,
+        gifticonStore: GifticonStore?,
+        remainingDays: Int?
+    ): Flow<Int> = flow {
         emit(
-            giftiConService.getGifticonCount(used)
-                .body
-                .count
+            giftiConService.getGifticonCount(
+                used = used,
+                gifticonStoreCategory = gifticonStoreCategory?.name,
+                gifticonStore = gifticonStore?.code,
+                remainingDays = remainingDays
+            ).body.count
         )
     }
 

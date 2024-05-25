@@ -12,7 +12,7 @@ enum class GifticonStore(val value: String, val code: String?) {
     MACDONALD("맥도날드", "MACDONALD"),
     GS25("GS25", "GS25"),
     CU("CU", "CU"),
-    OTHERS("기타", "OTHERS'"),
+    OTHERS("기타", "OTHERS"),
     NONE("", "")
 }
 

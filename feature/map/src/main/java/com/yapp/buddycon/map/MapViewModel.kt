@@ -45,6 +45,7 @@ class MapViewModel @Inject constructor(
 
     init {
         getGifticonCount()
+        getDeadLineCount()
     }
 
     fun fetchAvailableGifticon() {
@@ -58,12 +59,26 @@ class MapViewModel @Inject constructor(
     }
 
     private fun getGifticonCount() {
-        gifticonRepository.getGifticonCount(used = false)
-            .onEach {
-                _mapUiState.value = _mapUiState.value.copy(
-                    totalCount = it
-                )
-            }.launchIn(viewModelScope)
+        gifticonRepository.getGifticonCount(
+            used = false,
+            gifticonStore = mapUiState.value.store
+        ).onEach {
+            _mapUiState.value = _mapUiState.value.copy(
+                totalCount = it
+            )
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getDeadLineCount() {
+        gifticonRepository.getGifticonCount(
+            used = false,
+            gifticonStore = mapUiState.value.store,
+            remainingDays = 14
+        ).onEach {
+            _mapUiState.value = _mapUiState.value.copy(
+                deadLineCount = it
+            )
+        }.launchIn(viewModelScope)
     }
 
     fun searchPlacesByKeyword(
@@ -97,6 +112,8 @@ class MapViewModel @Inject constructor(
             store = store
         )
         fetchAvailableGifticon()
+        getGifticonCount()
+        getDeadLineCount()
     }
 
     fun changeBottomSheetValue(sheetValue: BottomSheetValue) {

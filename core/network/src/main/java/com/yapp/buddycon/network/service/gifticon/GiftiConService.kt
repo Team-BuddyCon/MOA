@@ -48,7 +48,10 @@ interface GiftiConService {
 
     @GET("api/v1/gifticons/count")
     suspend fun getGifticonCount(
-        @Query("used") used: Boolean
+        @Query("used") used: Boolean,
+        @Query("gifticonStoreCategory") gifticonStoreCategory: String? = null,
+        @Query("gifticonStore") gifticonStore: String? = null,
+        @Query("remainingDays") remainingDays: Int? = null
     ): GifticonCountResponse
 
     /** 기프티콘 상세 정보 수정 */
