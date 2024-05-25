@@ -32,11 +32,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -349,6 +352,7 @@ private fun GifticonDetailInfoRow(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun GifticonMap(
     mapLocation: MapLocation = MapLocation(),
@@ -378,9 +382,13 @@ private fun GifticonMap(
             .fillMaxWidth()
             .height(166.dp)
             .clip(RoundedCornerShape(20.dp))
+            .pointerInteropFilter {
+                (store == GifticonStore.OTHERS || !isGrantedPermission) // 기타 및 권한 없을 시 Map Touch 이벤트 막기
+            }
     ) {
         AndroidView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize(),
             factory = { context ->
                 MapView(context)
             },
@@ -411,7 +419,7 @@ private fun GifticonMap(
                 )
             }
         )
-        if (isGrantedPermission.not()) {
+        if (store == GifticonStore.OTHERS) {
             Spacer(
                 modifier = Modifier
                     .fillMaxSize()
@@ -421,27 +429,22 @@ private fun GifticonMap(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .background(BuddyConTheme.colors.background, RoundedCornerShape((22.5).dp))
-                    .padding(horizontal = 20.dp, vertical = 14.dp)
-                    .clickable {
-                        navigateToSetting(
-                            context = context,
-                            packageName = context.packageName
-                        )
-                    },
+                    .padding(horizontal = 20.dp, vertical = 14.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = buildAnnotatedString {
+                        append("해당 기프티콘 브랜드는 ")
                         withStyle(style = SpanStyle(Color.Red)) {
-                            append("위치 정보 이용")
+                            append("지도 기능")
                         }
-                        append("에 동의해야 사용할 수 있어요.")
+                        append("이 제한되어 있어요.")
                     },
                     style = BuddyConTheme.typography.body04.copy(color = Grey70)
                 )
             }
         } else {
-            if (store == GifticonStore.OTHERS) {
+            if (isGrantedPermission.not()) {
                 Spacer(
                     modifier = Modifier
                         .fillMaxSize()
@@ -451,16 +454,21 @@ private fun GifticonMap(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .background(BuddyConTheme.colors.background, RoundedCornerShape((22.5).dp))
-                        .padding(horizontal = 20.dp, vertical = 14.dp),
+                        .padding(horizontal = 20.dp, vertical = 14.dp)
+                        .clickable {
+                            navigateToSetting(
+                                context = context,
+                                packageName = context.packageName
+                            )
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = buildAnnotatedString {
-                            append("해당 기프티콘 브랜드는 ")
                             withStyle(style = SpanStyle(Color.Red)) {
-                                append("지도 기능")
+                                append("위치 정보 이용")
                             }
-                            append("이 제한되어 있어요.")
+                            append("에 동의해야 사용할 수 있어요.")
                         },
                         style = BuddyConTheme.typography.body04.copy(color = Grey70)
                     )

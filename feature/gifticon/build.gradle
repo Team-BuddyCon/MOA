@@ -43,6 +43,7 @@ dependencies {
     implementation project(":core:utility")
 
     implementation libs.hilt.android
+    implementation libs.androidx.constraintlayout
     kapt libs.hilt.compiler
     implementation libs.accompanist.systemuicontroller
 
