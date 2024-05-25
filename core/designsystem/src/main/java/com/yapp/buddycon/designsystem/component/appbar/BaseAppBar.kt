@@ -96,7 +96,7 @@ internal fun BaseAppBar(buddyConAppBars: BuddyConAppBars) {
                 when (buddyConAppBars) {
                     is BuddyConAppBars.WithNotification -> {
                         Icon(
-                            painter = painterResource(R.drawable.ic_notification_sel),
+                            painter = painterResource(R.drawable.ic_notification),
                             contentDescription = buddyConAppBars.title,
                             modifier = Modifier
                                 .size(AppbarIconSize)
