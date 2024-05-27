@@ -62,7 +62,7 @@ class TokenRepositoryImpl @Inject constructor(
 
     override fun getAccessTokenExpiresIn(): Flow<Long> =
         dataStore.data.map { preference ->
-            preference[ACCESS_TOKEN_EXPIRES_IN] ?: Long.MAX_VALUE
+            preference[ACCESS_TOKEN_EXPIRES_IN] ?: Long.MIN_VALUE
         }
 
     override suspend fun saveAccessTokenExpiresIn(expire: Long) {

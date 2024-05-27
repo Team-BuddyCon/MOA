@@ -2,6 +2,9 @@ package com.yapp.buddycon.startup.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.yapp.buddycon.domain.model.auth.LoginModel
 import com.yapp.buddycon.domain.repository.AuthRepository
 import com.yapp.buddycon.domain.repository.TokenRepository
@@ -27,9 +30,13 @@ class SplashViewModel @Inject constructor(
     private val _loginToken = MutableStateFlow(LoginModel())
     val loginToken = _loginToken.asStateFlow()
 
+    private val _isTestMode = MutableStateFlow(false)
+    val isTestMode = _isTestMode.asStateFlow()
+
     init {
         getIsFirstInstallation()
         getLoginToken()
+        fetchFirebaseConfig()
     }
 
     private fun getIsFirstInstallation() {
@@ -70,5 +77,25 @@ class SplashViewModel @Inject constructor(
             tokenRepository.saveRefreshToken(it.refreshToken)
             tokenRepository.saveAccessTokenExpiresIn(it.accessTokenExpiresIn)
         }.launchIn(viewModelScope)
+    }
+
+    private fun fetchFirebaseConfig() {
+        val remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 3600
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        remoteConfig.fetchAndActivate()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val mode = remoteConfig.getBoolean("isTestMode")
+                    viewModelScope.launch {
+                        _isTestMode.value = mode
+                    }
+                    Timber.d("Firebase Remote Config fetch and Active success isTestMode: $mode")
+                } else {
+                    Timber.d("Firebase Remote Config fetch and Active fail")
+                }
+            }
     }
 }

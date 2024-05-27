@@ -20,6 +20,7 @@ import com.yapp.buddycon.startup.onboarding.OnBoardingScreen
 import com.yapp.buddycon.startup.signup.SignUpScreen
 import com.yapp.buddycon.startup.splash.SplashScreen
 import com.yapp.buddycon.startup.welcome.WelcomeScreen
+import timber.log.Timber
 
 private const val ROOT_GRAPH = "root_graph"
 
@@ -49,7 +50,7 @@ fun BuddyConNavHost(
                         }
                     },
                     onNavigateToLogin = {
-                        navHostController.navigate(StartUpDestination.Login.route) {
+                        navHostController.navigate("${StartUpDestination.Login.route}/$it") {
                             popUpTo(StartUpDestination.Splash.route) {
                                 inclusive = true
                             }
@@ -67,16 +68,22 @@ fun BuddyConNavHost(
 
             composable(route = StartUpDestination.OnBoarding.route) {
                 OnBoardingScreen {
-                    navHostController.navigate(StartUpDestination.Login.route) {
-                        popUpTo(StartUpDestination.OnBoarding.route) {
+                    navHostController.navigate("${StartUpDestination.Login.route}/$it") {
+                        popUpTo("${StartUpDestination.OnBoarding.route}/$it") {
                             inclusive = true
                         }
                     }
                 }
             }
 
-            composable(route = StartUpDestination.Login.route) {
+            composable(
+                route = StartUpDestination.Login.routeWithArg,
+                arguments = StartUpDestination.Login.arguments
+            ) { entry ->
+                val isTestMode = entry.arguments?.getBoolean(StartUpDestination.Login.isTestModeArg) ?: false
+                Timber.d("BuddyConNavHost Login isTestMode: $isTestMode")
                 LoginScreen(
+                    isTestMode = isTestMode,
                     onNavigateToSignUp = {
                         navHostController.navigate(StartUpDestination.SignUp.route)
                     },

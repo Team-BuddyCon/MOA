@@ -32,6 +32,7 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.yapp.buddycon.designsystem.R
+import com.yapp.buddycon.designsystem.component.button.BuddyConButton
 import com.yapp.buddycon.designsystem.component.button.LoginButton
 import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
@@ -48,6 +49,7 @@ private val BuddyConLogoDescription = "BuddyConLogo"
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
+    isTestMode: Boolean,
     onNavigateToSignUp: () -> Unit = {},
     onNavigateToGifticon: () -> Unit = {}
 ) {
@@ -117,7 +119,22 @@ fun LoginScreen(
             style = BuddyConTheme.typography.body03,
             textAlign = TextAlign.Center
         )
-        Spacer(Modifier.weight(238f))
+        if (isTestMode) {
+            Spacer(Modifier.weight(184f))
+            BuddyConButton(
+                modifier = Modifier
+                    .padding(bottom = Paddings.medium)
+                    .padding(horizontal = Paddings.xlarge)
+                    .fillMaxWidth(),
+                text = stringResource(R.string.login_test_mode),
+                containerColor = BuddyConTheme.colors.primary,
+                contentColor = BuddyConTheme.colors.onPrimary
+            ) {
+                // onNavigateToWelcome()
+            }
+        } else {
+            Spacer(Modifier.weight(238f))
+        }
         LoginButton(
             modifier = Modifier
                 .padding(bottom = Paddings.xlarge)

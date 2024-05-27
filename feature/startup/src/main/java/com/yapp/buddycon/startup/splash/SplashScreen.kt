@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import kotlinx.coroutines.delay
@@ -17,16 +19,20 @@ private const val SplashIconDescription = "SplashIcon"
 fun SplashScreen(
     splashViewModel: SplashViewModel = hiltViewModel(),
     onNavigateToOnBoarding: () -> Unit = {},
-    onNavigateToLogin: () -> Unit = {},
+    onNavigateToLogin: (Boolean) -> Unit = {},
     onNavigateToGifticon: () -> Unit = {}
 ) {
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(BuddyConTheme.colors.primary)
 
+    val isTestMode by splashViewModel.isTestMode.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         splashViewModel.loginToken.collect {
-            if (it.accessTokenExpiresIn <= System.currentTimeMillis()) {
-                splashViewModel.fetchReissue()
+            if (it.accessTokenExpiresIn != Long.MIN_VALUE) {
+                if (it.accessTokenExpiresIn <= System.currentTimeMillis()) {
+                    splashViewModel.fetchReissue()
+                }
             }
         }
     }
@@ -40,7 +46,7 @@ fun SplashScreen(
             if (System.currentTimeMillis() <= splashViewModel.loginToken.value.accessTokenExpiresIn) {
                 onNavigateToGifticon()
             } else {
-                onNavigateToLogin()
+                onNavigateToLogin(isTestMode)
             }
         }
     }
