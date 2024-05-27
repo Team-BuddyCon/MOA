@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,6 +47,21 @@ class LoginViewModel @Inject constructor(
             tokenRepository.saveAccessTokenExpiresIn(it.accessTokenExpiresIn)
             _effect.emit(if (it.isFirstLogin) LoginSideEffect.FirstLogin else LoginSideEffect.ReLogin)
         }.launchIn(viewModelScope)
+    }
+
+    fun fetchTestLogin() {
+        val accessToken =
+            "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwiaWF0IjoxNzE2NzA3ODM1LCJleHAiOjE3MjI3NTU4MzV9.Afm0jsuHLVwg0YbiR1unky1xZkrd0B-yDJhAtAwixgZM5j1dv4kMHhjw279P1yOOFndkfJ_SVD30uQ9kZR69wA" // ktlint-disable max-line-length
+        val accessTokenExpiresIn = Calendar.getInstance().apply {
+            add(Calendar.YEAR, 100)
+        }.timeInMillis
+
+        viewModelScope.launch {
+            tokenRepository.saveNickname("TEST")
+            tokenRepository.saveAccessToken(accessToken)
+            tokenRepository.saveAccessTokenExpiresIn(accessTokenExpiresIn)
+            _effect.emit(LoginSideEffect.ReLogin)
+        }
     }
 
     fun handleKAKAOLoginError() {

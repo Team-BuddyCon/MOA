@@ -130,7 +130,7 @@ fun LoginScreen(
                 containerColor = BuddyConTheme.colors.primary,
                 contentColor = BuddyConTheme.colors.onPrimary
             ) {
-                // onNavigateToWelcome()
+                loginViewModel.fetchTestLogin()
             }
         } else {
             Spacer(Modifier.weight(238f))
