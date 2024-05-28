@@ -3,6 +3,9 @@ package com.yapp.buddycon.utility
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.label.Label
@@ -20,10 +23,24 @@ fun getCurrentLocation(
     context: Context,
     onSuccess: (Location) -> Unit
 ) {
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    fusedLocationClient.lastLocation.addOnSuccessListener {
-        onSuccess(it)
+    val locationRequest = LocationRequest.create()
+    locationRequest.interval = 60000
+    locationRequest.fastestInterval = 50000
+    locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+    val callback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            for (location in result.locations) {
+                if (location != null) {
+                    onSuccess(location)
+                }
+            }
+        }
     }
+
+    // 마지막 위치 정보가 없는 경우 Location이 null로 반환되는 이슈로 명시적으로 위치를 Update 하도록 수정
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    fusedLocationClient.requestLocationUpdates(locationRequest, callback, context.mainLooper)
 }
 
 // 지도 위 마커 추가 및 리턴
