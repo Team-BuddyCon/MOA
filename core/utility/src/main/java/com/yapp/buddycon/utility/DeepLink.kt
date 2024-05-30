@@ -1,5 +1,6 @@
 package com.yapp.buddycon.utility
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -104,7 +105,12 @@ private fun runDeepLink(
     }
 
     if (list.isEmpty()) {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(marketUrl)))
+        try {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(marketUrl)))
+        } catch (e: ActivityNotFoundException) {
+            // 구글 플레이 스토어가 없는 경우 -> CTS 받지 못한 경우
+            e.printStackTrace()
+        }
     } else {
         context.startActivity(intent)
     }
