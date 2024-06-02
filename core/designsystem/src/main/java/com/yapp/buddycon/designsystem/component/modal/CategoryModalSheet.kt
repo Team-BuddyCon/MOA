@@ -38,6 +38,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -75,7 +76,7 @@ fun CategoryModalSheet(
     onSubmitOthers: (String) -> Unit = {},
     onDismiss: () -> Unit
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     var clickedOthers by remember { mutableStateOf(false) }
     var store by remember { mutableStateOf("") }
     BottomSheetDialog(onDismissRequest = onDismiss) {
@@ -121,6 +122,7 @@ fun CategoryModalSheet(
                 )
             }
             if (clickedOthers) {
+                val keyboardController = LocalSoftwareKeyboardController.current
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -148,12 +150,12 @@ fun CategoryModalSheet(
                             .fillMaxWidth()
                             .height(22.dp),
                         textStyle = BuddyConTheme.typography.body01,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 keyboardController?.hide()
                             }
                         ),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         maxLines = 1
                     ) { innerTextField ->
                         if (store.isEmpty()) {

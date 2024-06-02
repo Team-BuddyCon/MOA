@@ -52,6 +52,7 @@ import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
 import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectDate
 import com.yapp.buddycon.designsystem.component.input.EssentialInputSelectUsage
+import com.yapp.buddycon.designsystem.component.input.EssentialInputText
 import com.yapp.buddycon.designsystem.component.input.NoEssentialInputText
 import com.yapp.buddycon.designsystem.component.modal.CalendarModalSheet
 import com.yapp.buddycon.designsystem.component.modal.CategoryModalSheet
@@ -283,7 +284,7 @@ private fun GifticonRegisterContent(
                 )
             }
         }
-        NoEssentialInputText(
+        EssentialInputText(
             modifier = Modifier
                 .padding(top = 20.dp)
                 .fillMaxSize(),
