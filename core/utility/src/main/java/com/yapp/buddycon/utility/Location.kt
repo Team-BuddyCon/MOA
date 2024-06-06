@@ -3,6 +3,7 @@ package com.yapp.buddycon.utility
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -17,30 +18,39 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.domain.model.kakao.SearchPlaceModel
 import com.yapp.buddycon.domain.model.type.GifticonStore
 
+private var fusedLocationClient: FusedLocationProviderClient? = null
+
 // 내 위치 정보
 @SuppressLint("MissingPermission")
 fun getCurrentLocation(
     context: Context,
     onSuccess: (Location) -> Unit
 ) {
-    val locationRequest = LocationRequest.create()
-    locationRequest.interval = 60000
-    locationRequest.fastestInterval = 50000
-    locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    // Client disconnected before listeners could be cleaned up* (android.os.DeadObjectException 수정)
+    if (fusedLocationClient == null) {
+        val locationRequest = LocationRequest.create()
+        locationRequest.interval = 60000
+        locationRequest.fastestInterval = 50000
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-    val callback = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult) {
-            for (location in result.locations) {
-                if (location != null) {
-                    onSuccess(location)
+        val callback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                for (location in result.locations) {
+                    if (location != null) {
+                        onSuccess(location)
+                    }
                 }
             }
         }
-    }
 
-    // 마지막 위치 정보가 없는 경우 Location이 null로 반환되는 이슈로 명시적으로 위치를 Update 하도록 수정
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    fusedLocationClient.requestLocationUpdates(locationRequest, callback, context.mainLooper)
+        // 마지막 위치 정보가 없는 경우 Location이 null로 반환되는 이슈로 명시적으로 위치를 Update 하도록 수정
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        fusedLocationClient?.requestLocationUpdates(locationRequest, callback, context.mainLooper)
+    } else {
+        fusedLocationClient?.lastLocation?.addOnSuccessListener {
+            onSuccess(it)
+        }
+    }
 }
 
 // 지도 위 마커 추가 및 리턴

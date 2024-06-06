@@ -39,6 +39,7 @@ dependencies {
     implementation project(":core:designsystem")
     implementation project(":domain")
 
+    implementation libs.timber
     implementation libs.kakao.map
     implementation libs.play.services.maps
     implementation libs.play.services.location
