@@ -6,6 +6,7 @@ import com.yapp.buddycon.navigation.base.BuddyConDestination
 
 private const val MYPAGE = "마이페이지"
 private const val USED_GIFTICON = "used_gifticon"
+private const val DELETE_MEMBER = "delete_member"
 
 sealed class MyPageDestination : BuddyConDestination {
 
@@ -17,5 +18,9 @@ sealed class MyPageDestination : BuddyConDestination {
 
     object UsedGifticon : MyPageDestination() {
         override val route = USED_GIFTICON
+    }
+
+    object DeleteMember : MyPageDestination() {
+        override val route = DELETE_MEMBER
     }
 }

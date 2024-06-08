@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.mypage.MyPageScreen
+import com.yapp.buddycon.mypage.delete.MemberDeleteScreen
 import com.yapp.buddycon.mypage.usedgifticon.UsedGifticon
 
 private const val MYPAGE_GRAPH = "mypage_graph"
@@ -22,14 +23,21 @@ internal fun NavGraphBuilder.mypageGraph(
                 onNavigateToUsedGifticon = {
                     navHostController.navigate(MyPageDestination.UsedGifticon.route)
                 },
-                onNavigateToLogin = onNavigateToLogin
+                onNavigateToLogin = onNavigateToLogin,
+                onNavigateToDeleteMember = {
+                    navHostController.navigate(MyPageDestination.DeleteMember.route)
+                }
             )
         }
 
-        composable(
-            route = MyPageDestination.UsedGifticon.route
-        ) {
+        composable(route = MyPageDestination.UsedGifticon.route) {
             UsedGifticon(
+                onBack = { navHostController.popBackStack() }
+            )
+        }
+
+        composable(route = MyPageDestination.DeleteMember.route) {
+            MemberDeleteScreen(
                 onBack = { navHostController.popBackStack() }
             )
         }

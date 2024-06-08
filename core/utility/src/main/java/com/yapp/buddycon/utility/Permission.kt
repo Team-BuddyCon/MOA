@@ -3,6 +3,7 @@ package com.yapp.buddycon.utility
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -15,7 +16,14 @@ import timber.log.Timber
 fun checkReadExternalStorage(
     context: Context
 ): Boolean {
-    return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    return ContextCompat.checkSelfPermission(
+        context,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+    ) == PackageManager.PERMISSION_GRANTED
 }
 
 // 외부 저장소 읽기 권한 요청
@@ -25,6 +33,7 @@ fun RequestReadExternalStoragePermission(
     onDeny: () -> Unit = {}
 ) {
     val context = LocalContext.current
+
     val permissionsLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -32,14 +41,19 @@ fun RequestReadExternalStoragePermission(
             Timber.d("RequestReadExternalStoragePermission isGranted")
             onGranted()
         } else {
-            Timber.d("RequestReadExternalStoragePermission Denied")
+            Timber.e("RequestReadExternalStoragePermission Denied")
             onDeny()
         }
     }
-
     LaunchedEffect(Unit) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-            permissionsLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (!checkReadExternalStorage(context)) {
+            permissionsLauncher.launch(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Manifest.permission.READ_MEDIA_IMAGES
+                } else {
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                }
+            )
         }
     }
 }

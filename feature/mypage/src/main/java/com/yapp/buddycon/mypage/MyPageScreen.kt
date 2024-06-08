@@ -48,7 +48,8 @@ const val TAG = "BuddyConTest"
 fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onNavigateToUsedGifticon: () -> Unit = {},
-    onNavigateToLogin: (Boolean) -> Unit = {}
+    onNavigateToLogin: (Boolean) -> Unit = {},
+    onNavigateToDeleteMember: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -77,7 +78,8 @@ fun MyPageScreen(
 
             MyPageSettingBars(
                 myPageViewModel = myPageViewModel,
-                onNavigateToLogin = onNavigateToLogin
+                onNavigateToLogin = onNavigateToLogin,
+                onNavigateToDeleteMember = onNavigateToDeleteMember
             )
         }
     }
@@ -146,7 +148,8 @@ private fun UsedGifticonInfo(
 @Composable
 private fun MyPageSettingBars(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
-    onNavigateToLogin: (Boolean) -> Unit = {}
+    onNavigateToLogin: (Boolean) -> Unit = {},
+    onNavigateToDeleteMember: () -> Unit = {}
 ) {
     val logoutEvent by myPageViewModel.logoutEvent.collectAsStateWithLifecycle()
     val isTestMode by myPageViewModel.isTestMode.collectAsStateWithLifecycle()
@@ -209,13 +212,14 @@ private fun MyPageSettingBars(
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_logout),
         onSettingClick = {
-            Log.d(TAG, "[로그아웃] click")
             showLogoutPopup = true
         }
     )
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_withdrawal),
-        onSettingClick = { Log.d(TAG, "[탈퇴하기] click") }
+        onSettingClick = {
+            onNavigateToDeleteMember()
+        }
     )
 }
