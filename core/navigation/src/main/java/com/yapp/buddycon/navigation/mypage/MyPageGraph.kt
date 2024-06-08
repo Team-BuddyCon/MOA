@@ -10,7 +10,8 @@ import com.yapp.buddycon.mypage.usedgifticon.UsedGifticon
 private const val MYPAGE_GRAPH = "mypage_graph"
 
 internal fun NavGraphBuilder.mypageGraph(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    onNavigateToLogin: (Boolean) -> Unit = {}
 ) {
     navigation(
         startDestination = MyPageDestination.MyPage.route,
@@ -20,7 +21,8 @@ internal fun NavGraphBuilder.mypageGraph(
             MyPageScreen(
                 onNavigateToUsedGifticon = {
                     navHostController.navigate(MyPageDestination.UsedGifticon.route)
-                }
+                },
+                onNavigateToLogin = onNavigateToLogin
             )
         }
 

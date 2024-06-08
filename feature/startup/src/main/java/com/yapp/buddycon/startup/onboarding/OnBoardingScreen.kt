@@ -20,7 +20,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.button.BuddyConButton
@@ -51,8 +48,7 @@ private data class OnBoardingItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnBoardingScreen(
-    onBoardingViewModel: OnBoardingViewModel = hiltViewModel(),
-    onNavigateToLogin: (Boolean) -> Unit = {}
+    onNavigateToLogin: () -> Unit = {}
 ) {
     val items = listOf(
         OnBoardingItem(
@@ -71,8 +67,6 @@ fun OnBoardingScreen(
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(BuddyConTheme.colors.background)
 
-    val isTestMode by onBoardingViewModel.isTestMode.collectAsStateWithLifecycle()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,7 +78,6 @@ fun OnBoardingScreen(
         ) {
             OnBoardingPagerContent(
                 modifier = Modifier.fillMaxSize(),
-                isTestMode = isTestMode,
                 onBoardingItem = items[it],
                 pagerState = pagerState,
                 onNavigateToLogin = onNavigateToLogin
@@ -97,10 +90,9 @@ fun OnBoardingScreen(
 @Composable
 private fun OnBoardingPagerContent(
     modifier: Modifier = Modifier,
-    isTestMode: Boolean,
     onBoardingItem: OnBoardingItem,
     pagerState: PagerState,
-    onNavigateToLogin: (Boolean) -> Unit = {}
+    onNavigateToLogin: () -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
     Column(
@@ -171,7 +163,7 @@ private fun OnBoardingPagerContent(
                         .padding(horizontal = Paddings.xlarge)
                         .fillMaxWidth()
                 ) {
-                    onNavigateToLogin(isTestMode)
+                    onNavigateToLogin()
                 }
             }
         }

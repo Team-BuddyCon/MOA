@@ -19,6 +19,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,7 +29,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarForSetting
+import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
+import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.setting.MainSettingBar
 import com.yapp.buddycon.designsystem.component.utils.DividerHorizontal
 import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
@@ -40,8 +46,9 @@ const val TAG = "BuddyConTest"
 
 @Composable
 fun MyPageScreen(
-    onNavigateToUsedGifticon: () -> Unit,
-    myPageViewModel: MyPageViewModel = hiltViewModel()
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
+    onNavigateToUsedGifticon: () -> Unit = {},
+    onNavigateToLogin: (Boolean) -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -68,7 +75,10 @@ fun MyPageScreen(
 
             SpacerVertical(height = 8.dp)
 
-            MyPageSettingBars()
+            MyPageSettingBars(
+                myPageViewModel = myPageViewModel,
+                onNavigateToLogin = onNavigateToLogin
+            )
         }
     }
 }
@@ -85,7 +95,7 @@ private fun UserName(userName: String) {
 @Composable
 private fun UsedGifticonInfo(
     usedGifticon: Int,
-    onUsedGiftionClick: () -> Unit
+    onUsedGiftionClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -134,7 +144,37 @@ private fun UsedGifticonInfo(
 }
 
 @Composable
-private fun MyPageSettingBars() {
+private fun MyPageSettingBars(
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
+    onNavigateToLogin: (Boolean) -> Unit = {}
+) {
+    val logoutEvent by myPageViewModel.logoutEvent.collectAsStateWithLifecycle()
+    val isTestMode by myPageViewModel.isTestMode.collectAsStateWithLifecycle()
+    var showLogoutPopup by remember { mutableStateOf(false) }
+
+    if (showLogoutPopup) {
+        DefaultDialog(
+            dialogTitle = stringResource(R.string.setting_logout_popup_title),
+            dismissText = stringResource(R.string.setting_logout_popup_dismiss),
+            confirmText = stringResource(R.string.setting_bar_logout),
+            dialogContent = stringResource(R.string.setting_logout_popup_content),
+            onConfirm = {
+                showLogoutPopup = false
+                myPageViewModel.fetchLogout()
+            },
+            onDismissRequest = {
+                showLogoutPopup = false
+            }
+        )
+    }
+
+    if (logoutEvent) {
+        ConfirmDialog(
+            dialogTitle = stringResource(R.string.setting_logout_success),
+            onClick = { onNavigateToLogin(isTestMode) }
+        )
+    }
+
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_notification),
         subText = "ON",
@@ -168,7 +208,10 @@ private fun MyPageSettingBars() {
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_logout),
-        onSettingClick = { Log.d(TAG, "[로그아웃] click") }
+        onSettingClick = {
+            Log.d(TAG, "[로그아웃] click")
+            showLogoutPopup = true
+        }
     )
 
     MainSettingBar(

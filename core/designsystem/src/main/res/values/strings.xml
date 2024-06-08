@@ -50,6 +50,10 @@
     <string name="setting_bar_open_source_license">오픈소스 라이센스</string>
     <string name="setting_bar_logout">로그아웃</string>
     <string name="setting_bar_withdrawal">탈퇴하기</string>
+    <string name="setting_logout_popup_title">로그아웃 할까요?</string>
+    <string name="setting_logout_popup_content">로그아웃을 해도 등록한\n기프티콘은 사라지지 않아요</string>
+    <string name="setting_logout_popup_dismiss">다음에</string>
+    <string name="setting_logout_success">로그아웃되었어요</string>
 
     <!-- Login -->
     <string name="login_kakao_talk">카카오톡으로 로그인</string>

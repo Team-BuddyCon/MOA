@@ -7,6 +7,7 @@ import com.yapp.buddycon.domain.repository.TokenRepository
 import com.yapp.buddycon.local.PreferenceKeys.ACCESS_TOKEN
 import com.yapp.buddycon.local.PreferenceKeys.ACCESS_TOKEN_EXPIRES_IN
 import com.yapp.buddycon.local.PreferenceKeys.IS_FIRST_INSTALLATION
+import com.yapp.buddycon.local.PreferenceKeys.IS_TEST_MODE
 import com.yapp.buddycon.local.PreferenceKeys.NICKNAME
 import com.yapp.buddycon.local.PreferenceKeys.REFRESH_TOKEN
 import kotlinx.coroutines.flow.Flow
@@ -68,6 +69,17 @@ class TokenRepositoryImpl @Inject constructor(
     override suspend fun saveAccessTokenExpiresIn(expire: Long) {
         dataStore.edit { preference ->
             preference[ACCESS_TOKEN_EXPIRES_IN] = expire
+        }
+    }
+
+    override fun isTestMode(): Flow<Boolean> =
+        dataStore.data.map { preference ->
+            preference[IS_TEST_MODE] ?: false
+        }
+
+    override suspend fun saveTestMode(isTestMode: Boolean) {
+        dataStore.edit { preference ->
+            preference[IS_TEST_MODE] = isTestMode
         }
     }
 }
