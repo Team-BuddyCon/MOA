@@ -66,6 +66,7 @@
     <string name="setting_delete_member_popup_content">탈퇴하면 등록한 기프티콘이 모두 사라져요</string>
     <string name="setting_delete_member_popup_confirm">탈퇴</string>
     <string name="setting_delete_member_popup_dismiss">다음에</string>
+    <string name="setting_terms_title">모아 약관 및 정책</string>
 
 
     <!-- Login -->

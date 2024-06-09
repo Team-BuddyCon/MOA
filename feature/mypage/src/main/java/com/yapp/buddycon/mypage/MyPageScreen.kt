@@ -49,7 +49,8 @@ fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onNavigateToUsedGifticon: () -> Unit = {},
     onNavigateToLogin: (Boolean) -> Unit = {},
-    onNavigateToDeleteMember: () -> Unit = {}
+    onNavigateToDeleteMember: () -> Unit = {},
+    onNavigateToTerms: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -79,7 +80,8 @@ fun MyPageScreen(
             MyPageSettingBars(
                 myPageViewModel = myPageViewModel,
                 onNavigateToLogin = onNavigateToLogin,
-                onNavigateToDeleteMember = onNavigateToDeleteMember
+                onNavigateToDeleteMember = onNavigateToDeleteMember,
+                onNavigateToTerms = onNavigateToTerms
             )
         }
     }
@@ -149,7 +151,8 @@ private fun UsedGifticonInfo(
 private fun MyPageSettingBars(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onNavigateToLogin: (Boolean) -> Unit = {},
-    onNavigateToDeleteMember: () -> Unit = {}
+    onNavigateToDeleteMember: () -> Unit = {},
+    onNavigateToTerms: () -> Unit = {}
 ) {
     val logoutEvent by myPageViewModel.logoutEvent.collectAsStateWithLifecycle()
     val isTestMode by myPageViewModel.isTestMode.collectAsStateWithLifecycle()
@@ -199,7 +202,9 @@ private fun MyPageSettingBars(
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_policy),
-        onSettingClick = { Log.d(TAG, "[약관 및 정책] click") }
+        onSettingClick = {
+            onNavigateToTerms()
+        }
     )
 
     MainSettingBar(
