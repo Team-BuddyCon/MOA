@@ -6,7 +6,9 @@ import com.yapp.buddycon.domain.repository.AuthRepository
 import com.yapp.buddycon.domain.repository.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -21,6 +23,19 @@ class LoginViewModel @Inject constructor(
 
     private val _effect = MutableSharedFlow<LoginSideEffect>()
     val effect = _effect.asSharedFlow()
+
+    private val _isTestMode = MutableStateFlow(false)
+    val isTestMode = _isTestMode.asStateFlow()
+
+    init {
+        getTestModeValue()
+    }
+
+    private fun getTestModeValue() {
+        tokenRepository.isTestMode()
+            .onEach { _isTestMode.value = it }
+            .launchIn(viewModelScope)
+    }
 
     fun saveNickname(nickname: String) {
         viewModelScope.launch {
@@ -51,7 +66,7 @@ class LoginViewModel @Inject constructor(
 
     fun fetchTestLogin() {
         val accessToken =
-            "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwiaWF0IjoxNzE2NzA3ODM1LCJleHAiOjE3MjI3NTU4MzV9.Afm0jsuHLVwg0YbiR1unky1xZkrd0B-yDJhAtAwixgZM5j1dv4kMHhjw279P1yOOFndkfJ_SVD30uQ9kZR69wA" // ktlint-disable max-line-length
+            "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwiaWF0IjoxNzE3ODQ1MDAzLCJleHAiOjE3MjM4OTMwMDN9.wNxFHkYU7vyFIh5ErZem18_WUSDV8hdlINzcqOZdrzrplQpAaMj8ZDax6OpWzqmrftPTCV4z2sjT7Rz6SEFdRw" // ktlint-disable max-line-length
         val accessTokenExpiresIn = Calendar.getInstance().apply {
             add(Calendar.YEAR, 100)
         }.timeInMillis

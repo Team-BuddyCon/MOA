@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -49,7 +50,6 @@ private val BuddyConLogoDescription = "BuddyConLogo"
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
-    isTestMode: Boolean,
     onNavigateToSignUp: () -> Unit = {},
     onNavigateToGifticon: () -> Unit = {}
 ) {
@@ -57,6 +57,7 @@ fun LoginScreen(
     val coroutineScope = rememberCoroutineScope()
     var isShowKakaoLoginError by remember { mutableStateOf(false) }
     var isShowMoaLoginError by remember { mutableStateOf(false) }
+    val isTestMode by loginViewModel.isTestMode.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         loginViewModel.effect.collect { effect ->

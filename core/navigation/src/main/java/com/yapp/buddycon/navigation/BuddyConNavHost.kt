@@ -20,7 +20,6 @@ import com.yapp.buddycon.startup.onboarding.OnBoardingScreen
 import com.yapp.buddycon.startup.signup.SignUpScreen
 import com.yapp.buddycon.startup.splash.SplashScreen
 import com.yapp.buddycon.startup.welcome.WelcomeScreen
-import timber.log.Timber
 
 private const val ROOT_GRAPH = "root_graph"
 
@@ -50,7 +49,7 @@ fun BuddyConNavHost(
                         }
                     },
                     onNavigateToLogin = {
-                        navHostController.navigate("${StartUpDestination.Login.route}/$it") {
+                        navHostController.navigate(StartUpDestination.Login.route) {
                             popUpTo(StartUpDestination.Splash.route) {
                                 inclusive = true
                             }
@@ -58,7 +57,7 @@ fun BuddyConNavHost(
                     },
                     onNavigateToGifticon = {
                         navHostController.navigate(GifticonDestination.Gifticon.route) {
-                            popUpTo(StartUpDestination.Welcome.route) {
+                            popUpTo(StartUpDestination.Splash.route) {
                                 inclusive = true
                             }
                         }
@@ -68,22 +67,16 @@ fun BuddyConNavHost(
 
             composable(route = StartUpDestination.OnBoarding.route) {
                 OnBoardingScreen {
-                    navHostController.navigate("${StartUpDestination.Login.route}/$it") {
-                        popUpTo("${StartUpDestination.OnBoarding.route}/$it") {
+                    navHostController.navigate(StartUpDestination.Login.route) {
+                        popUpTo(StartUpDestination.OnBoarding.route) {
                             inclusive = true
                         }
                     }
                 }
             }
 
-            composable(
-                route = StartUpDestination.Login.routeWithArg,
-                arguments = StartUpDestination.Login.arguments
-            ) { entry ->
-                val isTestMode = entry.arguments?.getBoolean(StartUpDestination.Login.isTestModeArg) ?: false
-                Timber.d("BuddyConNavHost Login isTestMode: $isTestMode")
+            composable(route = StartUpDestination.Login.route) { entry ->
                 LoginScreen(
-                    isTestMode = isTestMode,
                     onNavigateToSignUp = {
                         navHostController.navigate(StartUpDestination.SignUp.route)
                     },
@@ -124,7 +117,13 @@ fun BuddyConNavHost(
 
             gifticonGraph(navHostController, amplitude)
             mapGraph(navHostController)
-            mypageGraph(navHostController)
+            mypageGraph(navHostController) {
+                navHostController.navigate(StartUpDestination.Login.route) {
+                    popUpTo(GifticonDestination.Gifticon.route) {
+                        inclusive = true
+                    }
+                }
+            }
         }
     }
 }

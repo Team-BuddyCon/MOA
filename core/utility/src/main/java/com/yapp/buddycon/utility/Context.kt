@@ -3,6 +3,8 @@ package com.yapp.buddycon.utility
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.pm.PackageManager
+import android.os.Build
 
 fun Context.findActivity(): Activity {
     var context = this
@@ -11,4 +13,12 @@ fun Context.findActivity(): Activity {
         context = context.baseContext
     }
     throw IllegalStateException("no activity")
+}
+
+fun Context.getVersionName(): String {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        return packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0)).versionName
+    } else {
+        return packageManager.getPackageInfo(packageName, 0).versionName
+    }
 }

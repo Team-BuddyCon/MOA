@@ -21,4 +21,8 @@ interface TokenRepository {
     fun getAccessTokenExpiresIn(): Flow<Long>
 
     suspend fun saveAccessTokenExpiresIn(expire: Long)
+
+    fun isTestMode(): Flow<Boolean>
+
+    suspend fun saveTestMode(isTestMode: Boolean)
 }

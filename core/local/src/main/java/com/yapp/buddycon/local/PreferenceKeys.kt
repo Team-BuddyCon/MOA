@@ -10,4 +10,5 @@ object PreferenceKeys {
     val ACCESS_TOKEN = stringPreferencesKey("ACCESS_TOKEN")
     val REFRESH_TOKEN = stringPreferencesKey("REFRESH_TOKEN")
     val ACCESS_TOKEN_EXPIRES_IN = longPreferencesKey("ACCESS_TOKEN_EXPIRES_IN")
+    val IS_TEST_MODE = booleanPreferencesKey("IS_TEST_MODE")
 }

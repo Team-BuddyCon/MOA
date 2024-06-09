@@ -1,7 +1,5 @@
 package com.yapp.buddycon.navigation.startup
 
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import com.yapp.buddycon.navigation.base.BuddyConDestination
 
 private const val SPLASH = "splash"
@@ -21,13 +19,6 @@ sealed class StartUpDestination : BuddyConDestination {
 
     object Login : StartUpDestination() {
         override val route = LOGIN
-        const val isTestModeArg = "isTestMode"
-        val routeWithArg = "${Login.route}/{$isTestModeArg}"
-        val arguments = listOf(
-            navArgument(isTestModeArg) {
-                type = NavType.BoolType
-            }
-        )
     }
 
     object SignUp : StartUpDestination() {

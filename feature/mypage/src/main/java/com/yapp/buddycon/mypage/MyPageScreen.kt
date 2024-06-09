@@ -1,5 +1,6 @@
 package com.yapp.buddycon.mypage
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,15 +19,24 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarForSetting
+import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
+import com.yapp.buddycon.designsystem.component.dialog.DefaultDialog
 import com.yapp.buddycon.designsystem.component.setting.MainSettingBar
 import com.yapp.buddycon.designsystem.component.utils.DividerHorizontal
 import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
@@ -35,18 +45,27 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey90
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.White
+import com.yapp.buddycon.utility.getVersionName
 
 const val TAG = "BuddyConTest"
 
 @Composable
 fun MyPageScreen(
-    onNavigateToUsedGifticon: () -> Unit,
-    myPageViewModel: MyPageViewModel = hiltViewModel()
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
+    onNavigateToUsedGifticon: () -> Unit = {},
+    onNavigateToLogin: (Boolean) -> Unit = {},
+    onNavigateToDeleteMember: () -> Unit = {},
+    onNavigateToTerms: () -> Unit = {},
+    onNavigateToVersion: () -> Unit = {},
+    onNavigateToNotification: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
-
     val userName by myPageViewModel.userName.collectAsStateWithLifecycle()
     val usedGifticonCount by myPageViewModel.usedGifticonCount.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        myPageViewModel.getNotificationSettings()
+    }
 
     Scaffold(
         topBar = { TopAppBarForSetting(action = {}) }
@@ -68,7 +87,14 @@ fun MyPageScreen(
 
             SpacerVertical(height = 8.dp)
 
-            MyPageSettingBars()
+            MyPageSettingBars(
+                myPageViewModel = myPageViewModel,
+                onNavigateToLogin = onNavigateToLogin,
+                onNavigateToDeleteMember = onNavigateToDeleteMember,
+                onNavigateToTerms = onNavigateToTerms,
+                onNavigateToVersion = onNavigateToVersion,
+                onNavigateToNotification = onNavigateToNotification
+            )
         }
     }
 }
@@ -85,7 +111,7 @@ private fun UserName(userName: String) {
 @Composable
 private fun UsedGifticonInfo(
     usedGifticon: Int,
-    onUsedGiftionClick: () -> Unit
+    onUsedGiftionClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -134,11 +160,49 @@ private fun UsedGifticonInfo(
 }
 
 @Composable
-private fun MyPageSettingBars() {
+private fun MyPageSettingBars(
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
+    onNavigateToLogin: (Boolean) -> Unit = {},
+    onNavigateToDeleteMember: () -> Unit = {},
+    onNavigateToTerms: () -> Unit = {},
+    onNavigateToVersion: () -> Unit = {},
+    onNavigateToNotification: () -> Unit = {}
+) {
+    val logoutEvent by myPageViewModel.logoutEvent.collectAsStateWithLifecycle()
+    val isTestMode by myPageViewModel.isTestMode.collectAsStateWithLifecycle()
+    val isActiveNotification by myPageViewModel.isActiveNotification.collectAsStateWithLifecycle()
+    var showLogoutPopup by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    if (showLogoutPopup) {
+        DefaultDialog(
+            dialogTitle = stringResource(R.string.setting_logout_popup_title),
+            dismissText = stringResource(R.string.setting_logout_popup_dismiss),
+            confirmText = stringResource(R.string.setting_bar_logout),
+            dialogContent = stringResource(R.string.setting_logout_popup_content),
+            onConfirm = {
+                showLogoutPopup = false
+                myPageViewModel.fetchLogout()
+            },
+            onDismissRequest = {
+                showLogoutPopup = false
+            }
+        )
+    }
+
+    if (logoutEvent) {
+        ConfirmDialog(
+            dialogTitle = stringResource(R.string.setting_logout_success),
+            onClick = { onNavigateToLogin(isTestMode) }
+        )
+    }
+
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_notification),
-        subText = "ON",
-        onSettingClick = { Log.d(TAG, "[알림] click") }
+        subText = if (isActiveNotification) "ON" else "OFF",
+        onSettingClick = {
+            onNavigateToNotification()
+        }
     )
 
     DividerHorizontal(modifier = Modifier.padding(horizontal = 16.dp))
@@ -150,29 +214,41 @@ private fun MyPageSettingBars() {
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_version_info),
-        subText = "1.1", // todo - version 정보
-        onSettingClick = { Log.d(TAG, "[버전 정보] click") }
+        subText = context.getVersionName(),
+        onSettingClick = {
+            onNavigateToVersion()
+        }
     )
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_policy),
-        onSettingClick = { Log.d(TAG, "[약관 및 정책] click") }
+        onSettingClick = {
+            onNavigateToTerms()
+        }
     )
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_open_source_license),
-        onSettingClick = { Log.d(TAG, "[오픈소스 라이센스] click") }
+        onSettingClick = {
+            context.startActivity(
+                Intent(context, OssLicensesMenuActivity::class.java)
+            )
+        }
     )
 
     DividerHorizontal(modifier = Modifier.padding(horizontal = 16.dp))
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_logout),
-        onSettingClick = { Log.d(TAG, "[로그아웃] click") }
+        onSettingClick = {
+            showLogoutPopup = true
+        }
     )
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_withdrawal),
-        onSettingClick = { Log.d(TAG, "[탈퇴하기] click") }
+        onSettingClick = {
+            onNavigateToDeleteMember()
+        }
     )
 }

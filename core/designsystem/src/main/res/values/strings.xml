@@ -31,6 +31,7 @@
     <string name="write_complete">작성완료</string>
     <string name="location_permission_guide_message">위치 정보 이용에 동의해야 사용할 수 있어요.</string>
     <string name="location_permission_move_setting">설정으로 이동</string>
+    <string name="next">다음</string>
 
     <string name="startup_onboarding_gifticon_title">기프티콘을 한곳에서 관리해요</string>
     <string name="startup_onboarding_gifticon_description">흩어져 있는 기프티콘을 한곳에서 확인하고\n만료 전 알림으로 유효기간을 관리해요</string>
@@ -50,6 +51,31 @@
     <string name="setting_bar_open_source_license">오픈소스 라이센스</string>
     <string name="setting_bar_logout">로그아웃</string>
     <string name="setting_bar_withdrawal">탈퇴하기</string>
+    <string name="setting_logout_popup_title">로그아웃 할까요?</string>
+    <string name="setting_logout_popup_content">로그아웃을 해도 등록한\n기프티콘은 사라지지 않아요</string>
+    <string name="setting_logout_popup_dismiss">다음에</string>
+    <string name="setting_logout_success">로그아웃되었어요</string>
+    <string name="setting_delete_member">탈퇴하기</string>
+    <string name="setting_delete_member_reason">탈퇴하는 이유가 무엇인가요?</string>
+    <string name="setting_delete_member_reason_etc">모아에게 의견을 알려주세요</string>
+    <string name="setting_delete_member_reason_placeholder">내용을 입력해 주세요</string>
+    <string name="setting_delete_member_third_title_format">%s님,\n탈퇴하기 전에 확인해주세요</string>
+    <string name="setting_delete_member_first_guide_format">모아에서 관리했던 %s님의 기프티콘을 다시 볼 수 없어요.</string>
+    <string name="setting_delete_member_second_guide">다시 가입하더라도 이전의 기프티콘 정보를 불러올 수 없어요.</string>
+    <string name="setting_delete_member_popup_title">정말 모아를 떠나시겠어요?</string>
+    <string name="setting_delete_member_popup_content">탈퇴하면 등록한 기프티콘이 모두 사라져요</string>
+    <string name="setting_delete_member_popup_confirm">탈퇴</string>
+    <string name="setting_delete_member_popup_dismiss">다음에</string>
+    <string name="setting_terms_title">모아 약관 및 정책</string>
+    <string name="setting_version_information_title">모아 버전정보</string>
+    <string name="setting_version_information_format">v%s(%s)</string>
+    <string name="setting_notification_title">알림 설정</string>
+    <string name="setting_notification_guide">유효기간 만료 알림 (다중선택 가능)</string>
+    <string name="setting_notification_fourteenDaysBefore">14일 전</string>
+    <string name="setting_notification_sevenDaysBefore">7일 전</string>
+    <string name="setting_notification_threeDaysBefore">3일 전</string>
+    <string name="setting_notification_oneDayBefore">1일 전</string>
+    <string name="setting_notification_theDay">당일</string>
 
     <!-- Login -->
     <string name="login_kakao_talk">카카오톡으로 로그인</string>
