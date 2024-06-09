@@ -1,5 +1,6 @@
 package com.yapp.buddycon.mypage
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarForSetting
 import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
@@ -227,7 +229,11 @@ private fun MyPageSettingBars(
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_open_source_license),
-        onSettingClick = { Log.d(TAG, "[오픈소스 라이센스] click") }
+        onSettingClick = {
+            context.startActivity(
+                Intent(context, OssLicensesMenuActivity::class.java)
+            )
+        }
     )
 
     DividerHorizontal(modifier = Modifier.padding(horizontal = 16.dp))

@@ -50,6 +50,7 @@ dependencies {
     implementation project(":core:utility")
     implementation project(":domain")
 
+    implementation libs.oss.license
     implementation libs.timber
     implementation libs.androidx.core.ktx
     implementation libs.androidx.activity.compose

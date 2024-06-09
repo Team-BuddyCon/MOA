@@ -3,6 +3,7 @@ plugins {
     alias libs.plugins.kotlin.android
     alias libs.plugins.hilt.android
     alias libs.plugins.kotlin.kapt
+    id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 def Properties properties = new Properties()
