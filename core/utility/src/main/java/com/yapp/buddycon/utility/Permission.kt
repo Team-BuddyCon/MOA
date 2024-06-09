@@ -9,6 +9,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import timber.log.Timber
+
+// 외부 저장소 읽기 권한 확인
+fun checkReadExternalStorage(
+    context: Context
+): Boolean {
+    return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+}
+
+// 외부 저장소 읽기 권한 요청
+@Composable
+fun RequestReadExternalStoragePermission(
+    onGranted: () -> Unit = {},
+    onDeny: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Timber.d("RequestReadExternalStoragePermission isGranted")
+            onGranted()
+        } else {
+            Timber.d("RequestReadExternalStoragePermission Denied")
+            onDeny()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            permissionsLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+    }
+}
 
 // 현재 위치 권한 확인
 fun checkLocationPermission(
@@ -38,8 +72,10 @@ fun RequestLocationPermission(
     ) { permissions ->
         val isGranted = permissions.values.all { it }
         if (isGranted) {
+            Timber.d("RequestLocationPermission isGranted")
             onGranted()
         } else {
+            Timber.d("RequestLocationPermission Denied")
             onDeny()
         }
     }
