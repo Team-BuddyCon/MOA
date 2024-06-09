@@ -15,6 +15,10 @@ android {
     defaultConfig {
         minSdk 26
 
+        def date = new Date()
+        def formattedDate = date.format('yyyy.MM.dd')
+        buildConfigField("String", "VERSION_DATE", "\"${formattedDate}\"")
+
         resValue("string", "KAKAO_REDIRECT_SCHEME", "kakao${properties.getProperty("KAKAO_APP_KEY")}")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

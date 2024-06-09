@@ -67,6 +67,8 @@
     <string name="setting_delete_member_popup_confirm">탈퇴</string>
     <string name="setting_delete_member_popup_dismiss">다음에</string>
     <string name="setting_terms_title">모아 약관 및 정책</string>
+    <string name="setting_version_information_title">모아 버전정보</string>
+    <string name="setting_version_information_format">v%s(%s)</string>
 
 
     <!-- Login -->

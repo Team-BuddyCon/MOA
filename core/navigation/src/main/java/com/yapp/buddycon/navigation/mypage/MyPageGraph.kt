@@ -8,6 +8,7 @@ import com.yapp.buddycon.mypage.MyPageScreen
 import com.yapp.buddycon.mypage.delete.MemberDeleteScreen
 import com.yapp.buddycon.mypage.terms.MyPageTermsScreen
 import com.yapp.buddycon.mypage.usedgifticon.UsedGifticon
+import com.yapp.buddycon.mypage.version.MyPageVersionScreen
 
 private const val MYPAGE_GRAPH = "mypage_graph"
 
@@ -30,6 +31,9 @@ internal fun NavGraphBuilder.mypageGraph(
                 },
                 onNavigateToTerms = {
                     navHostController.navigate(MyPageDestination.Terms.route)
+                },
+                onNavigateToVersion = {
+                    navHostController.navigate(MyPageDestination.Version.route)
                 }
             )
         }
@@ -48,6 +52,12 @@ internal fun NavGraphBuilder.mypageGraph(
 
         composable(route = MyPageDestination.Terms.route) {
             MyPageTermsScreen {
+                navHostController.popBackStack()
+            }
+        }
+
+        composable(route = MyPageDestination.Version.route) {
+            MyPageVersionScreen {
                 navHostController.popBackStack()
             }
         }

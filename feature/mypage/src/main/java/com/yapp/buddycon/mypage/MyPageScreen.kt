@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey90
 import com.yapp.buddycon.designsystem.theme.Paddings
 import com.yapp.buddycon.designsystem.theme.White
+import com.yapp.buddycon.utility.getVersionName
 
 const val TAG = "BuddyConTest"
 
@@ -50,7 +52,8 @@ fun MyPageScreen(
     onNavigateToUsedGifticon: () -> Unit = {},
     onNavigateToLogin: (Boolean) -> Unit = {},
     onNavigateToDeleteMember: () -> Unit = {},
-    onNavigateToTerms: () -> Unit = {}
+    onNavigateToTerms: () -> Unit = {},
+    onNavigateToVersion: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -81,7 +84,8 @@ fun MyPageScreen(
                 myPageViewModel = myPageViewModel,
                 onNavigateToLogin = onNavigateToLogin,
                 onNavigateToDeleteMember = onNavigateToDeleteMember,
-                onNavigateToTerms = onNavigateToTerms
+                onNavigateToTerms = onNavigateToTerms,
+                onNavigateToVersion = onNavigateToVersion
             )
         }
     }
@@ -152,11 +156,13 @@ private fun MyPageSettingBars(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onNavigateToLogin: (Boolean) -> Unit = {},
     onNavigateToDeleteMember: () -> Unit = {},
-    onNavigateToTerms: () -> Unit = {}
+    onNavigateToTerms: () -> Unit = {},
+    onNavigateToVersion: () -> Unit = {}
 ) {
     val logoutEvent by myPageViewModel.logoutEvent.collectAsStateWithLifecycle()
     val isTestMode by myPageViewModel.isTestMode.collectAsStateWithLifecycle()
     var showLogoutPopup by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     if (showLogoutPopup) {
         DefaultDialog(
@@ -196,8 +202,10 @@ private fun MyPageSettingBars(
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_version_info),
-        subText = "1.1", // todo - version 정보
-        onSettingClick = { Log.d(TAG, "[버전 정보] click") }
+        subText = context.getVersionName(),
+        onSettingClick = {
+            onNavigateToVersion()
+        }
     )
 
     MainSettingBar(
