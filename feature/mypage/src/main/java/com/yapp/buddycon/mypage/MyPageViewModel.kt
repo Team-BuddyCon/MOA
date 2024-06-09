@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.buddycon.domain.repository.GifticonRepository
 import com.yapp.buddycon.domain.repository.MemberRepository
+import com.yapp.buddycon.domain.repository.NotificationRepository
 import com.yapp.buddycon.domain.repository.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val memberRepository: MemberRepository,
     private val tokenRepository: TokenRepository,
-    private val gifticonRepository: GifticonRepository
+    private val gifticonRepository: GifticonRepository,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
     private var _userName = MutableStateFlow("")
     val userName = _userName.asStateFlow()
@@ -31,10 +33,19 @@ class MyPageViewModel @Inject constructor(
     private val _isTestMode = MutableStateFlow(false)
     val isTestMode = _isTestMode.asStateFlow()
 
+    private val _isActiveNotification = MutableStateFlow(false)
+    val isActiveNotification = _isActiveNotification.asStateFlow()
+
     init {
         loadUserName()
         getUsedGifticonCount()
         getTestModel()
+    }
+
+    fun getNotificationSettings() {
+        notificationRepository.getNotificationSettings()
+            .onEach { _isActiveNotification.value = it.activated }
+            .launchIn(viewModelScope)
     }
 
     private fun loadUserName() {

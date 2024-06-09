@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,12 +54,16 @@ fun MyPageScreen(
     onNavigateToLogin: (Boolean) -> Unit = {},
     onNavigateToDeleteMember: () -> Unit = {},
     onNavigateToTerms: () -> Unit = {},
-    onNavigateToVersion: () -> Unit = {}
+    onNavigateToVersion: () -> Unit = {},
+    onNavigateToNotification: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
-
     val userName by myPageViewModel.userName.collectAsStateWithLifecycle()
     val usedGifticonCount by myPageViewModel.usedGifticonCount.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        myPageViewModel.getNotificationSettings()
+    }
 
     Scaffold(
         topBar = { TopAppBarForSetting(action = {}) }
@@ -85,7 +90,8 @@ fun MyPageScreen(
                 onNavigateToLogin = onNavigateToLogin,
                 onNavigateToDeleteMember = onNavigateToDeleteMember,
                 onNavigateToTerms = onNavigateToTerms,
-                onNavigateToVersion = onNavigateToVersion
+                onNavigateToVersion = onNavigateToVersion,
+                onNavigateToNotification = onNavigateToNotification
             )
         }
     }
@@ -157,10 +163,12 @@ private fun MyPageSettingBars(
     onNavigateToLogin: (Boolean) -> Unit = {},
     onNavigateToDeleteMember: () -> Unit = {},
     onNavigateToTerms: () -> Unit = {},
-    onNavigateToVersion: () -> Unit = {}
+    onNavigateToVersion: () -> Unit = {},
+    onNavigateToNotification: () -> Unit = {}
 ) {
     val logoutEvent by myPageViewModel.logoutEvent.collectAsStateWithLifecycle()
     val isTestMode by myPageViewModel.isTestMode.collectAsStateWithLifecycle()
+    val isActiveNotification by myPageViewModel.isActiveNotification.collectAsStateWithLifecycle()
     var showLogoutPopup by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -189,8 +197,10 @@ private fun MyPageSettingBars(
 
     MainSettingBar(
         mainTitle = stringResource(com.yapp.buddycon.designsystem.R.string.setting_bar_notification),
-        subText = "ON",
-        onSettingClick = { Log.d(TAG, "[알림] click") }
+        subText = if (isActiveNotification) "ON" else "OFF",
+        onSettingClick = {
+            onNavigateToNotification()
+        }
     )
 
     DividerHorizontal(modifier = Modifier.padding(horizontal = 16.dp))

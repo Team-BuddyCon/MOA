@@ -7,6 +7,7 @@ import com.yapp.buddycon.network.service.auth.AuthService
 import com.yapp.buddycon.network.service.gifticon.GiftiConService
 import com.yapp.buddycon.network.service.kakao.KakaoService
 import com.yapp.buddycon.network.service.member.MemberService
+import com.yapp.buddycon.network.service.notification.NotificationService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,5 +47,12 @@ object ServiceModule {
     fun provideMemberService(
         @BuddyConRetrofit retrofit: Retrofit
     ): MemberService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideNotificationService(
+        @BuddyConRetrofit retrofit: Retrofit
+    ): NotificationService =
         retrofit.create()
 }

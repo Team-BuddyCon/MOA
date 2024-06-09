@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.yapp.buddycon.mypage.MyPageScreen
 import com.yapp.buddycon.mypage.delete.MemberDeleteScreen
+import com.yapp.buddycon.mypage.notification.MyPageNotificationScreen
 import com.yapp.buddycon.mypage.terms.MyPageTermsScreen
 import com.yapp.buddycon.mypage.usedgifticon.UsedGifticon
 import com.yapp.buddycon.mypage.version.MyPageVersionScreen
@@ -34,6 +35,9 @@ internal fun NavGraphBuilder.mypageGraph(
                 },
                 onNavigateToVersion = {
                     navHostController.navigate(MyPageDestination.Version.route)
+                },
+                onNavigateToNotification = {
+                    navHostController.navigate(MyPageDestination.Notification.route)
                 }
             )
         }
@@ -58,6 +62,12 @@ internal fun NavGraphBuilder.mypageGraph(
 
         composable(route = MyPageDestination.Version.route) {
             MyPageVersionScreen {
+                navHostController.popBackStack()
+            }
+        }
+
+        composable(route = MyPageDestination.Notification.route) {
+            MyPageNotificationScreen {
                 navHostController.popBackStack()
             }
         }

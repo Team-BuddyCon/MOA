@@ -69,7 +69,13 @@
     <string name="setting_terms_title">모아 약관 및 정책</string>
     <string name="setting_version_information_title">모아 버전정보</string>
     <string name="setting_version_information_format">v%s(%s)</string>
-
+    <string name="setting_notification_title">알림 설정</string>
+    <string name="setting_notification_guide">유효기간 만료 알림 (다중선택 가능)</string>
+    <string name="setting_notification_fourteenDaysBefore">14일 전</string>
+    <string name="setting_notification_sevenDaysBefore">7일 전</string>
+    <string name="setting_notification_threeDaysBefore">3일 전</string>
+    <string name="setting_notification_oneDayBefore">1일 전</string>
+    <string name="setting_notification_theDay">당일</string>
 
     <!-- Login -->
     <string name="login_kakao_talk">카카오톡으로 로그인</string>

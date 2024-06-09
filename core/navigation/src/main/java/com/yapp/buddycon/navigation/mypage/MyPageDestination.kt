@@ -9,6 +9,7 @@ private const val USED_GIFTICON = "used_gifticon"
 private const val DELETE_MEMBER = "delete_member"
 private const val TERMS = "terms"
 private const val VERSION = "version"
+private const val NOTIFICATION = "notification"
 
 sealed class MyPageDestination : BuddyConDestination {
 
@@ -32,5 +33,9 @@ sealed class MyPageDestination : BuddyConDestination {
 
     object Version : MyPageDestination() {
         override val route = VERSION
+    }
+
+    object Notification : MyPageDestination() {
+        override val route = NOTIFICATION
     }
 }
