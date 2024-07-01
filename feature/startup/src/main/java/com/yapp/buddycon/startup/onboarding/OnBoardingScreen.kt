@@ -138,9 +138,7 @@ private fun OnBoardingPagerContent(
                     Text(
                         text = stringResource(R.string.startup_onboarding_pager_skip),
                         modifier = Modifier.clickable {
-                            coroutineScope.launch {
-                                pagerState.scrollToPage(pagerState.pageCount - 1)
-                            }
+                            onNavigateToLogin()
                         },
                         style = BuddyConTheme.typography.subTitle.copy(color = Grey60)
                     )
