@@ -88,7 +88,7 @@
     <string name="complete">완료!</string>
     <string name="welcome_greeting_format">MOA의 소중한 회원이 되신 %s님,\n만나서 반가워요!</string>
     <string name="start">시작하기</string>
-    <string name="login_banner_description">선물 모아, 마음모아\n모으면 더 배가 되는 선물 받는 기쁨</string>
+    <string name="login_banner_description">소중한 마음 놓치지 말고 모아</string>
     <string name="login_test_mode">테스트용 계정으로 로그인</string>
 
     <string name="gifticon">기프티콘</string>
