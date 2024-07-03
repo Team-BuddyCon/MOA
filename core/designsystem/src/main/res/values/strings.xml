@@ -77,6 +77,9 @@
     <string name="setting_notification_oneDayBefore">1일 전</string>
     <string name="setting_notification_theDay">당일</string>
 
+    <!-- design system -->
+    <string name="gifticon_main_tooltip">기프티콘을 등록해 간편하게 관리하세요!</string>
+
     <!-- Login -->
     <string name="login_kakao_talk">카카오톡으로 로그인</string>
     <string name="signup">회원가입</string>

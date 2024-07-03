@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,9 +19,6 @@ import com.yapp.buddycon.designsystem.component.button.FloatingActionButton
 import com.yapp.buddycon.designsystem.component.dialog.ConfirmDialog
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.gifticon.available.AvailabeGifticonScreen
-import com.yapp.buddycon.utility.RequestReadExternalStoragePermission
-import com.yapp.buddycon.utility.checkReadExternalStorage
-import com.yapp.buddycon.utility.findActivity
 
 @Composable
 fun GifticonScreeen(
@@ -45,16 +40,10 @@ fun GifticonScreeen(
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(BuddyConTheme.colors.background)
 
-    val context = LocalContext.current
-    val isGrantedPermission by remember {
-        mutableStateOf(checkReadExternalStorage(context))
-    }
+    val showCoachMark by gifticonViewModel.showCoachMark.collectAsStateWithLifecycle()
 
-    // TODO 권한 없을 시 팝업 노출
-    if (!isGrantedPermission) {
-        RequestReadExternalStoragePermission {
-            context.findActivity().finish()
-        }
+    LaunchedEffect(Unit) {
+        gifticonViewModel.confirmCoachMark()
     }
 
     Scaffold(
@@ -66,6 +55,10 @@ fun GifticonScreeen(
                 .padding(paddingValues)
                 .fillMaxSize()
                 .background(BuddyConTheme.colors.background),
+            showCoachMark = showCoachMark,
+            onCloseCoachMark = {
+                gifticonViewModel.stopCoachMark()
+            },
             onNavigateToGifticonDetail = { gifticonId ->
                 onNavigateToGifticonDetail(gifticonId)
             },
@@ -77,11 +70,15 @@ fun GifticonScreeen(
 @Composable
 fun GifticonContent(
     modifier: Modifier = Modifier,
+    showCoachMark: Boolean = false,
+    onCloseCoachMark: () -> Unit = {},
     onNavigateToGifticonDetail: (Int) -> Unit,
     afterGifticonRegistrationCompletes: Boolean?
 ) {
     Column(modifier) {
         AvailabeGifticonScreen(
+            showCoachMark = showCoachMark,
+            onCloseCoachMark = onCloseCoachMark,
             onNavigateToGifticonDetail = { gifticonId ->
                 onNavigateToGifticonDetail(gifticonId)
             },
@@ -89,3 +86,15 @@ fun GifticonContent(
         )
     }
 }
+
+//    val context = LocalContext.current
+//    val isGrantedPermission by remember {
+//        mutableStateOf(checkReadExternalStorage(context))
+//    }
+//
+//    // TODO 권한 없을 시 팝업 노출
+//    if (!isGrantedPermission) {
+//        RequestReadExternalStoragePermission {
+//            context.findActivity().finish()
+//        }
+//    }

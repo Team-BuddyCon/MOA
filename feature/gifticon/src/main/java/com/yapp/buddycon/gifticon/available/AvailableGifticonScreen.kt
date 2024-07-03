@@ -71,6 +71,7 @@ import com.yapp.buddycon.designsystem.component.modal.FilterModalSheet
 import com.yapp.buddycon.designsystem.component.modal.toOtherFormat
 import com.yapp.buddycon.designsystem.component.tag.DDayTag
 import com.yapp.buddycon.designsystem.component.tag.SortTag
+import com.yapp.buddycon.designsystem.component.tooltips.MoaTooltip
 import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
 import com.yapp.buddycon.designsystem.theme.Black
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
@@ -94,6 +95,8 @@ private val TAG = "MOATest"
 @Composable
 fun AvailabeGifticonScreen(
     availableGifticonViewModel: AvailableGifticonViewModel = hiltViewModel(),
+    showCoachMark: Boolean = false,
+    onCloseCoachMark: () -> Unit = {},
     onNavigateToGifticonDetail: (Int) -> Unit,
     afterGifticonRegistrationCompletes: Boolean?
 ) {
@@ -119,6 +122,17 @@ fun AvailabeGifticonScreen(
                 modalBottomSheetState = modalBottomSheetState,
                 availableGifticonViewModel = availableGifticonViewModel,
                 onDismiss = { isBottomSheetOpen = false }
+            )
+        }
+
+        if (showCoachMark) {
+            MoaTooltip(
+                text = stringResource(R.string.gifticon_main_tooltip),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 82.dp)
+                    .padding(end = 16.dp),
+                onClose = onCloseCoachMark
             )
         }
     }
