@@ -95,14 +95,15 @@ internal fun BaseAppBar(buddyConAppBars: BuddyConAppBars) {
             ) {
                 when (buddyConAppBars) {
                     is BuddyConAppBars.WithNotification -> {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_notification),
-                            contentDescription = buddyConAppBars.title,
-                            modifier = Modifier
-                                .size(AppbarIconSize)
-                                .clickable { buddyConAppBars.action?.invoke() },
-                            tint = Color.Unspecified
-                        )
+                        // TODO 추가 기능
+//                        Icon(
+//                            painter = painterResource(R.drawable.ic_notification),
+//                            contentDescription = buddyConAppBars.title,
+//                            modifier = Modifier
+//                                .size(AppbarIconSize)
+//                                .clickable { buddyConAppBars.action?.invoke() },
+//                            tint = Color.Unspecified
+//                        )
                     }
 
                     is BuddyConAppBars.ForSetting -> {
