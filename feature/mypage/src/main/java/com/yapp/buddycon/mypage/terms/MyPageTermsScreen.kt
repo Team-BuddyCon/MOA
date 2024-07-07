@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Scaffold
@@ -17,15 +16,13 @@ import com.yapp.buddycon.designsystem.R
 import com.yapp.buddycon.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 
-private const val SERVICE_TERMS_URL = "https://scarce-cartoon-27d.notion.site/e09da35361e142b7936c12e38396475e"
-private const val PRIVACY_INFORMATION_TERMS_URL = "https://scarce-cartoon-27d.notion.site/c4e5ff54f9bd434e971a2631d122252c?pvs=4"
+private const val TERMS_URL = "https://scarce-cartoon-27d.notion.site/2d0a87de00dc44bea41577c9af59b97f?pvs=4"
 
 @Composable
 fun MyPageTermsScreen(
     onBack: () -> Unit = {}
 ) {
-    val serviceWebViewState = rememberWebViewState(url = SERVICE_TERMS_URL)
-    val privacyWebViewState = rememberWebViewState(url = PRIVACY_INFORMATION_TERMS_URL)
+    val webState = rememberWebViewState(url = TERMS_URL)
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -43,20 +40,8 @@ fun MyPageTermsScreen(
                 .background(BuddyConTheme.colors.background)
         ) {
             WebView(
-                state = serviceWebViewState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f, true),
-                onCreated = {
-                    it.settings.javaScriptEnabled = true
-                    it.settings.domStorageEnabled = true
-                }
-            )
-            WebView(
-                state = privacyWebViewState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f, true),
+                state = webState,
+                modifier = Modifier.fillMaxSize(),
                 onCreated = {
                     it.settings.javaScriptEnabled = true
                     it.settings.domStorageEnabled = true
