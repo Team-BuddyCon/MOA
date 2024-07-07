@@ -80,6 +80,7 @@
 
     <!-- design system -->
     <string name="gifticon_main_tooltip">기프티콘을 등록해 간편하게 관리하세요!</string>
+    <string name="mypage_moa_email">buddycon@gmail.com</string>
 
     <!-- Login -->
     <string name="login_kakao_talk">카카오톡으로 로그인</string>

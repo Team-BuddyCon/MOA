@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.yapp.buddycon.data'
+    namespace 'com.yapp.moa.data'
     compileSdk 33
 
     defaultConfig {
