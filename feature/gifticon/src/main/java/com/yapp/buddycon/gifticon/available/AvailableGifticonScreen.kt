@@ -73,7 +73,6 @@ import com.yapp.buddycon.designsystem.component.tag.DDayTag
 import com.yapp.buddycon.designsystem.component.tag.SortTag
 import com.yapp.buddycon.designsystem.component.tooltips.MoaTooltip
 import com.yapp.buddycon.designsystem.component.utils.SpacerHorizontal
-import com.yapp.buddycon.designsystem.theme.Black
 import com.yapp.buddycon.designsystem.theme.BuddyConTheme
 import com.yapp.buddycon.designsystem.theme.Grey60
 import com.yapp.buddycon.designsystem.theme.Paddings
@@ -489,9 +488,7 @@ private fun NoAvailableGifticonContent(topAppBarHeight: Dp) {
 @Composable
 fun LoadingStateScreen() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Black.copy(alpha = 0.3f)),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
