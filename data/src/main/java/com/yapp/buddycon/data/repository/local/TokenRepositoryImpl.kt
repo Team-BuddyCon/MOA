@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import com.yapp.buddycon.domain.repository.TokenRepository
 import com.yapp.buddycon.local.PreferenceKeys.ACCESS_TOKEN
 import com.yapp.buddycon.local.PreferenceKeys.ACCESS_TOKEN_EXPIRES_IN
+import com.yapp.buddycon.local.PreferenceKeys.IS_FIRST_EXTERNAL_STORAGE
 import com.yapp.buddycon.local.PreferenceKeys.IS_FIRST_INSTALLATION
 import com.yapp.buddycon.local.PreferenceKeys.IS_SHOULD_SHOW_COACH_MARK
 import com.yapp.buddycon.local.PreferenceKeys.IS_TEST_MODE
@@ -26,6 +27,17 @@ class TokenRepositoryImpl @Inject constructor(
     override suspend fun checkFirstInstallation() {
         dataStore.edit { preference ->
             preference[IS_FIRST_INSTALLATION] = false
+        }
+    }
+
+    override fun isFirstExternalStoragePopup(): Flow<Boolean> =
+        dataStore.data.map { preference ->
+            preference[IS_FIRST_EXTERNAL_STORAGE] ?: true
+        }
+
+    override suspend fun checkFirstExternalStoragePopup() {
+        dataStore.edit { preference ->
+            preference[IS_FIRST_EXTERNAL_STORAGE] = false
         }
     }
 

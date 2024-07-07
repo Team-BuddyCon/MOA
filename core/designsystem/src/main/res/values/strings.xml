@@ -21,7 +21,8 @@
     <string name="location_permission_dialog_title">위치 정보 이용에 동의해 주세요</string>
     <string name="location_permission_dialog_content">위치 정보 이용을 허용해야\n지도 기능을 사용할 수 있어요.</string>
     <string name="location_permission_later">다음에 하기</string>
-    <string name="location_permission_granted">허용하기</string>
+    <string name="location_permission_granted">허용하기</string>기
+    <string name="granted">허용하기</string>
     <string name="naver_map">네이버 지도</string>
     <string name="kakao_map">카카오맵</string>
     <string name="google_map">구글 지도</string>
@@ -119,6 +120,8 @@
     <string name="gifticon_others_register_title">기프티콘 사용처를 입력해주세요</string>
     <string name="gifticon_others_register_placeholder">예) 롯데리아</string>
     <string name="gifticon_others_register_guide_message">앞으로 더 많은 브랜드를 지원하기 위해서 노력할게요.</string>
+    <string name="gifticon_external_storage_popup_title">저장을 위해 접근 권한이 필요해요</string>
+    <string name="gifticon_external_Storage_popup_description">기프티콘 이미지를 저장하기 위해\n외부 저장소 접근을 허용해 주세요.</string>
 
     <string name="gifticon_delete_or_not_dialog_title">기프티콘을 삭제할까요?</string>
     <string name="gifticon_delete_or_not_dialog_close">닫기</string>

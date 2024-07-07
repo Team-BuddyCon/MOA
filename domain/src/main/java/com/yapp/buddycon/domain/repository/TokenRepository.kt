@@ -9,6 +9,9 @@ interface TokenRepository {
     fun isShouldShowCoachMark(): Flow<Boolean>
     suspend fun stopShowCoachMark()
 
+    fun isFirstExternalStoragePopup(): Flow<Boolean>
+    suspend fun checkFirstExternalStoragePopup()
+
     fun getNickname(): Flow<String>
     suspend fun saveNickname(nickname: String)
 
