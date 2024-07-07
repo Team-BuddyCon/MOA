@@ -62,13 +62,29 @@ fun MyPageScreen(
     val scrollState = rememberScrollState()
     val userName by myPageViewModel.userName.collectAsStateWithLifecycle()
     val usedGifticonCount by myPageViewModel.usedGifticonCount.collectAsStateWithLifecycle()
+    var notDevelopedPopup by remember {
+        mutableStateOf(false)
+    }
 
     LaunchedEffect(Unit) {
         myPageViewModel.getNotificationSettings()
     }
 
+    if (notDevelopedPopup) {
+        ConfirmDialog(
+            dialogTitle = stringResource(R.string.not_developed_feature_popup_title),
+            dialogContent = stringResource(R.string.not_developed_feature_popup_description),
+            onClick = { notDevelopedPopup = false },
+            onDismissRequest = { notDevelopedPopup = false }
+        )
+    }
+
     Scaffold(
-        topBar = { TopAppBarForSetting(action = {}) }
+        topBar = {
+            TopAppBarForSetting(action = {
+                notDevelopedPopup = true
+            })
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -90,10 +106,16 @@ fun MyPageScreen(
             MyPageSettingBars(
                 myPageViewModel = myPageViewModel,
                 onNavigateToLogin = onNavigateToLogin,
-                onNavigateToDeleteMember = onNavigateToDeleteMember,
+                onNavigateToDeleteMember = {
+                    // TODO 탈퇴
+                    notDevelopedPopup = true
+                },
                 onNavigateToTerms = onNavigateToTerms,
                 onNavigateToVersion = onNavigateToVersion,
-                onNavigateToNotification = onNavigateToNotification
+                onNavigateToNotification = {
+                    // TODO 알림으로 이동
+                    notDevelopedPopup = true
+                }
             )
         }
     }

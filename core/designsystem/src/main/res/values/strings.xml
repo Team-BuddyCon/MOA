@@ -147,4 +147,6 @@
     <string name="gifticon_register_stop">쿠폰 등록을 그만할까요?</string>
     <string name="gifticon_register_stop_dismiss">계속 작성</string>
     <string name="gifticon_register_stop_confirm">나가기</string>
+    <string name="not_developed_feature_popup_title">아직 준비 중인 기능이에요</string>
+    <string name="not_developed_feature_popup_description">알림과 탈퇴 기능은 곧 출시 예정이니\n조금만 기다려 주세요.</string>
 </resources>
