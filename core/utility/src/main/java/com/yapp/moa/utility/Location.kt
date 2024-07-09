@@ -14,9 +14,9 @@ import com.kakao.vectormap.label.LabelManager
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import com.yapp.moa.designsystem.R
 import com.yapp.moa.domain.model.kakao.SearchPlaceModel
 import com.yapp.moa.domain.model.type.GifticonStore
-import com.yapp.moa.designsystem.R
 
 private var fusedLocationClient: FusedLocationProviderClient? = null
 
@@ -37,7 +37,9 @@ fun getCurrentLocation(
             override fun onLocationResult(result: LocationResult) {
                 for (location in result.locations) {
                     if (location != null) {
-                        onSuccess(location)
+                        setLocation(location) {
+                            onSuccess(it)
+                        }
                     }
                 }
             }
@@ -47,9 +49,34 @@ fun getCurrentLocation(
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient?.requestLocationUpdates(locationRequest, callback, context.mainLooper)
     } else {
-        fusedLocationClient?.lastLocation?.addOnSuccessListener {
-            onSuccess(it)
+        fusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
+            setLocation(location) {
+                onSuccess(it)
+            }
         }
+    }
+}
+
+fun setLocation(
+    location: Location,
+    onSuccess: (Location) -> Unit
+) {
+    val latitude = location.latitude
+    val longitude = location.longitude
+
+    val southKoreaMinLat = 33.0
+    val southKoreaMaxLat = 39.0
+    val southKoreaMinLon = 124.0
+    val southKoreaMaxLon = 132.0
+
+    if (latitude !in southKoreaMinLat..southKoreaMaxLat || longitude !in southKoreaMinLon..southKoreaMaxLon) {
+        val correctedLocation = Location(location).apply {
+            this.latitude = 37.402005
+            this.longitude = 127.108621
+        }
+        onSuccess(correctedLocation)
+    } else {
+        onSuccess(location)
     }
 }
 
