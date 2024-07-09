@@ -17,7 +17,7 @@ android {
         applicationId "com.yapp.moa"
         minSdk 26
         targetSdk 34
-        versionCode 3
+        versionCode 5
         versionName "1.0.0"
 
         buildConfigField("String", "KAKAO_APP_KEY", properties.getProperty("KAKAO_APP_KEY"))

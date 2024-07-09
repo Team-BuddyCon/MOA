@@ -28,7 +28,7 @@ fun navigateToNaverMap(
         .scheme("nmap")
         .authority("route")
         .appendPath("public")
-        .appendQueryParameter("appname", "com.yapp.buddycon")
+        .appendQueryParameter("appname", "com.yapp.moa")
         .appendQueryParameter("dlat", dlat)
         .appendQueryParameter("dlng", dlng)
         .appendQueryParameter("dname", dname)

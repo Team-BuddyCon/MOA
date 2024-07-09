@@ -10,6 +10,12 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
+    <queries>
+        <intent>
+            <action android:name="*" />
+        </intent>
+    </queries>
+
     <application
         android:name=".BuddyConApplication"
         android:allowBackup="false"
