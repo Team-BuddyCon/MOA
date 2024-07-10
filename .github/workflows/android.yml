@@ -62,7 +62,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Grant execute permission for gradlew
+      - name: Grant execute permission for 제gradlew
         run: chmod +x gradlew
 
       - name: Run ktlint
