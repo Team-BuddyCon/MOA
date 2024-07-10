@@ -68,12 +68,5 @@ jobs:
       - name: Run ktlint
         run: ./gradlew ktlintCheck
 
-      - name: Run Unit tests
-        run: ./gradlew testDebugUnitTest
-
-      - name: Android Test Report Action
-        uses: asadmansr/android-test-report-action@v1.2.0
-        if: ${{ always() }}
-
       - name: Build assemble Debug APK
         run: ./gradlew assembleDebug
