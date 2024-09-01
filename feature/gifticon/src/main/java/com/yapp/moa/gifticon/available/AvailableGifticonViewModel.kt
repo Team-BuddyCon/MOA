@@ -1,0 +1,146 @@
+package com.yapp.moa.gifticon.available
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.yapp.moa.domain.model.gifticon.AvailableGifticon
+import com.yapp.moa.domain.model.type.GifticonStoreCategory
+import com.yapp.moa.domain.model.type.SortType
+import com.yapp.moa.domain.repository.AvailableGifticonRepository
+import com.yapp.moa.domain.result.DataResult
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import javax.annotation.concurrent.Immutable
+import javax.inject.Inject
+
+@HiltViewModel
+class AvailableGifticonViewModel @Inject constructor(
+    private val availableGifticonRepository: AvailableGifticonRepository
+) : ViewModel() {
+    private var _availabeGifticonDataResult = MutableStateFlow<DataResult<AvailableGifticon>>(
+        DataResult.None
+    )
+    val availableGifticonDataResult = _availabeGifticonDataResult.asStateFlow()
+
+    private var _currentAvailableGifiticons = MutableStateFlow(arrayListOf<AvailableGifticon.AvailableGifticonInfo>())
+    val currentAvailableGifticons = _currentAvailableGifiticons.asStateFlow()
+
+    private var _availableGifticonDetailState = MutableStateFlow(AvailableGifticonDetailState())
+    val availableGifticonDetailState = _availableGifticonDetailState.asStateFlow()
+
+    private var _availableGifticonScreenUiState = MutableStateFlow<AvailableGifticonScreenUiState>(AvailableGifticonScreenUiState.None)
+    val availableGifticonScreenUiState = _availableGifticonScreenUiState.asStateFlow()
+
+    private var _scrollToTopEvent = MutableSharedFlow<Boolean>()
+    val scrollToTopEvent = _scrollToTopEvent.asSharedFlow()
+
+    private var availableGifticonPageState = AvailableGifticonPageState()
+
+    init {
+        Log.e("MOATest", "AvailableGifticonViewModel init")
+        getAvailableGifiticon()
+    }
+
+    fun getAvailableGifiticon() {
+        if (availableGifticonPageState.isCurrentTabLastPage.not() && _availabeGifticonDataResult.value != DataResult.Loading) {
+            viewModelScope.launch {
+                Log.e("MOATest", "[AvailableGifticonViewModel] - getAvailableGifiticon real called")
+
+                if (availableGifticonPageState.currentPage == -1) {
+                    _scrollToTopEvent.emit(true)
+                }
+
+                availableGifticonPageState = availableGifticonPageState.copy(currentPage = availableGifticonPageState.currentPage + 1)
+
+                availableGifticonRepository.getAvailableGifiticon(
+                    gifticonStoreCategory = _availableGifticonDetailState.value.currentStoreCategory,
+                    gifticonSortType = availableGifticonDetailState.value.currentSortType,
+                    currentPage = availableGifticonPageState.currentPage
+                ).onStart {
+                    // set loading state
+                    Log.e("MOATest", "loading...")
+                    _availabeGifticonDataResult.value = DataResult.Loading
+                    delay(300L)
+                }.catch { throwable ->
+                    // error handling
+                    Log.e("MOATest", "catch error!}")
+                    throwable.stackTrace.forEach {
+                        Log.e("MOATest", "[stackTrace] : $it")
+                    }
+                    _availabeGifticonDataResult.value = DataResult.Failure(throwable = throwable)
+                }.collectLatest { availableGifticon ->
+                    Log.e("MOATest", "collect data : $availableGifticon")
+                    _availabeGifticonDataResult.value = DataResult.Success(data = availableGifticon)
+                }
+            }
+        }
+    }
+
+    fun updateCurrentStoreCategoryTab(newStoreCategory: GifticonStoreCategory) {
+        if (_availableGifticonDetailState.value.currentStoreCategory != newStoreCategory) {
+            _availableGifticonDetailState.value = _availableGifticonDetailState.value.copy(currentStoreCategory = newStoreCategory)
+            availableGifticonPageState = availableGifticonPageState.copy(currentPage = -1, isCurrentTabLastPage = false)
+
+            getAvailableGifiticon()
+        }
+    }
+
+    fun updateCurrentSortType(newSortType: SortType) {
+        if (_availableGifticonDetailState.value.currentSortType != newSortType) {
+            _availableGifticonDetailState.value = _availableGifticonDetailState.value.copy(currentSortType = newSortType)
+            availableGifticonPageState = availableGifticonPageState.copy(currentPage = -1, isCurrentTabLastPage = false)
+
+            getAvailableGifiticon()
+        }
+    }
+
+    fun updateCurrentAvailabeGifticons(addedAvailableGifticon: AvailableGifticon) {
+        val tempList = arrayListOf<AvailableGifticon.AvailableGifticonInfo>().apply {
+            if (addedAvailableGifticon.isFirstPage.not()) { // 첫 페이지가 아닌 경우
+                addAll(_currentAvailableGifiticons.value)
+            }
+            addAll(addedAvailableGifticon.availableGifticons)
+        }
+
+        _currentAvailableGifiticons.value = tempList
+        availableGifticonPageState = availableGifticonPageState.copy(isCurrentTabLastPage = addedAvailableGifticon.isLastPage)
+    }
+
+    fun updateAvailableGifticonScreenUiState(newAvailableGifticonScreenUiState: AvailableGifticonScreenUiState) {
+        _availableGifticonScreenUiState.value = newAvailableGifticonScreenUiState
+    }
+
+    fun initPagingState() { // paging 상태 초기화
+        availableGifticonPageState = AvailableGifticonPageState()
+    }
+
+    fun initAvailabeGifticonDataResult() {
+        _availabeGifticonDataResult.value = DataResult.None
+    }
+}
+
+@Immutable
+data class AvailableGifticonDetailState(
+    val currentStoreCategory: GifticonStoreCategory = GifticonStoreCategory.TOTAL,
+    val currentSortType: SortType = SortType.EXPIRATION_DATE,
+)
+
+data class AvailableGifticonPageState(
+    val currentPage: Int = -1,
+    val isCurrentTabLastPage: Boolean = false
+)
+
+@Immutable
+sealed class AvailableGifticonScreenUiState {
+    object None : AvailableGifticonScreenUiState()
+    object Loading : AvailableGifticonScreenUiState()
+    object Failure : AvailableGifticonScreenUiState()
+}

@@ -3,7 +3,7 @@
 
     <style name="Theme.BuddyCon" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <style name="Theme.BuddyCon.Splash" parent="Theme.SplashScreen">
+    <style name="Theme.moa.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimationDuration">2000</item>
         <item name="windowSplashScreenBackground">@color/pink100</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>

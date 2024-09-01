@@ -10,14 +10,14 @@ def Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
-    namespace 'com.yapp.buddycon'
-    compileSdk 33
+    namespace 'com.yapp.moa'
+    compileSdk 34
 
     defaultConfig {
-        applicationId "com.yapp.buddycon"
+        applicationId "com.yapp.moa"
         minSdk 26
-        targetSdk 33
-        versionCode 1
+        targetSdk 34
+        versionCode 5
         versionName "1.0.0"
 
         buildConfigField("String", "KAKAO_APP_KEY", properties.getProperty("KAKAO_APP_KEY"))

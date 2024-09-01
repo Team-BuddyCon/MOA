@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.yapp.buddycon.gifticon'
+    namespace 'com.yapp.moa.gifticon'
     compileSdk 33
 
     defaultConfig {

@@ -9,7 +9,7 @@ def Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
-    namespace 'com.yapp.buddycon.network'
+    namespace 'com.yapp.moa.network'
     compileSdk 33
 
     defaultConfig {

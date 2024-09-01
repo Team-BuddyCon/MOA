@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.yapp.buddycon.navigation'
+    namespace 'com.yapp.moa.navigation'
     compileSdk 33
 
     defaultConfig {
