@@ -15,7 +15,7 @@ private const val MYPAGE_GRAPH = "mypage_graph"
 
 internal fun NavGraphBuilder.mypageGraph(
     navHostController: NavHostController,
-    onNavigateToLogin: (Boolean) -> Unit = {}
+    onNavigateToLogin: () -> Unit = {}
 ) {
     navigation(
         startDestination = MyPageDestination.MyPage.route,
@@ -50,6 +50,7 @@ internal fun NavGraphBuilder.mypageGraph(
 
         composable(route = MyPageDestination.DeleteMember.route) {
             MemberDeleteScreen(
+                onNavigateToLogin = onNavigateToLogin,
                 onBack = { navHostController.popBackStack() }
             )
         }

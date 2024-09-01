@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,19 +37,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yapp.moa.designsystem.R
 import com.yapp.moa.designsystem.component.appbar.TopAppBarWithBack
 import com.yapp.moa.designsystem.component.button.BuddyConButton
+import com.yapp.moa.designsystem.component.dialog.ConfirmDialog
 import com.yapp.moa.designsystem.component.dialog.DefaultDialog
 import com.yapp.moa.designsystem.theme.BuddyConTheme
 import com.yapp.moa.designsystem.theme.Grey20
 import com.yapp.moa.designsystem.theme.Grey60
 import com.yapp.moa.designsystem.theme.Grey90
 import com.yapp.moa.designsystem.theme.Pink100
-import com.yapp.moa.designsystem.R
 
 @Composable
 fun MemberDeleteScreen(
     memberDeleteViewModel: MemberDeleteViewModel = hiltViewModel(),
+    onNavigateToLogin: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val phrase by memberDeleteViewModel.phrase.collectAsStateWithLifecycle()
@@ -56,6 +59,27 @@ fun MemberDeleteScreen(
     val reasonText by memberDeleteViewModel.reasonText.collectAsStateWithLifecycle()
     val userName by memberDeleteViewModel.userName.collectAsStateWithLifecycle()
     var showDeleteMemberPopup by remember { mutableStateOf(false) }
+    var showCompleteDeleteUser by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        memberDeleteViewModel.completeDelete.collect { result ->
+            if (result) {
+                showCompleteDeleteUser = true
+            }
+        }
+    }
+
+    if (showCompleteDeleteUser) {
+        ConfirmDialog(
+            dialogTitle = stringResource(R.string.complete_delete_member),
+            onClick = {
+                onNavigateToLogin()
+            },
+            onDismissRequest = {
+                onNavigateToLogin()
+            }
+        )
+    }
 
     if (showDeleteMemberPopup) {
         DefaultDialog(
@@ -65,7 +89,7 @@ fun MemberDeleteScreen(
             dialogContent = stringResource(R.string.setting_delete_member_popup_content),
             onConfirm = {
                 showDeleteMemberPopup = false
-                // TODO 탈퇴 API
+                memberDeleteViewModel.deleteUser()
             },
             onDismissRequest = {
                 showDeleteMemberPopup = false

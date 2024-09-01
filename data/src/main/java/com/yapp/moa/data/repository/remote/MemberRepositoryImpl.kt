@@ -14,4 +14,8 @@ class MemberRepositoryImpl @Inject constructor(
             memberService.fetchLogout().status == 200
         )
     }
+
+    override suspend fun deleteUser(): Boolean {
+        return memberService.deleteUser().status == 200
+    }
 }
