@@ -77,6 +77,7 @@
     <string name="setting_notification_threeDaysBefore">3일 전</string>
     <string name="setting_notification_oneDayBefore">1일 전</string>
     <string name="setting_notification_theDay">당일</string>
+    <string name="complete_delete_member">탈퇴되었어요</string>
 
     <!-- design system -->
     <string name="gifticon_main_tooltip">기프티콘을 등록해 간편하게 관리하세요!</string>

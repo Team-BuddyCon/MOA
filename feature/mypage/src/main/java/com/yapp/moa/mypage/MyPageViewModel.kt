@@ -30,16 +30,12 @@ class MyPageViewModel @Inject constructor(
     private val _logoutEvent = MutableStateFlow(false)
     val logoutEvent = _logoutEvent.asStateFlow()
 
-    private val _isTestMode = MutableStateFlow(false)
-    val isTestMode = _isTestMode.asStateFlow()
-
     private val _isActiveNotification = MutableStateFlow(false)
     val isActiveNotification = _isActiveNotification.asStateFlow()
 
     init {
         loadUserName()
         getUsedGifticonCount()
-        getTestModel()
     }
 
     fun getNotificationSettings() {
@@ -51,12 +47,6 @@ class MyPageViewModel @Inject constructor(
     private fun loadUserName() {
         tokenRepository.getNickname()
             .onEach { _userName.value = it }
-            .launchIn(viewModelScope)
-    }
-
-    private fun getTestModel() {
-        tokenRepository.isTestMode()
-            .onEach { _isTestMode.value = it }
             .launchIn(viewModelScope)
     }
 

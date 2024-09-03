@@ -2,12 +2,16 @@ package com.yapp.moa.mypage.delete
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.moa.domain.repository.MemberRepository
 import com.yapp.moa.domain.repository.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class DeleteMemberPhrase {
@@ -23,7 +27,8 @@ enum class DeleteMemberReason(val reason: String) {
 
 @HiltViewModel
 class MemberDeleteViewModel @Inject constructor(
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val memberRepository: MemberRepository
 ) : ViewModel() {
     private val _phrase = MutableStateFlow(DeleteMemberPhrase.FIRST)
     val phrase = _phrase.asStateFlow()
@@ -37,6 +42,9 @@ class MemberDeleteViewModel @Inject constructor(
     private val _userName = MutableStateFlow("")
     val userName = _userName.asStateFlow()
 
+    private val _completeDelete = MutableSharedFlow<Boolean>()
+    val completeDelete = _completeDelete.asSharedFlow()
+
     init {
         getUserName()
     }
@@ -45,6 +53,13 @@ class MemberDeleteViewModel @Inject constructor(
         tokenRepository.getNickname()
             .onEach { _userName.value = it }
             .launchIn(viewModelScope)
+    }
+
+    fun deleteUser() {
+        viewModelScope.launch {
+            val result = memberRepository.deleteUser()
+            _completeDelete.emit(result)
+        }
     }
 
     fun setPhrase(phrase: DeleteMemberPhrase) {

@@ -16,7 +16,7 @@ class BuddyConInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         var accessToken = runBlocking { tokenRepository.getAccessToken().first() }
         val refreshToken = runBlocking { tokenRepository.getRefreshToken().first() }
-        val accessTokenExpiresIn = runBlocking { tokenRepository.getAccessTokenExpiresIn().first() }
+        var accessTokenExpiresIn = runBlocking { tokenRepository.getAccessTokenExpiresIn().first() }
         val currentTime = System.currentTimeMillis()
 
         if (accessTokenExpiresIn < currentTime) {
@@ -28,6 +28,8 @@ class BuddyConInterceptor @Inject constructor(
                     ).first()
                 }
                 accessToken = token.accessToken
+                accessTokenExpiresIn = token.accessTokenExpiresIn
+
                 runBlocking {
                     tokenRepository.saveAccessToken(accessToken)
                     tokenRepository.saveRefreshToken(refreshToken)
@@ -41,8 +43,7 @@ class BuddyConInterceptor @Inject constructor(
             .addHeader("Authorization", "Bearer $accessToken")
             .build()
 
-        Log.e("MOATest", "token : Bearer $accessToken") // test용 로그 출력 -> 추후 삭제 예정
-
+        Log.e("MOATest", "token : Bearer $accessToken expireIn: $accessTokenExpiresIn") // test용 로그 출력 -> 추후 삭제 예정
         return chain.proceed(newRequest)
     }
 }

@@ -53,7 +53,7 @@ const val TAG = "BuddyConTest"
 fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onNavigateToUsedGifticon: () -> Unit = {},
-    onNavigateToLogin: (Boolean) -> Unit = {},
+    onNavigateToLogin: () -> Unit = {},
     onNavigateToDeleteMember: () -> Unit = {},
     onNavigateToTerms: () -> Unit = {},
     onNavigateToVersion: () -> Unit = {},
@@ -106,10 +106,7 @@ fun MyPageScreen(
             MyPageSettingBars(
                 myPageViewModel = myPageViewModel,
                 onNavigateToLogin = onNavigateToLogin,
-                onNavigateToDeleteMember = {
-                    // TODO 탈퇴
-                    notDevelopedPopup = true
-                },
+                onNavigateToDeleteMember = onNavigateToDeleteMember,
                 onNavigateToTerms = onNavigateToTerms,
                 onNavigateToVersion = onNavigateToVersion,
                 onNavigateToNotification = {
@@ -184,14 +181,13 @@ private fun UsedGifticonInfo(
 @Composable
 private fun MyPageSettingBars(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
-    onNavigateToLogin: (Boolean) -> Unit = {},
+    onNavigateToLogin: () -> Unit = {},
     onNavigateToDeleteMember: () -> Unit = {},
     onNavigateToTerms: () -> Unit = {},
     onNavigateToVersion: () -> Unit = {},
     onNavigateToNotification: () -> Unit = {}
 ) {
     val logoutEvent by myPageViewModel.logoutEvent.collectAsStateWithLifecycle()
-    val isTestMode by myPageViewModel.isTestMode.collectAsStateWithLifecycle()
     val isActiveNotification by myPageViewModel.isActiveNotification.collectAsStateWithLifecycle()
     var showLogoutPopup by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -215,7 +211,7 @@ private fun MyPageSettingBars(
     if (logoutEvent) {
         ConfirmDialog(
             dialogTitle = stringResource(R.string.setting_logout_success),
-            onClick = { onNavigateToLogin(isTestMode) }
+            onClick = { onNavigateToLogin() }
         )
     }
 
